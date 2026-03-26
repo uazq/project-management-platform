@@ -1,0 +1,239 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               Int       @id @default(autoincrement())
+  fullName         String
+  username         String    @unique
+  email            String    @unique
+  passwordHash     String
+  profilePicture   String?
+  role             Role      @default(team_member)
+  isActive         Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  lastLogin        DateTime?
+  resetToken       String?   @unique
+  resetTokenExpiry DateTime?
+
+  createdProjects Project[]       @relation("UserCreatedProjects")
+  projectMembers  ProjectMember[]
+  assignedTasks   Task[]          @relation("TaskAssignee")
+  createdTasks    Task[]          @relation("TaskCreator")
+  comments        Comment[]
+  files           File[]
+  passwordResets  PasswordReset[]
+  activities      ActivityLog[]
+  discussions     Discussion[]
+  replies         Reply[]
+}
+
+model Project {
+  id          Int           @id @default(autoincrement())
+  name        String
+  description String?
+  startDate   DateTime
+  endDate     DateTime?
+  status      ProjectStatus @default(active)
+  createdBy   Int
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  archived    Boolean       @default(false)
+
+  creator     User            @relation("UserCreatedProjects", fields: [createdBy], references: [id])
+  members     ProjectMember[]
+  tasks       Task[]
+  comments    Comment[]
+  files       File[]
+  discussions Discussion[]
+  tags        ProjectTag[]
+  shares      PublicShare[]
+}
+
+model ProjectMember {
+  projectId Int
+  userId    Int
+  joinedAt  DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, userId])
+}
+
+model Task {
+  id          Int        @id @default(autoincrement())
+  title       String
+  description String?
+  priority    Priority   @default(medium)
+  dueDate     DateTime?
+  status      TaskStatus @default(not_started)
+  projectId   Int
+  assigneeId  Int?
+  createdBy   Int
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  project  Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assignee User?     @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  creator  User      @relation("TaskCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+  comments Comment[]
+  files    File[]
+  tags     TaskTag[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  userId    Int
+  taskId    Int?
+  projectId Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task    Task?    @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+  @@index([projectId])
+}
+
+model File {
+  id         Int      @id @default(autoincrement())
+  fileName   String
+  filePath   String
+  fileType   String
+  size       Int
+  uploadedBy Int
+  projectId  Int?
+  taskId     Int?
+  uploadedAt DateTime @default(now())
+
+  uploader User     @relation(fields: [uploadedBy], references: [id], onDelete: Cascade)
+  project  Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  task     Task?    @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([taskId])
+}
+
+model PasswordReset {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ActivityLog {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  action     String
+  entityType String
+  entityId   Int?
+  details    Json?
+  projectId  Int?
+  createdAt  DateTime @default(now())
+
+  @@index([projectId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model Discussion {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  projectId Int
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  replies   Reply[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Reply {
+  id           Int        @id @default(autoincrement())
+  content      String
+  userId       Int
+  user         User       @relation(fields: [userId], references: [id])
+  discussionId Int
+  discussion   Discussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Tag {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  color     String?
+  createdAt DateTime @default(now())
+
+  projects ProjectTag[]
+  tasks    TaskTag[]
+}
+
+model ProjectTag {
+  projectId Int
+  tagId     Int
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, tagId])
+}
+
+model TaskTag {
+  taskId Int
+  tagId  Int
+  task   Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([taskId, tagId])
+}
+
+model PublicShare {
+  id        Int       @id @default(autoincrement())
+  projectId Int
+  token     String    @unique
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+  project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  admin
+  project_manager
+  team_member
+}
+
+enum ProjectStatus {
+  active
+  suspended
+  completed
+}
+
+enum Priority {
+  high
+  medium
+  low
+}
+
+enum TaskStatus {
+  not_started
+  in_progress
+  completed
+  overdue
+}
