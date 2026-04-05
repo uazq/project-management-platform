@@ -17,22 +17,27 @@ model User {
   profilePicture   String?
   role             Role      @default(team_member)
   isActive         Boolean   @default(true)
+  isApproved       Boolean   @default(false)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
   lastLogin        DateTime?
   resetToken       String?   @unique
   resetTokenExpiry DateTime?
 
-  createdProjects Project[]       @relation("UserCreatedProjects")
-  projectMembers  ProjectMember[]
-  assignedTasks   Task[]          @relation("TaskAssignee")
-  createdTasks    Task[]          @relation("TaskCreator")
-  comments        Comment[]
-  files           File[]
-  passwordResets  PasswordReset[]
-  activities      ActivityLog[]
-  discussions     Discussion[]
-  replies         Reply[]
+  createdProjects                  Project[]              @relation("UserCreatedProjects")
+  projectMembers                   ProjectMember[]
+  assignedTasks                    Task[]                 @relation("TaskAssignee")
+  createdTasks                     Task[]                 @relation("TaskCreator")
+  comments                         Comment[]
+  files                            File[]
+  passwordResets                   PasswordReset[]
+  activities                       ActivityLog[]
+  discussions                      Discussion[]
+  replies                          Reply[]
+  // علاقات طلبات حذف الأعضاء (ثلاث علاقات مستقلة)
+  memberRemovalRequestsAsTarget    MemberRemovalRequest[] @relation("MemberRemovalTarget")
+  memberRemovalRequestsAsRequester MemberRemovalRequest[] @relation("MemberRemovalRequester")
+  memberRemovalRequestsAsApprover  MemberRemovalRequest[] @relation("MemberRemovalApprover")
 }
 
 model Project {
@@ -46,15 +51,18 @@ model Project {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   archived    Boolean       @default(false)
+  approved    Boolean       @default(false)
+  approvedAt  DateTime?
 
-  creator     User            @relation("UserCreatedProjects", fields: [createdBy], references: [id])
-  members     ProjectMember[]
-  tasks       Task[]
-  comments    Comment[]
-  files       File[]
-  discussions Discussion[]
-  tags        ProjectTag[]
-  shares      PublicShare[]
+  creator         User                   @relation("UserCreatedProjects", fields: [createdBy], references: [id])
+  members         ProjectMember[]
+  tasks           Task[]
+  comments        Comment[]
+  files           File[]
+  discussions     Discussion[]
+  tags            ProjectTag[]
+  shares          PublicShare[]
+  removalRequests MemberRemovalRequest[]
 }
 
 model ProjectMember {
@@ -213,6 +221,26 @@ model PublicShare {
   project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
+model MemberRemovalRequest {
+  id          Int           @id @default(autoincrement())
+  projectId   Int
+  project     Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId      Int
+  user        User          @relation("MemberRemovalTarget", fields: [userId], references: [id])
+  requestedBy Int
+  requester   User          @relation("MemberRemovalRequester", fields: [requestedBy], references: [id])
+  reason      String
+  status      RequestStatus @default(pending)
+  approvedBy  Int?
+  approver    User?         @relation("MemberRemovalApprover", fields: [approvedBy], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([projectId])
+  @@index([userId])
+  @@index([status])
+}
+
 enum Role {
   admin
   project_manager
@@ -236,4 +264,10 @@ enum TaskStatus {
   in_progress
   completed
   overdue
+}
+
+enum RequestStatus {
+  pending
+  approved
+  rejected
 }

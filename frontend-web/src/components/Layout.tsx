@@ -4,7 +4,7 @@ import { useAuthStore } from '../store/authStore';
 import { 
   FiHome, FiFolder, FiUsers, FiUser, FiLogOut, 
   FiMenu, FiX, FiBell, FiMoon, FiSun, FiClock, FiGlobe,
-  FiTag
+  FiCheckCircle, FiUserX   // ✅ أضف FiUserX هنا
 } from 'react-icons/fi';
 import { useTranslation } from 'react-i18next';
 import socket from '../services/socket';
@@ -59,10 +59,12 @@ const Layout = ({ children }: LayoutProps) => {
   const navLinks = [
     { path: '/', label: t('common.dashboard'), icon: FiHome },
     { path: '/projects', label: t('common.projects'), icon: FiFolder },
+    { path: '/my-tasks', label: t('myTasks.title'), icon: FiCheckCircle },
     { path: '/activities', label: t('common.activities'), icon: FiClock },
     { path: '/profile', label: t('common.profile'), icon: FiUser },
     { path: '/users', label: t('common.users'), icon: FiUsers, adminOnly: true },
-    { path: '/tags', label: t('tag.management'), icon: FiTag, adminOnly: true },
+    { path: '/admin/approvals', label: t('admin.approvals'), icon: FiCheckCircle, adminOnly: true },
+    { path: '/admin/removal-requests', label: t('removal.title'), icon: FiUserX, adminOnly: true }, // ✅ الآن تم استيراد FiUserX
   ];
 
   return (

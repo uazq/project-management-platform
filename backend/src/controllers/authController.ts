@@ -1,4 +1,3 @@
-// backend/src/controllers/authController.ts
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -7,7 +6,7 @@ import prisma from '../lib/prisma';
 import { AuthRequest } from '../middleware/auth';
 import { sendResetPasswordEmail } from '../utils/email';
 
-// تسجيل مستخدم جديد
+// ==================== تسجيل مستخدم جديد ====================
 export const register = async (req: Request, res: Response) => {
   try {
     const { fullName, username, email, password } = req.body;
@@ -27,25 +26,17 @@ export const register = async (req: Request, res: Response) => {
         username,
         email,
         passwordHash: hashedPassword,
+        isApproved: false, // ✅ يحتاج موافقة الأدمن
       },
     });
 
-    const token = jwt.sign(
-      { userId: user.id, role: user.role },
-      process.env.JWT_SECRET!,
-      { expiresIn: '7d' }
-    );
-
     res.status(201).json({
-      token,
+      message: 'User registered successfully. Please wait for admin approval.',
       user: {
         id: user.id,
         fullName: user.fullName,
         username: user.username,
         email: user.email,
-        role: user.role,
-        profilePicture: user.profilePicture,
-        isActive: user.isActive,
       },
     });
   } catch (error) {
@@ -54,7 +45,7 @@ export const register = async (req: Request, res: Response) => {
   }
 };
 
-// تسجيل الدخول
+// ==================== تسجيل الدخول ====================
 export const login = async (req: Request, res: Response) => {
   try {
     const { username, password } = req.body;
@@ -66,8 +57,9 @@ export const login = async (req: Request, res: Response) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    if (!user.isActive) {
-      return res.status(403).json({ message: 'Your account has been deactivated. Please contact admin.' });
+    // ✅ التحقق من موافقة الأدمن
+    if (!user.isApproved) {
+      return res.status(403).json({ message: 'Your account is pending admin approval.' });
     }
 
     const isValid = await bcrypt.compare(password, user.passwordHash);
@@ -95,7 +87,7 @@ export const login = async (req: Request, res: Response) => {
         email: user.email,
         role: user.role,
         profilePicture: user.profilePicture,
-        isActive: user.isActive,
+        isApproved: user.isApproved,
       },
     });
   } catch (error) {
@@ -104,7 +96,7 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-// تغيير كلمة المرور (للمستخدم المسجل)
+// ==================== تغيير كلمة المرور (للمستخدم المسجل) ====================
 export const changePassword = async (req: AuthRequest, res: Response) => {
   try {
     const { currentPassword, newPassword } = req.body;
@@ -137,7 +129,7 @@ export const changePassword = async (req: AuthRequest, res: Response) => {
   }
 };
 
-// طلب إعادة تعيين كلمة المرور (نسيت كلمة المرور)
+// ==================== طلب إعادة تعيين كلمة المرور (نسيت كلمة المرور) ====================
 export const forgotPassword = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
@@ -152,9 +144,8 @@ export const forgotPassword = async (req: Request, res: Response) => {
       return res.json({ message: 'If your email is registered, you will receive a reset link.' });
     }
 
-    // إنشاء رمز عشوائي
     const resetToken = crypto.randomBytes(32).toString('hex');
-    const resetTokenExpiry = new Date(Date.now() + 3600000); // صالح لمدة ساعة
+    const resetTokenExpiry = new Date(Date.now() + 3600000); // ساعة
 
     await prisma.user.update({
       where: { id: user.id },
@@ -170,7 +161,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
   }
 };
 
-// إعادة تعيين كلمة المرور باستخدام الرمز
+// ==================== إعادة تعيين كلمة المرور باستخدام الرمز ====================
 export const resetPassword = async (req: Request, res: Response) => {
   try {
     const { token, newPassword } = req.body;
@@ -191,7 +182,6 @@ export const resetPassword = async (req: Request, res: Response) => {
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-
     await prisma.user.update({
       where: { id: user.id },
       data: {

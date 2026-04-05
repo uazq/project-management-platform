@@ -121,7 +121,8 @@
     "createdNotification": "📌 New task added",
     "updatedNotification": "✏️ Task updated",
     "statusChangedNotification": "✅ Status changed for: {{title}}",
-    "deletedNotification": "🗑️ Task deleted"
+    "deletedNotification": "🗑️ Task deleted",
+     "all": "All"
   },
   "member": {
     "title": "Team Members",
@@ -254,7 +255,17 @@
     "deleteError": "Failed to delete user",
     "roleSuccess": "Role changed",
     "roleError": "Failed to change role",
-    "noUsers": "No users"
+    "noUsers": "No users",
+    "totalUsers": "Total Users",
+  "activeUsers": "Active",
+  "inactiveUsers": "Inactive",
+  "admins": "Admins",
+  "export": "Export CSV",
+  "exportSuccess": "Users list exported",
+  "sortBy": "Sort by",
+  "sortName": "Name",
+  "sortEmail": "Email",
+  "sortDate": "Join Date"
   },
   "login": {
     "subtitle": "Sign in to continue",
@@ -382,5 +393,46 @@
     "unavailable": "Unable to fetch status",
     "lastChecked": "Last checked",
     "refresh": "Refresh"
-  }
+  },
+  "myTasks": {
+  "title": "My Tasks",
+  "noTasks": "No tasks assigned to you",
+  "project": "Project"
+},
+
+  "admin": {
+  "approvals": "Approval Requests",
+  "pendingProjects": "Pending Projects",
+  "pendingUsers": "Pending Users",
+  "noPendingProjects": "No pending projects",
+  "noPendingUsers": "No pending users",
+  "createdBy": "Created by",
+  "approve": "Approve",
+  "projectApproved": "Project approved",
+  "userApproved": "User approved",
+  "approveError": "Approval failed",
+  "fetchError": "Failed to load data"
+},
+"removal": {
+  "title": "Member Removal Requests",
+  "pending": "Pending",
+  "approved": "Approved",
+  "rejected": "Rejected",
+  "reason": "Reason",
+  "requestedBy": "Requested by",
+  "approve": "Approve",
+  "reject": "Reject",
+  "approvedSuccess": "Removal request approved",
+  "rejectedSuccess": "Removal request rejected",
+  "fetchError": "Failed to load requests",
+  "actionError": "Failed to process request",
+  "noRequests": "No requests",
+    "request": "Request Removal",
+  "requestTitle": "Request Member Removal",
+  "confirmRemove": "Are you sure you want to request removal of {{name}}?",
+  "reasonPlaceholder": "Enter reason...",
+  "sendRequest": "Send Request",
+  "requestSent": "Removal request sent to admin",
+  "requestError": "Failed to send request"
+}
 }

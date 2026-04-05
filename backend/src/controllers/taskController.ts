@@ -328,3 +328,59 @@ export const assignTask = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+// جلب المهام المسندة للمستخدم الحالي (مهامي)
+export const getMyTasks = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.userId;
+    const { status, priority } = req.query;
+
+    let whereClause: any = { assigneeId: userId };
+
+    if (status) {
+      whereClause.status = status;
+    }
+    if (priority) {
+      whereClause.priority = priority;
+    }
+
+    const tasks = await prisma.task.findMany({
+      where: whereClause,
+      include: {
+        project: { select: { id: true, name: true } },
+        creator: { select: { id: true, fullName: true } },
+      },
+      orderBy: { dueDate: 'asc' },
+    });
+
+    res.json(tasks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+// جلب المهام حسب المسند إليه (assigneeId)
+export const getTasksByAssignee = async (req: AuthRequest, res: Response) => {
+  try {
+    const { assigneeId, status, priority } = req.query;
+    if (!assigneeId) {
+      return res.status(400).json({ message: 'assigneeId is required' });
+    }
+    const userId = parseInt(assigneeId as string);
+    let whereClause: any = { assigneeId: userId };
+    if (status) whereClause.status = status;
+    if (priority) whereClause.priority = priority;
+
+    const tasks = await prisma.task.findMany({
+      where: whereClause,
+      include: {
+        project: { select: { id: true, name: true } },
+        creator: { select: { id: true, fullName: true } },
+      },
+      orderBy: { dueDate: 'asc' },
+    });
+    res.json(tasks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};

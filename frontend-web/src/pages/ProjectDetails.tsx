@@ -10,7 +10,7 @@ import {
   FiEdit, FiTrash2, FiPlus, FiDownload, FiUpload,
   FiX, FiCalendar, FiUsers, FiFileText, FiMessageSquare,
   FiBarChart2, FiCheckCircle, FiClock, FiAlertCircle, FiPlay,
-  FiFolder, FiArchive, FiShare2
+  FiFolder, FiArchive, FiShare2, FiUserX
 } from 'react-icons/fi';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
@@ -69,6 +69,11 @@ const ProjectDetails = () => {
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [shareLink, setShareLink] = useState('');
 
+  // حالات طلب حذف العضو
+  const [removalReason, setRemovalReason] = useState('');
+  const [showRemovalModal, setShowRemovalModal] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<User | null>(null);
+
   useEffect(() => {
     if (id) fetchProject();
   }, [id]);
@@ -96,7 +101,7 @@ const ProjectDetails = () => {
     }
   };
 
-  // WebSocket للتحديث الفوري (كما هو موجود)
+  // WebSocket للتحديث الفوري
   useEffect(() => {
     if (!id) return;
     socket.emit('join-project', id);
@@ -146,13 +151,13 @@ const ProjectDetails = () => {
   useEffect(() => {
     if (showAddMember && (user?.role === 'admin' || user?.role === 'project_manager')) {
       const fetchAvailable = async () => {
-        try {
-          const res = await api.get('/users');
-          setAvailableUsers(res.data.filter((u: User) => !members.some(m => m.id === u.id)));
-        } catch {
-          toast.error(t('member.fetchError'));
-        }
-      };
+  try {
+    const res = await api.get(`/users/projects/${id}/available-members`);
+    setAvailableUsers(res.data);
+  } catch (error) {
+    toast.error(t('member.fetchError'));
+  }
+};
       fetchAvailable();
     }
   }, [showAddMember, members, user]);
@@ -217,8 +222,8 @@ const ProjectDetails = () => {
     }
   };
 
-  // إزالة عضو
-  const handleRemoveMember = async (userId: number) => {
+  // إزالة عضو مباشر (للأدمن فقط)
+  const handleRemoveMemberDirect = async (userId: number) => {
     if (!confirm(t('common.confirmDelete'))) return;
     try {
       await api.delete(`/projects/${id}/members/${userId}`);
@@ -226,6 +231,20 @@ const ProjectDetails = () => {
       toast.success(t('member.removeSuccess'));
     } catch {
       toast.error(t('member.removeError'));
+    }
+  };
+
+  // طلب حذف عضو (للمدير)
+  const handleRequestRemoval = async () => {
+    if (!selectedMember || !removalReason.trim()) return;
+    try {
+      await api.post(`/projects/${id}/members/${selectedMember.id}/removal-request`, { reason: removalReason });
+      toast.success(t('removal.requestSent'));
+      setShowRemovalModal(false);
+      setRemovalReason('');
+      setSelectedMember(null);
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || t('removal.requestError'));
     }
   };
 
@@ -829,9 +848,23 @@ const ProjectDetails = () => {
                     <span className="badge badge-info">{t('member.projectManager')}</span>
                   )}
                   {isManager && member.id !== project.createdBy && !project.archived && (
-                    <button onClick={() => handleRemoveMember(member.id)} className="text-red-500 hover:text-red-600">
-                      <FiTrash2 size={16} />
-                    </button>
+                    <>
+                      <button
+                        onClick={() => {
+                          setSelectedMember(member);
+                          setShowRemovalModal(true);
+                        }}
+                        className="text-red-500 hover:text-red-700 text-sm flex items-center gap-1"
+                        title={t('removal.request')}
+                      >
+                        <FiUserX size={16} /> {t('removal.request')}
+                      </button>
+                      {user?.role === 'admin' && (
+                        <button onClick={() => handleRemoveMemberDirect(member.id)} className="text-red-600 hover:text-red-800 text-sm">
+                          {t('common.delete')}
+                        </button>
+                      )}
+                    </>
                   )}
                 </div>
               ))}
@@ -1000,7 +1033,7 @@ const ProjectDetails = () => {
                       <th className="py-2 text-right">{t('report.totalTasks')}</th>
                       <th className="py-2 text-right">{t('report.completedTasks')}</th>
                       <th className="py-2 text-right">{t('report.percentage')}</th>
-                     </tr>
+                    </tr>
                   </thead>
                   <tbody>
                     {members.map(member => {
@@ -1031,6 +1064,33 @@ const ProjectDetails = () => {
           </div>
         )}
       </div>
+
+      {/* مودال طلب حذف العضو */}
+      {showRemovalModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full p-6">
+            <h3 className="text-lg font-semibold mb-2">{t('removal.requestTitle')}</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              {t('removal.confirmRemove', { name: selectedMember?.fullName })}
+            </p>
+            <textarea
+              placeholder={t('removal.reasonPlaceholder')}
+              value={removalReason}
+              onChange={(e) => setRemovalReason(e.target.value)}
+              className="input-field w-full mb-4"
+              rows={3}
+            />
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setShowRemovalModal(false)} className="btn-secondary">
+                {t('common.cancel')}
+              </button>
+              <button onClick={handleRequestRemoval} className="btn-primary">
+                {t('removal.sendRequest')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* مودال مشاركة المشروع */}
       {shareModalOpen && (

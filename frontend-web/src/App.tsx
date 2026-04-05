@@ -14,6 +14,10 @@ import toast from 'react-hot-toast';
 import TagsManagement from './pages/TagsManagement';
 import Status from './pages/Status';
 import PublicProject from './pages/PublicProject';
+import AdminApprovals from './pages/AdminApprovals';
+import MyTasks from './pages/MyTasks';
+import MemberDetails from './pages/MemberDetails';
+import RemovalRequests from './pages/RemovalRequests';
 
 // تحميل الصفحات بشكل كسول
 const Dashboard = lazy(() => import('./pages/Dashboard'));
@@ -96,6 +100,30 @@ function App() {
           </PrivateRoute>
         } />
 
+          <Route path="/my-tasks" element={
+  <PrivateRoute>
+    <Layout>
+      <MyTasks />
+    </Layout>
+  </PrivateRoute>
+} />
+
+<Route path="/admin/removal-requests" element={
+  <PrivateRoute requiredRole={['admin']}>
+    <Layout>
+      <RemovalRequests />
+    </Layout>
+  </PrivateRoute>
+} />
+
+<Route path="/users/:id/details" element={
+  <PrivateRoute requiredRole={['admin', 'project_manager']}>
+    <Layout>
+      <MemberDetails />
+    </Layout>
+  </PrivateRoute>
+} />
+
         <Route path="/users" element={
           <PrivateRoute requiredRole={['admin']}>
             <Layout>
@@ -105,6 +133,14 @@ function App() {
             </Layout>
           </PrivateRoute>
         } />
+
+        <Route path="/admin/approvals" element={
+  <PrivateRoute requiredRole={['admin']}>
+    <Layout>
+      <AdminApprovals />
+    </Layout>
+  </PrivateRoute>
+} />
 
       <Route path="/tags" element={
   <PrivateRoute requiredRole={['admin']}>

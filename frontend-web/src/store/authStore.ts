@@ -83,17 +83,11 @@ export const useAuthStore = create<AuthState>((set) => {
     },
 
     logout: () => {
-  // مسح localStorage بأمان
-  try {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-  } catch (e) {
-    // تجاهل الأخطاء
-  }
+  safeLocalStorage.removeItem('token');
+  safeLocalStorage.removeItem('user');
   set({ user: null, token: null });
-  toast.success(t('auth.logoutSuccess'));
+  toast.success('تم تسجيل الخروج');
 },
-
     setUser: (user) => {
       safeLocalStorage.setItem('user', JSON.stringify(user));
       set({ user });

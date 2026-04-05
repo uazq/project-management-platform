@@ -3,6 +3,7 @@ import { AuthRequest } from '../middleware/auth';
 import prisma from '../lib/prisma';
 import path from 'path';
 import fs from 'fs';
+import { logActivity } from '../services/activityLog';
 
 // عرض جميع المستخدمين (للأدمن فقط)
 export const getAllUsers = async (req: AuthRequest, res: Response) => {
@@ -15,12 +16,69 @@ export const getAllUsers = async (req: AuthRequest, res: Response) => {
         email: true,
         role: true,
         isActive: true,
+        isApproved: true,
         createdAt: true,
         lastLogin: true,
         profilePicture: true,
       },
     });
     res.json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// ✅ جديد: جلب المستخدمين المعلقين (لأدمن فقط)
+export const getPendingUsers = async (req: AuthRequest, res: Response) => {
+  try {
+    if (req.user!.role !== 'admin') {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+    const users = await prisma.user.findMany({
+      where: { isApproved: false },
+      select: {
+        id: true,
+        fullName: true,
+        username: true,
+        email: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+    res.json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// ✅ جديد: الموافقة على مستخدم (لأدمن فقط)
+export const approveUser = async (req: AuthRequest, res: Response) => {
+  try {
+    if (req.user!.role !== 'admin') {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+    const userId = parseInt(String(req.params.id));
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    if (user.isApproved) {
+      return res.status(400).json({ message: 'User already approved' });
+    }
+    const updated = await prisma.user.update({
+      where: { id: userId },
+      data: { isApproved: true },
+    });
+    await logActivity({
+      userId: req.user!.userId,
+      action: 'APPROVE_USER',
+      entityType: 'User',
+      entityId: userId,
+      details: { fullName: user.fullName },
+    });
+    res.json({ message: 'User approved successfully', user: updated });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
@@ -105,6 +163,7 @@ export const getProfile = async (req: AuthRequest, res: Response) => {
         email: true,
         role: true,
         isActive: true,
+        isApproved: true,
         profilePicture: true,
         createdAt: true,
       },
@@ -130,6 +189,7 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
         email: true,
         role: true,
         isActive: true,
+        isApproved: true,
         profilePicture: true,
       },
     });
@@ -140,7 +200,7 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
   }
 };
 
-// رفع الصورة الشخصية (بدون sharp لتجنب المشاكل)
+// رفع الصورة الشخصية
 export const uploadProfilePicture = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.userId;
@@ -150,21 +210,16 @@ export const uploadProfilePicture = async (req: AuthRequest, res: Response) => {
       return res.status(400).json({ message: 'لم يتم رفع ملف' });
     }
 
-    // إنشاء مجلد uploads/profile إذا لم يكن موجوداً
     const uploadDir = path.join(__dirname, '../../uploads/profile');
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
 
-    // إنشاء اسم فريد للملف مع الاحتفاظ بالامتداد الأصلي
     const fileExt = path.extname(file.originalname);
     const fileName = `profile-${userId}-${Date.now()}${fileExt}`;
     const finalPath = path.join(uploadDir, fileName);
-
-    // نقل الملف من المسار المؤقت إلى المسار النهائي
     fs.renameSync(file.path, finalPath);
 
-    // تحديث مسار الصورة في قاعدة البيانات
     const profilePicturePath = `/uploads/profile/${fileName}`;
     await prisma.user.update({
       where: { id: userId },
@@ -173,7 +228,139 @@ export const uploadProfilePicture = async (req: AuthRequest, res: Response) => {
 
     res.json({ profilePicture: profilePicturePath });
   } catch (error) {
-    console.error('❌ خطأ في رفع الصورة:', error);
-    res.status(500).json({ message: 'Server error', error: String(error) });
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+// جلب تفاصيل عضو معين (للمشرفين أو مديري المشاريع)
+export const getMemberDetails = async (req: AuthRequest, res: Response) => {
+  try {
+    const memberId = parseInt(String(req.params.id));
+    const currentUserId = req.user!.userId;
+    const currentUserRole = req.user!.role;
+
+    // جلب بيانات العضو
+    const member = await prisma.user.findUnique({
+      where: { id: memberId },
+      select: {
+        id: true,
+        fullName: true,
+        username: true,
+        email: true,
+        profilePicture: true,
+        role: true,
+        isActive: true,
+        createdAt: true,
+      },
+    });
+    if (!member) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // تحديد المشاريع التي يمكن للعضو رؤيتها (حسب صلاحيات المستخدم الحالي)
+    let projectWhereClause: any = {};
+    if (currentUserRole !== 'admin') {
+      // المستخدم العادي أو مدير المشروع يرى فقط المشاريع المشتركة مع هذا العضو
+      projectWhereClause = {
+        members: { some: { userId: currentUserId } },
+        AND: { members: { some: { userId: memberId } } },
+      };
+    } else {
+      // الأدمن يرى كل مشاريع العضو
+      projectWhereClause = {
+        members: { some: { userId: memberId } },
+      };
+    }
+
+    // جلب المشاريع التي شارك فيها العضو
+    const projects = await prisma.project.findMany({
+      where: projectWhereClause,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        status: true,
+        startDate: true,
+        endDate: true,
+        _count: { select: { tasks: true, members: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    // جلب المهام المسندة للعضو
+    const tasks = await prisma.task.findMany({
+      where: { assigneeId: memberId },
+      include: {
+        project: { select: { id: true, name: true } },
+      },
+      orderBy: { dueDate: 'asc' },
+    });
+
+    // إحصائيات الإنجازات
+    const totalTasks = tasks.length;
+    const completedTasks = tasks.filter(t => t.status === 'completed').length;
+    const overdueTasks = tasks.filter(t => t.status === 'overdue').length;
+    const completionRate = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
+
+    res.json({
+      member,
+      projects,
+      tasks,
+      stats: {
+        totalTasks,
+        completedTasks,
+        overdueTasks,
+        completionRate,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+// جلب المستخدمين المتاحين للإضافة إلى مشروع معين (ليسوا أعضاء بالفعل)
+export const getAvailableMembers = async (req: AuthRequest, res: Response) => {
+  try {
+    const projectId = parseInt(String(req.params.projectId), 10);
+    if (isNaN(projectId)) {
+      return res.status(400).json({ message: 'Invalid project ID' });
+    }
+
+    const project = await prisma.project.findUnique({
+      where: { id: projectId },
+      select: { createdBy: true },
+    });
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+    if (project.createdBy !== req.user!.userId && req.user!.role !== 'admin') {
+      return res.status(403).json({ message: 'You are not allowed to add members to this project' });
+    }
+
+    const members = await prisma.projectMember.findMany({
+      where: { projectId },
+      select: { userId: true },
+    });
+    const memberIds = members.map(m => m.userId);
+
+    const availableUsers = await prisma.user.findMany({
+      where: {
+        id: { notIn: memberIds },
+        isActive: true,
+      },
+      select: {
+        id: true,
+        fullName: true,
+        username: true,
+        email: true,
+        profilePicture: true,
+      },
+      orderBy: { fullName: 'asc' },
+    });
+
+    res.json(availableUsers);
+  } catch (error) {
+    console.error('Error in getAvailableMembers:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };

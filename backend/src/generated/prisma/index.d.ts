@@ -83,6 +83,11 @@ export type TaskTag = $Result.DefaultSelection<Prisma.$TaskTagPayload>
  * 
  */
 export type PublicShare = $Result.DefaultSelection<Prisma.$PublicSharePayload>
+/**
+ * Model MemberRemovalRequest
+ * 
+ */
+export type MemberRemovalRequest = $Result.DefaultSelection<Prisma.$MemberRemovalRequestPayload>
 
 /**
  * Enums
@@ -124,6 +129,15 @@ export const TaskStatus: {
 
 export type TaskStatus = (typeof TaskStatus)[keyof typeof TaskStatus]
 
+
+export const RequestStatus: {
+  pending: 'pending',
+  approved: 'approved',
+  rejected: 'rejected'
+};
+
+export type RequestStatus = (typeof RequestStatus)[keyof typeof RequestStatus]
+
 }
 
 export type Role = $Enums.Role
@@ -141,6 +155,10 @@ export const Priority: typeof $Enums.Priority
 export type TaskStatus = $Enums.TaskStatus
 
 export const TaskStatus: typeof $Enums.TaskStatus
+
+export type RequestStatus = $Enums.RequestStatus
+
+export const RequestStatus: typeof $Enums.RequestStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -399,6 +417,16 @@ export class PrismaClient<
     * ```
     */
   get publicShare(): Prisma.PublicShareDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.memberRemovalRequest`: Exposes CRUD operations for the **MemberRemovalRequest** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MemberRemovalRequests
+    * const memberRemovalRequests = await prisma.memberRemovalRequest.findMany()
+    * ```
+    */
+  get memberRemovalRequest(): Prisma.MemberRemovalRequestDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -853,7 +881,8 @@ export namespace Prisma {
     Tag: 'Tag',
     ProjectTag: 'ProjectTag',
     TaskTag: 'TaskTag',
-    PublicShare: 'PublicShare'
+    PublicShare: 'PublicShare',
+    MemberRemovalRequest: 'MemberRemovalRequest'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -872,7 +901,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "project" | "projectMember" | "task" | "comment" | "file" | "passwordReset" | "activityLog" | "discussion" | "reply" | "tag" | "projectTag" | "taskTag" | "publicShare"
+      modelProps: "user" | "project" | "projectMember" | "task" | "comment" | "file" | "passwordReset" | "activityLog" | "discussion" | "reply" | "tag" | "projectTag" | "taskTag" | "publicShare" | "memberRemovalRequest"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1912,6 +1941,80 @@ export namespace Prisma {
           }
         }
       }
+      MemberRemovalRequest: {
+        payload: Prisma.$MemberRemovalRequestPayload<ExtArgs>
+        fields: Prisma.MemberRemovalRequestFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MemberRemovalRequestFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberRemovalRequestPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MemberRemovalRequestFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberRemovalRequestPayload>
+          }
+          findFirst: {
+            args: Prisma.MemberRemovalRequestFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberRemovalRequestPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MemberRemovalRequestFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberRemovalRequestPayload>
+          }
+          findMany: {
+            args: Prisma.MemberRemovalRequestFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberRemovalRequestPayload>[]
+          }
+          create: {
+            args: Prisma.MemberRemovalRequestCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberRemovalRequestPayload>
+          }
+          createMany: {
+            args: Prisma.MemberRemovalRequestCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MemberRemovalRequestCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberRemovalRequestPayload>[]
+          }
+          delete: {
+            args: Prisma.MemberRemovalRequestDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberRemovalRequestPayload>
+          }
+          update: {
+            args: Prisma.MemberRemovalRequestUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberRemovalRequestPayload>
+          }
+          deleteMany: {
+            args: Prisma.MemberRemovalRequestDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MemberRemovalRequestUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.MemberRemovalRequestUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberRemovalRequestPayload>[]
+          }
+          upsert: {
+            args: Prisma.MemberRemovalRequestUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberRemovalRequestPayload>
+          }
+          aggregate: {
+            args: Prisma.MemberRemovalRequestAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMemberRemovalRequest>
+          }
+          groupBy: {
+            args: Prisma.MemberRemovalRequestGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MemberRemovalRequestGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MemberRemovalRequestCountArgs<ExtArgs>
+            result: $Utils.Optional<MemberRemovalRequestCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2022,6 +2125,7 @@ export namespace Prisma {
     projectTag?: ProjectTagOmit
     taskTag?: TaskTagOmit
     publicShare?: PublicShareOmit
+    memberRemovalRequest?: MemberRemovalRequestOmit
   }
 
   /* Types for Logging */
@@ -2112,6 +2216,9 @@ export namespace Prisma {
     activities: number
     discussions: number
     replies: number
+    memberRemovalRequestsAsTarget: number
+    memberRemovalRequestsAsRequester: number
+    memberRemovalRequestsAsApprover: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2125,6 +2232,9 @@ export namespace Prisma {
     activities?: boolean | UserCountOutputTypeCountActivitiesArgs
     discussions?: boolean | UserCountOutputTypeCountDiscussionsArgs
     replies?: boolean | UserCountOutputTypeCountRepliesArgs
+    memberRemovalRequestsAsTarget?: boolean | UserCountOutputTypeCountMemberRemovalRequestsAsTargetArgs
+    memberRemovalRequestsAsRequester?: boolean | UserCountOutputTypeCountMemberRemovalRequestsAsRequesterArgs
+    memberRemovalRequestsAsApprover?: boolean | UserCountOutputTypeCountMemberRemovalRequestsAsApproverArgs
   }
 
   // Custom InputTypes
@@ -2208,6 +2318,27 @@ export namespace Prisma {
     where?: ReplyWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountMemberRemovalRequestsAsTargetArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MemberRemovalRequestWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountMemberRemovalRequestsAsRequesterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MemberRemovalRequestWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountMemberRemovalRequestsAsApproverArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MemberRemovalRequestWhereInput
+  }
+
 
   /**
    * Count Type ProjectCountOutputType
@@ -2221,6 +2352,7 @@ export namespace Prisma {
     discussions: number
     tags: number
     shares: number
+    removalRequests: number
   }
 
   export type ProjectCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2231,6 +2363,7 @@ export namespace Prisma {
     discussions?: boolean | ProjectCountOutputTypeCountDiscussionsArgs
     tags?: boolean | ProjectCountOutputTypeCountTagsArgs
     shares?: boolean | ProjectCountOutputTypeCountSharesArgs
+    removalRequests?: boolean | ProjectCountOutputTypeCountRemovalRequestsArgs
   }
 
   // Custom InputTypes
@@ -2291,6 +2424,13 @@ export namespace Prisma {
    */
   export type ProjectCountOutputTypeCountSharesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PublicShareWhereInput
+  }
+
+  /**
+   * ProjectCountOutputType without action
+   */
+  export type ProjectCountOutputTypeCountRemovalRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MemberRemovalRequestWhereInput
   }
 
 
@@ -2447,6 +2587,7 @@ export namespace Prisma {
     profilePicture: string | null
     role: $Enums.Role | null
     isActive: boolean | null
+    isApproved: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
     lastLogin: Date | null
@@ -2463,6 +2604,7 @@ export namespace Prisma {
     profilePicture: string | null
     role: $Enums.Role | null
     isActive: boolean | null
+    isApproved: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
     lastLogin: Date | null
@@ -2479,6 +2621,7 @@ export namespace Prisma {
     profilePicture: number
     role: number
     isActive: number
+    isApproved: number
     createdAt: number
     updatedAt: number
     lastLogin: number
@@ -2505,6 +2648,7 @@ export namespace Prisma {
     profilePicture?: true
     role?: true
     isActive?: true
+    isApproved?: true
     createdAt?: true
     updatedAt?: true
     lastLogin?: true
@@ -2521,6 +2665,7 @@ export namespace Prisma {
     profilePicture?: true
     role?: true
     isActive?: true
+    isApproved?: true
     createdAt?: true
     updatedAt?: true
     lastLogin?: true
@@ -2537,6 +2682,7 @@ export namespace Prisma {
     profilePicture?: true
     role?: true
     isActive?: true
+    isApproved?: true
     createdAt?: true
     updatedAt?: true
     lastLogin?: true
@@ -2640,6 +2786,7 @@ export namespace Prisma {
     profilePicture: string | null
     role: $Enums.Role
     isActive: boolean
+    isApproved: boolean
     createdAt: Date
     updatedAt: Date
     lastLogin: Date | null
@@ -2675,6 +2822,7 @@ export namespace Prisma {
     profilePicture?: boolean
     role?: boolean
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     lastLogin?: boolean
@@ -2690,6 +2838,9 @@ export namespace Prisma {
     activities?: boolean | User$activitiesArgs<ExtArgs>
     discussions?: boolean | User$discussionsArgs<ExtArgs>
     replies?: boolean | User$repliesArgs<ExtArgs>
+    memberRemovalRequestsAsTarget?: boolean | User$memberRemovalRequestsAsTargetArgs<ExtArgs>
+    memberRemovalRequestsAsRequester?: boolean | User$memberRemovalRequestsAsRequesterArgs<ExtArgs>
+    memberRemovalRequestsAsApprover?: boolean | User$memberRemovalRequestsAsApproverArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2702,6 +2853,7 @@ export namespace Prisma {
     profilePicture?: boolean
     role?: boolean
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     lastLogin?: boolean
@@ -2718,6 +2870,7 @@ export namespace Prisma {
     profilePicture?: boolean
     role?: boolean
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     lastLogin?: boolean
@@ -2734,6 +2887,7 @@ export namespace Prisma {
     profilePicture?: boolean
     role?: boolean
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     lastLogin?: boolean
@@ -2741,7 +2895,7 @@ export namespace Prisma {
     resetTokenExpiry?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fullName" | "username" | "email" | "passwordHash" | "profilePicture" | "role" | "isActive" | "createdAt" | "updatedAt" | "lastLogin" | "resetToken" | "resetTokenExpiry", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fullName" | "username" | "email" | "passwordHash" | "profilePicture" | "role" | "isActive" | "isApproved" | "createdAt" | "updatedAt" | "lastLogin" | "resetToken" | "resetTokenExpiry", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     createdProjects?: boolean | User$createdProjectsArgs<ExtArgs>
     projectMembers?: boolean | User$projectMembersArgs<ExtArgs>
@@ -2753,6 +2907,9 @@ export namespace Prisma {
     activities?: boolean | User$activitiesArgs<ExtArgs>
     discussions?: boolean | User$discussionsArgs<ExtArgs>
     replies?: boolean | User$repliesArgs<ExtArgs>
+    memberRemovalRequestsAsTarget?: boolean | User$memberRemovalRequestsAsTargetArgs<ExtArgs>
+    memberRemovalRequestsAsRequester?: boolean | User$memberRemovalRequestsAsRequesterArgs<ExtArgs>
+    memberRemovalRequestsAsApprover?: boolean | User$memberRemovalRequestsAsApproverArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2771,6 +2928,9 @@ export namespace Prisma {
       activities: Prisma.$ActivityLogPayload<ExtArgs>[]
       discussions: Prisma.$DiscussionPayload<ExtArgs>[]
       replies: Prisma.$ReplyPayload<ExtArgs>[]
+      memberRemovalRequestsAsTarget: Prisma.$MemberRemovalRequestPayload<ExtArgs>[]
+      memberRemovalRequestsAsRequester: Prisma.$MemberRemovalRequestPayload<ExtArgs>[]
+      memberRemovalRequestsAsApprover: Prisma.$MemberRemovalRequestPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -2781,6 +2941,7 @@ export namespace Prisma {
       profilePicture: string | null
       role: $Enums.Role
       isActive: boolean
+      isApproved: boolean
       createdAt: Date
       updatedAt: Date
       lastLogin: Date | null
@@ -3190,6 +3351,9 @@ export namespace Prisma {
     activities<T extends User$activitiesArgs<ExtArgs> = {}>(args?: Subset<T, User$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActivityLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     discussions<T extends User$discussionsArgs<ExtArgs> = {}>(args?: Subset<T, User$discussionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DiscussionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     replies<T extends User$repliesArgs<ExtArgs> = {}>(args?: Subset<T, User$repliesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReplyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    memberRemovalRequestsAsTarget<T extends User$memberRemovalRequestsAsTargetArgs<ExtArgs> = {}>(args?: Subset<T, User$memberRemovalRequestsAsTargetArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MemberRemovalRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    memberRemovalRequestsAsRequester<T extends User$memberRemovalRequestsAsRequesterArgs<ExtArgs> = {}>(args?: Subset<T, User$memberRemovalRequestsAsRequesterArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MemberRemovalRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    memberRemovalRequestsAsApprover<T extends User$memberRemovalRequestsAsApproverArgs<ExtArgs> = {}>(args?: Subset<T, User$memberRemovalRequestsAsApproverArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MemberRemovalRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3227,6 +3391,7 @@ export namespace Prisma {
     readonly profilePicture: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'Role'>
     readonly isActive: FieldRef<"User", 'Boolean'>
+    readonly isApproved: FieldRef<"User", 'Boolean'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
     readonly lastLogin: FieldRef<"User", 'DateTime'>
@@ -3860,6 +4025,78 @@ export namespace Prisma {
   }
 
   /**
+   * User.memberRemovalRequestsAsTarget
+   */
+  export type User$memberRemovalRequestsAsTargetArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberRemovalRequest
+     */
+    select?: MemberRemovalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberRemovalRequest
+     */
+    omit?: MemberRemovalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberRemovalRequestInclude<ExtArgs> | null
+    where?: MemberRemovalRequestWhereInput
+    orderBy?: MemberRemovalRequestOrderByWithRelationInput | MemberRemovalRequestOrderByWithRelationInput[]
+    cursor?: MemberRemovalRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MemberRemovalRequestScalarFieldEnum | MemberRemovalRequestScalarFieldEnum[]
+  }
+
+  /**
+   * User.memberRemovalRequestsAsRequester
+   */
+  export type User$memberRemovalRequestsAsRequesterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberRemovalRequest
+     */
+    select?: MemberRemovalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberRemovalRequest
+     */
+    omit?: MemberRemovalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberRemovalRequestInclude<ExtArgs> | null
+    where?: MemberRemovalRequestWhereInput
+    orderBy?: MemberRemovalRequestOrderByWithRelationInput | MemberRemovalRequestOrderByWithRelationInput[]
+    cursor?: MemberRemovalRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MemberRemovalRequestScalarFieldEnum | MemberRemovalRequestScalarFieldEnum[]
+  }
+
+  /**
+   * User.memberRemovalRequestsAsApprover
+   */
+  export type User$memberRemovalRequestsAsApproverArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberRemovalRequest
+     */
+    select?: MemberRemovalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberRemovalRequest
+     */
+    omit?: MemberRemovalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberRemovalRequestInclude<ExtArgs> | null
+    where?: MemberRemovalRequestWhereInput
+    orderBy?: MemberRemovalRequestOrderByWithRelationInput | MemberRemovalRequestOrderByWithRelationInput[]
+    cursor?: MemberRemovalRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MemberRemovalRequestScalarFieldEnum | MemberRemovalRequestScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3911,6 +4148,8 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     archived: boolean | null
+    approved: boolean | null
+    approvedAt: Date | null
   }
 
   export type ProjectMaxAggregateOutputType = {
@@ -3924,6 +4163,8 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     archived: boolean | null
+    approved: boolean | null
+    approvedAt: Date | null
   }
 
   export type ProjectCountAggregateOutputType = {
@@ -3937,6 +4178,8 @@ export namespace Prisma {
     createdAt: number
     updatedAt: number
     archived: number
+    approved: number
+    approvedAt: number
     _all: number
   }
 
@@ -3962,6 +4205,8 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     archived?: true
+    approved?: true
+    approvedAt?: true
   }
 
   export type ProjectMaxAggregateInputType = {
@@ -3975,6 +4220,8 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     archived?: true
+    approved?: true
+    approvedAt?: true
   }
 
   export type ProjectCountAggregateInputType = {
@@ -3988,6 +4235,8 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     archived?: true
+    approved?: true
+    approvedAt?: true
     _all?: true
   }
 
@@ -4088,6 +4337,8 @@ export namespace Prisma {
     createdAt: Date
     updatedAt: Date
     archived: boolean
+    approved: boolean
+    approvedAt: Date | null
     _count: ProjectCountAggregateOutputType | null
     _avg: ProjectAvgAggregateOutputType | null
     _sum: ProjectSumAggregateOutputType | null
@@ -4120,6 +4371,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     archived?: boolean
+    approved?: boolean
+    approvedAt?: boolean
     creator?: boolean | UserDefaultArgs<ExtArgs>
     members?: boolean | Project$membersArgs<ExtArgs>
     tasks?: boolean | Project$tasksArgs<ExtArgs>
@@ -4128,6 +4381,7 @@ export namespace Prisma {
     discussions?: boolean | Project$discussionsArgs<ExtArgs>
     tags?: boolean | Project$tagsArgs<ExtArgs>
     shares?: boolean | Project$sharesArgs<ExtArgs>
+    removalRequests?: boolean | Project$removalRequestsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["project"]>
 
@@ -4142,6 +4396,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     archived?: boolean
+    approved?: boolean
+    approvedAt?: boolean
     creator?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["project"]>
 
@@ -4156,6 +4412,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     archived?: boolean
+    approved?: boolean
+    approvedAt?: boolean
     creator?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["project"]>
 
@@ -4170,9 +4428,11 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     archived?: boolean
+    approved?: boolean
+    approvedAt?: boolean
   }
 
-  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "startDate" | "endDate" | "status" | "createdBy" | "createdAt" | "updatedAt" | "archived", ExtArgs["result"]["project"]>
+  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "startDate" | "endDate" | "status" | "createdBy" | "createdAt" | "updatedAt" | "archived" | "approved" | "approvedAt", ExtArgs["result"]["project"]>
   export type ProjectInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     creator?: boolean | UserDefaultArgs<ExtArgs>
     members?: boolean | Project$membersArgs<ExtArgs>
@@ -4182,6 +4442,7 @@ export namespace Prisma {
     discussions?: boolean | Project$discussionsArgs<ExtArgs>
     tags?: boolean | Project$tagsArgs<ExtArgs>
     shares?: boolean | Project$sharesArgs<ExtArgs>
+    removalRequests?: boolean | Project$removalRequestsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProjectIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4202,6 +4463,7 @@ export namespace Prisma {
       discussions: Prisma.$DiscussionPayload<ExtArgs>[]
       tags: Prisma.$ProjectTagPayload<ExtArgs>[]
       shares: Prisma.$PublicSharePayload<ExtArgs>[]
+      removalRequests: Prisma.$MemberRemovalRequestPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -4214,6 +4476,8 @@ export namespace Prisma {
       createdAt: Date
       updatedAt: Date
       archived: boolean
+      approved: boolean
+      approvedAt: Date | null
     }, ExtArgs["result"]["project"]>
     composites: {}
   }
@@ -4616,6 +4880,7 @@ export namespace Prisma {
     discussions<T extends Project$discussionsArgs<ExtArgs> = {}>(args?: Subset<T, Project$discussionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DiscussionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     tags<T extends Project$tagsArgs<ExtArgs> = {}>(args?: Subset<T, Project$tagsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectTagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     shares<T extends Project$sharesArgs<ExtArgs> = {}>(args?: Subset<T, Project$sharesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PublicSharePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    removalRequests<T extends Project$removalRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Project$removalRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MemberRemovalRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4655,6 +4920,8 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"Project", 'DateTime'>
     readonly updatedAt: FieldRef<"Project", 'DateTime'>
     readonly archived: FieldRef<"Project", 'Boolean'>
+    readonly approved: FieldRef<"Project", 'Boolean'>
+    readonly approvedAt: FieldRef<"Project", 'DateTime'>
   }
     
 
@@ -5216,6 +5483,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: PublicShareScalarFieldEnum | PublicShareScalarFieldEnum[]
+  }
+
+  /**
+   * Project.removalRequests
+   */
+  export type Project$removalRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberRemovalRequest
+     */
+    select?: MemberRemovalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberRemovalRequest
+     */
+    omit?: MemberRemovalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberRemovalRequestInclude<ExtArgs> | null
+    where?: MemberRemovalRequestWhereInput
+    orderBy?: MemberRemovalRequestOrderByWithRelationInput | MemberRemovalRequestOrderByWithRelationInput[]
+    cursor?: MemberRemovalRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MemberRemovalRequestScalarFieldEnum | MemberRemovalRequestScalarFieldEnum[]
   }
 
   /**
@@ -18895,6 +19186,1209 @@ export namespace Prisma {
 
 
   /**
+   * Model MemberRemovalRequest
+   */
+
+  export type AggregateMemberRemovalRequest = {
+    _count: MemberRemovalRequestCountAggregateOutputType | null
+    _avg: MemberRemovalRequestAvgAggregateOutputType | null
+    _sum: MemberRemovalRequestSumAggregateOutputType | null
+    _min: MemberRemovalRequestMinAggregateOutputType | null
+    _max: MemberRemovalRequestMaxAggregateOutputType | null
+  }
+
+  export type MemberRemovalRequestAvgAggregateOutputType = {
+    id: number | null
+    projectId: number | null
+    userId: number | null
+    requestedBy: number | null
+    approvedBy: number | null
+  }
+
+  export type MemberRemovalRequestSumAggregateOutputType = {
+    id: number | null
+    projectId: number | null
+    userId: number | null
+    requestedBy: number | null
+    approvedBy: number | null
+  }
+
+  export type MemberRemovalRequestMinAggregateOutputType = {
+    id: number | null
+    projectId: number | null
+    userId: number | null
+    requestedBy: number | null
+    reason: string | null
+    status: $Enums.RequestStatus | null
+    approvedBy: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MemberRemovalRequestMaxAggregateOutputType = {
+    id: number | null
+    projectId: number | null
+    userId: number | null
+    requestedBy: number | null
+    reason: string | null
+    status: $Enums.RequestStatus | null
+    approvedBy: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MemberRemovalRequestCountAggregateOutputType = {
+    id: number
+    projectId: number
+    userId: number
+    requestedBy: number
+    reason: number
+    status: number
+    approvedBy: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type MemberRemovalRequestAvgAggregateInputType = {
+    id?: true
+    projectId?: true
+    userId?: true
+    requestedBy?: true
+    approvedBy?: true
+  }
+
+  export type MemberRemovalRequestSumAggregateInputType = {
+    id?: true
+    projectId?: true
+    userId?: true
+    requestedBy?: true
+    approvedBy?: true
+  }
+
+  export type MemberRemovalRequestMinAggregateInputType = {
+    id?: true
+    projectId?: true
+    userId?: true
+    requestedBy?: true
+    reason?: true
+    status?: true
+    approvedBy?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MemberRemovalRequestMaxAggregateInputType = {
+    id?: true
+    projectId?: true
+    userId?: true
+    requestedBy?: true
+    reason?: true
+    status?: true
+    approvedBy?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MemberRemovalRequestCountAggregateInputType = {
+    id?: true
+    projectId?: true
+    userId?: true
+    requestedBy?: true
+    reason?: true
+    status?: true
+    approvedBy?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type MemberRemovalRequestAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MemberRemovalRequest to aggregate.
+     */
+    where?: MemberRemovalRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MemberRemovalRequests to fetch.
+     */
+    orderBy?: MemberRemovalRequestOrderByWithRelationInput | MemberRemovalRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MemberRemovalRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MemberRemovalRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MemberRemovalRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MemberRemovalRequests
+    **/
+    _count?: true | MemberRemovalRequestCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: MemberRemovalRequestAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: MemberRemovalRequestSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MemberRemovalRequestMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MemberRemovalRequestMaxAggregateInputType
+  }
+
+  export type GetMemberRemovalRequestAggregateType<T extends MemberRemovalRequestAggregateArgs> = {
+        [P in keyof T & keyof AggregateMemberRemovalRequest]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMemberRemovalRequest[P]>
+      : GetScalarType<T[P], AggregateMemberRemovalRequest[P]>
+  }
+
+
+
+
+  export type MemberRemovalRequestGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MemberRemovalRequestWhereInput
+    orderBy?: MemberRemovalRequestOrderByWithAggregationInput | MemberRemovalRequestOrderByWithAggregationInput[]
+    by: MemberRemovalRequestScalarFieldEnum[] | MemberRemovalRequestScalarFieldEnum
+    having?: MemberRemovalRequestScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MemberRemovalRequestCountAggregateInputType | true
+    _avg?: MemberRemovalRequestAvgAggregateInputType
+    _sum?: MemberRemovalRequestSumAggregateInputType
+    _min?: MemberRemovalRequestMinAggregateInputType
+    _max?: MemberRemovalRequestMaxAggregateInputType
+  }
+
+  export type MemberRemovalRequestGroupByOutputType = {
+    id: number
+    projectId: number
+    userId: number
+    requestedBy: number
+    reason: string
+    status: $Enums.RequestStatus
+    approvedBy: number | null
+    createdAt: Date
+    updatedAt: Date
+    _count: MemberRemovalRequestCountAggregateOutputType | null
+    _avg: MemberRemovalRequestAvgAggregateOutputType | null
+    _sum: MemberRemovalRequestSumAggregateOutputType | null
+    _min: MemberRemovalRequestMinAggregateOutputType | null
+    _max: MemberRemovalRequestMaxAggregateOutputType | null
+  }
+
+  type GetMemberRemovalRequestGroupByPayload<T extends MemberRemovalRequestGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MemberRemovalRequestGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MemberRemovalRequestGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MemberRemovalRequestGroupByOutputType[P]>
+            : GetScalarType<T[P], MemberRemovalRequestGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MemberRemovalRequestSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    userId?: boolean
+    requestedBy?: boolean
+    reason?: boolean
+    status?: boolean
+    approvedBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    requester?: boolean | UserDefaultArgs<ExtArgs>
+    approver?: boolean | MemberRemovalRequest$approverArgs<ExtArgs>
+  }, ExtArgs["result"]["memberRemovalRequest"]>
+
+  export type MemberRemovalRequestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    userId?: boolean
+    requestedBy?: boolean
+    reason?: boolean
+    status?: boolean
+    approvedBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    requester?: boolean | UserDefaultArgs<ExtArgs>
+    approver?: boolean | MemberRemovalRequest$approverArgs<ExtArgs>
+  }, ExtArgs["result"]["memberRemovalRequest"]>
+
+  export type MemberRemovalRequestSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    userId?: boolean
+    requestedBy?: boolean
+    reason?: boolean
+    status?: boolean
+    approvedBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    requester?: boolean | UserDefaultArgs<ExtArgs>
+    approver?: boolean | MemberRemovalRequest$approverArgs<ExtArgs>
+  }, ExtArgs["result"]["memberRemovalRequest"]>
+
+  export type MemberRemovalRequestSelectScalar = {
+    id?: boolean
+    projectId?: boolean
+    userId?: boolean
+    requestedBy?: boolean
+    reason?: boolean
+    status?: boolean
+    approvedBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type MemberRemovalRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "userId" | "requestedBy" | "reason" | "status" | "approvedBy" | "createdAt" | "updatedAt", ExtArgs["result"]["memberRemovalRequest"]>
+  export type MemberRemovalRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    requester?: boolean | UserDefaultArgs<ExtArgs>
+    approver?: boolean | MemberRemovalRequest$approverArgs<ExtArgs>
+  }
+  export type MemberRemovalRequestIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    requester?: boolean | UserDefaultArgs<ExtArgs>
+    approver?: boolean | MemberRemovalRequest$approverArgs<ExtArgs>
+  }
+  export type MemberRemovalRequestIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    requester?: boolean | UserDefaultArgs<ExtArgs>
+    approver?: boolean | MemberRemovalRequest$approverArgs<ExtArgs>
+  }
+
+  export type $MemberRemovalRequestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MemberRemovalRequest"
+    objects: {
+      project: Prisma.$ProjectPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
+      requester: Prisma.$UserPayload<ExtArgs>
+      approver: Prisma.$UserPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      projectId: number
+      userId: number
+      requestedBy: number
+      reason: string
+      status: $Enums.RequestStatus
+      approvedBy: number | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["memberRemovalRequest"]>
+    composites: {}
+  }
+
+  type MemberRemovalRequestGetPayload<S extends boolean | null | undefined | MemberRemovalRequestDefaultArgs> = $Result.GetResult<Prisma.$MemberRemovalRequestPayload, S>
+
+  type MemberRemovalRequestCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<MemberRemovalRequestFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: MemberRemovalRequestCountAggregateInputType | true
+    }
+
+  export interface MemberRemovalRequestDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MemberRemovalRequest'], meta: { name: 'MemberRemovalRequest' } }
+    /**
+     * Find zero or one MemberRemovalRequest that matches the filter.
+     * @param {MemberRemovalRequestFindUniqueArgs} args - Arguments to find a MemberRemovalRequest
+     * @example
+     * // Get one MemberRemovalRequest
+     * const memberRemovalRequest = await prisma.memberRemovalRequest.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MemberRemovalRequestFindUniqueArgs>(args: SelectSubset<T, MemberRemovalRequestFindUniqueArgs<ExtArgs>>): Prisma__MemberRemovalRequestClient<$Result.GetResult<Prisma.$MemberRemovalRequestPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one MemberRemovalRequest that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {MemberRemovalRequestFindUniqueOrThrowArgs} args - Arguments to find a MemberRemovalRequest
+     * @example
+     * // Get one MemberRemovalRequest
+     * const memberRemovalRequest = await prisma.memberRemovalRequest.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MemberRemovalRequestFindUniqueOrThrowArgs>(args: SelectSubset<T, MemberRemovalRequestFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MemberRemovalRequestClient<$Result.GetResult<Prisma.$MemberRemovalRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MemberRemovalRequest that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MemberRemovalRequestFindFirstArgs} args - Arguments to find a MemberRemovalRequest
+     * @example
+     * // Get one MemberRemovalRequest
+     * const memberRemovalRequest = await prisma.memberRemovalRequest.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MemberRemovalRequestFindFirstArgs>(args?: SelectSubset<T, MemberRemovalRequestFindFirstArgs<ExtArgs>>): Prisma__MemberRemovalRequestClient<$Result.GetResult<Prisma.$MemberRemovalRequestPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MemberRemovalRequest that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MemberRemovalRequestFindFirstOrThrowArgs} args - Arguments to find a MemberRemovalRequest
+     * @example
+     * // Get one MemberRemovalRequest
+     * const memberRemovalRequest = await prisma.memberRemovalRequest.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MemberRemovalRequestFindFirstOrThrowArgs>(args?: SelectSubset<T, MemberRemovalRequestFindFirstOrThrowArgs<ExtArgs>>): Prisma__MemberRemovalRequestClient<$Result.GetResult<Prisma.$MemberRemovalRequestPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more MemberRemovalRequests that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MemberRemovalRequestFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MemberRemovalRequests
+     * const memberRemovalRequests = await prisma.memberRemovalRequest.findMany()
+     * 
+     * // Get first 10 MemberRemovalRequests
+     * const memberRemovalRequests = await prisma.memberRemovalRequest.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const memberRemovalRequestWithIdOnly = await prisma.memberRemovalRequest.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MemberRemovalRequestFindManyArgs>(args?: SelectSubset<T, MemberRemovalRequestFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MemberRemovalRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a MemberRemovalRequest.
+     * @param {MemberRemovalRequestCreateArgs} args - Arguments to create a MemberRemovalRequest.
+     * @example
+     * // Create one MemberRemovalRequest
+     * const MemberRemovalRequest = await prisma.memberRemovalRequest.create({
+     *   data: {
+     *     // ... data to create a MemberRemovalRequest
+     *   }
+     * })
+     * 
+     */
+    create<T extends MemberRemovalRequestCreateArgs>(args: SelectSubset<T, MemberRemovalRequestCreateArgs<ExtArgs>>): Prisma__MemberRemovalRequestClient<$Result.GetResult<Prisma.$MemberRemovalRequestPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many MemberRemovalRequests.
+     * @param {MemberRemovalRequestCreateManyArgs} args - Arguments to create many MemberRemovalRequests.
+     * @example
+     * // Create many MemberRemovalRequests
+     * const memberRemovalRequest = await prisma.memberRemovalRequest.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MemberRemovalRequestCreateManyArgs>(args?: SelectSubset<T, MemberRemovalRequestCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many MemberRemovalRequests and returns the data saved in the database.
+     * @param {MemberRemovalRequestCreateManyAndReturnArgs} args - Arguments to create many MemberRemovalRequests.
+     * @example
+     * // Create many MemberRemovalRequests
+     * const memberRemovalRequest = await prisma.memberRemovalRequest.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many MemberRemovalRequests and only return the `id`
+     * const memberRemovalRequestWithIdOnly = await prisma.memberRemovalRequest.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MemberRemovalRequestCreateManyAndReturnArgs>(args?: SelectSubset<T, MemberRemovalRequestCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MemberRemovalRequestPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a MemberRemovalRequest.
+     * @param {MemberRemovalRequestDeleteArgs} args - Arguments to delete one MemberRemovalRequest.
+     * @example
+     * // Delete one MemberRemovalRequest
+     * const MemberRemovalRequest = await prisma.memberRemovalRequest.delete({
+     *   where: {
+     *     // ... filter to delete one MemberRemovalRequest
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MemberRemovalRequestDeleteArgs>(args: SelectSubset<T, MemberRemovalRequestDeleteArgs<ExtArgs>>): Prisma__MemberRemovalRequestClient<$Result.GetResult<Prisma.$MemberRemovalRequestPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one MemberRemovalRequest.
+     * @param {MemberRemovalRequestUpdateArgs} args - Arguments to update one MemberRemovalRequest.
+     * @example
+     * // Update one MemberRemovalRequest
+     * const memberRemovalRequest = await prisma.memberRemovalRequest.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MemberRemovalRequestUpdateArgs>(args: SelectSubset<T, MemberRemovalRequestUpdateArgs<ExtArgs>>): Prisma__MemberRemovalRequestClient<$Result.GetResult<Prisma.$MemberRemovalRequestPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more MemberRemovalRequests.
+     * @param {MemberRemovalRequestDeleteManyArgs} args - Arguments to filter MemberRemovalRequests to delete.
+     * @example
+     * // Delete a few MemberRemovalRequests
+     * const { count } = await prisma.memberRemovalRequest.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MemberRemovalRequestDeleteManyArgs>(args?: SelectSubset<T, MemberRemovalRequestDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MemberRemovalRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MemberRemovalRequestUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MemberRemovalRequests
+     * const memberRemovalRequest = await prisma.memberRemovalRequest.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MemberRemovalRequestUpdateManyArgs>(args: SelectSubset<T, MemberRemovalRequestUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MemberRemovalRequests and returns the data updated in the database.
+     * @param {MemberRemovalRequestUpdateManyAndReturnArgs} args - Arguments to update many MemberRemovalRequests.
+     * @example
+     * // Update many MemberRemovalRequests
+     * const memberRemovalRequest = await prisma.memberRemovalRequest.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more MemberRemovalRequests and only return the `id`
+     * const memberRemovalRequestWithIdOnly = await prisma.memberRemovalRequest.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends MemberRemovalRequestUpdateManyAndReturnArgs>(args: SelectSubset<T, MemberRemovalRequestUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MemberRemovalRequestPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one MemberRemovalRequest.
+     * @param {MemberRemovalRequestUpsertArgs} args - Arguments to update or create a MemberRemovalRequest.
+     * @example
+     * // Update or create a MemberRemovalRequest
+     * const memberRemovalRequest = await prisma.memberRemovalRequest.upsert({
+     *   create: {
+     *     // ... data to create a MemberRemovalRequest
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MemberRemovalRequest we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MemberRemovalRequestUpsertArgs>(args: SelectSubset<T, MemberRemovalRequestUpsertArgs<ExtArgs>>): Prisma__MemberRemovalRequestClient<$Result.GetResult<Prisma.$MemberRemovalRequestPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of MemberRemovalRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MemberRemovalRequestCountArgs} args - Arguments to filter MemberRemovalRequests to count.
+     * @example
+     * // Count the number of MemberRemovalRequests
+     * const count = await prisma.memberRemovalRequest.count({
+     *   where: {
+     *     // ... the filter for the MemberRemovalRequests we want to count
+     *   }
+     * })
+    **/
+    count<T extends MemberRemovalRequestCountArgs>(
+      args?: Subset<T, MemberRemovalRequestCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MemberRemovalRequestCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MemberRemovalRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MemberRemovalRequestAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MemberRemovalRequestAggregateArgs>(args: Subset<T, MemberRemovalRequestAggregateArgs>): Prisma.PrismaPromise<GetMemberRemovalRequestAggregateType<T>>
+
+    /**
+     * Group by MemberRemovalRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MemberRemovalRequestGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MemberRemovalRequestGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MemberRemovalRequestGroupByArgs['orderBy'] }
+        : { orderBy?: MemberRemovalRequestGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MemberRemovalRequestGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMemberRemovalRequestGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MemberRemovalRequest model
+   */
+  readonly fields: MemberRemovalRequestFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MemberRemovalRequest.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MemberRemovalRequestClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    requester<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    approver<T extends MemberRemovalRequest$approverArgs<ExtArgs> = {}>(args?: Subset<T, MemberRemovalRequest$approverArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MemberRemovalRequest model
+   */
+  interface MemberRemovalRequestFieldRefs {
+    readonly id: FieldRef<"MemberRemovalRequest", 'Int'>
+    readonly projectId: FieldRef<"MemberRemovalRequest", 'Int'>
+    readonly userId: FieldRef<"MemberRemovalRequest", 'Int'>
+    readonly requestedBy: FieldRef<"MemberRemovalRequest", 'Int'>
+    readonly reason: FieldRef<"MemberRemovalRequest", 'String'>
+    readonly status: FieldRef<"MemberRemovalRequest", 'RequestStatus'>
+    readonly approvedBy: FieldRef<"MemberRemovalRequest", 'Int'>
+    readonly createdAt: FieldRef<"MemberRemovalRequest", 'DateTime'>
+    readonly updatedAt: FieldRef<"MemberRemovalRequest", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MemberRemovalRequest findUnique
+   */
+  export type MemberRemovalRequestFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberRemovalRequest
+     */
+    select?: MemberRemovalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberRemovalRequest
+     */
+    omit?: MemberRemovalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberRemovalRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which MemberRemovalRequest to fetch.
+     */
+    where: MemberRemovalRequestWhereUniqueInput
+  }
+
+  /**
+   * MemberRemovalRequest findUniqueOrThrow
+   */
+  export type MemberRemovalRequestFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberRemovalRequest
+     */
+    select?: MemberRemovalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberRemovalRequest
+     */
+    omit?: MemberRemovalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberRemovalRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which MemberRemovalRequest to fetch.
+     */
+    where: MemberRemovalRequestWhereUniqueInput
+  }
+
+  /**
+   * MemberRemovalRequest findFirst
+   */
+  export type MemberRemovalRequestFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberRemovalRequest
+     */
+    select?: MemberRemovalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberRemovalRequest
+     */
+    omit?: MemberRemovalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberRemovalRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which MemberRemovalRequest to fetch.
+     */
+    where?: MemberRemovalRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MemberRemovalRequests to fetch.
+     */
+    orderBy?: MemberRemovalRequestOrderByWithRelationInput | MemberRemovalRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MemberRemovalRequests.
+     */
+    cursor?: MemberRemovalRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MemberRemovalRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MemberRemovalRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MemberRemovalRequests.
+     */
+    distinct?: MemberRemovalRequestScalarFieldEnum | MemberRemovalRequestScalarFieldEnum[]
+  }
+
+  /**
+   * MemberRemovalRequest findFirstOrThrow
+   */
+  export type MemberRemovalRequestFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberRemovalRequest
+     */
+    select?: MemberRemovalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberRemovalRequest
+     */
+    omit?: MemberRemovalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberRemovalRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which MemberRemovalRequest to fetch.
+     */
+    where?: MemberRemovalRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MemberRemovalRequests to fetch.
+     */
+    orderBy?: MemberRemovalRequestOrderByWithRelationInput | MemberRemovalRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MemberRemovalRequests.
+     */
+    cursor?: MemberRemovalRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MemberRemovalRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MemberRemovalRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MemberRemovalRequests.
+     */
+    distinct?: MemberRemovalRequestScalarFieldEnum | MemberRemovalRequestScalarFieldEnum[]
+  }
+
+  /**
+   * MemberRemovalRequest findMany
+   */
+  export type MemberRemovalRequestFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberRemovalRequest
+     */
+    select?: MemberRemovalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberRemovalRequest
+     */
+    omit?: MemberRemovalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberRemovalRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which MemberRemovalRequests to fetch.
+     */
+    where?: MemberRemovalRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MemberRemovalRequests to fetch.
+     */
+    orderBy?: MemberRemovalRequestOrderByWithRelationInput | MemberRemovalRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MemberRemovalRequests.
+     */
+    cursor?: MemberRemovalRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MemberRemovalRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MemberRemovalRequests.
+     */
+    skip?: number
+    distinct?: MemberRemovalRequestScalarFieldEnum | MemberRemovalRequestScalarFieldEnum[]
+  }
+
+  /**
+   * MemberRemovalRequest create
+   */
+  export type MemberRemovalRequestCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberRemovalRequest
+     */
+    select?: MemberRemovalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberRemovalRequest
+     */
+    omit?: MemberRemovalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberRemovalRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to create a MemberRemovalRequest.
+     */
+    data: XOR<MemberRemovalRequestCreateInput, MemberRemovalRequestUncheckedCreateInput>
+  }
+
+  /**
+   * MemberRemovalRequest createMany
+   */
+  export type MemberRemovalRequestCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MemberRemovalRequests.
+     */
+    data: MemberRemovalRequestCreateManyInput | MemberRemovalRequestCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MemberRemovalRequest createManyAndReturn
+   */
+  export type MemberRemovalRequestCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberRemovalRequest
+     */
+    select?: MemberRemovalRequestSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberRemovalRequest
+     */
+    omit?: MemberRemovalRequestOmit<ExtArgs> | null
+    /**
+     * The data used to create many MemberRemovalRequests.
+     */
+    data: MemberRemovalRequestCreateManyInput | MemberRemovalRequestCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberRemovalRequestIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MemberRemovalRequest update
+   */
+  export type MemberRemovalRequestUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberRemovalRequest
+     */
+    select?: MemberRemovalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberRemovalRequest
+     */
+    omit?: MemberRemovalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberRemovalRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to update a MemberRemovalRequest.
+     */
+    data: XOR<MemberRemovalRequestUpdateInput, MemberRemovalRequestUncheckedUpdateInput>
+    /**
+     * Choose, which MemberRemovalRequest to update.
+     */
+    where: MemberRemovalRequestWhereUniqueInput
+  }
+
+  /**
+   * MemberRemovalRequest updateMany
+   */
+  export type MemberRemovalRequestUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MemberRemovalRequests.
+     */
+    data: XOR<MemberRemovalRequestUpdateManyMutationInput, MemberRemovalRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which MemberRemovalRequests to update
+     */
+    where?: MemberRemovalRequestWhereInput
+    /**
+     * Limit how many MemberRemovalRequests to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * MemberRemovalRequest updateManyAndReturn
+   */
+  export type MemberRemovalRequestUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberRemovalRequest
+     */
+    select?: MemberRemovalRequestSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberRemovalRequest
+     */
+    omit?: MemberRemovalRequestOmit<ExtArgs> | null
+    /**
+     * The data used to update MemberRemovalRequests.
+     */
+    data: XOR<MemberRemovalRequestUpdateManyMutationInput, MemberRemovalRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which MemberRemovalRequests to update
+     */
+    where?: MemberRemovalRequestWhereInput
+    /**
+     * Limit how many MemberRemovalRequests to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberRemovalRequestIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MemberRemovalRequest upsert
+   */
+  export type MemberRemovalRequestUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberRemovalRequest
+     */
+    select?: MemberRemovalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberRemovalRequest
+     */
+    omit?: MemberRemovalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberRemovalRequestInclude<ExtArgs> | null
+    /**
+     * The filter to search for the MemberRemovalRequest to update in case it exists.
+     */
+    where: MemberRemovalRequestWhereUniqueInput
+    /**
+     * In case the MemberRemovalRequest found by the `where` argument doesn't exist, create a new MemberRemovalRequest with this data.
+     */
+    create: XOR<MemberRemovalRequestCreateInput, MemberRemovalRequestUncheckedCreateInput>
+    /**
+     * In case the MemberRemovalRequest was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MemberRemovalRequestUpdateInput, MemberRemovalRequestUncheckedUpdateInput>
+  }
+
+  /**
+   * MemberRemovalRequest delete
+   */
+  export type MemberRemovalRequestDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberRemovalRequest
+     */
+    select?: MemberRemovalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberRemovalRequest
+     */
+    omit?: MemberRemovalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberRemovalRequestInclude<ExtArgs> | null
+    /**
+     * Filter which MemberRemovalRequest to delete.
+     */
+    where: MemberRemovalRequestWhereUniqueInput
+  }
+
+  /**
+   * MemberRemovalRequest deleteMany
+   */
+  export type MemberRemovalRequestDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MemberRemovalRequests to delete
+     */
+    where?: MemberRemovalRequestWhereInput
+    /**
+     * Limit how many MemberRemovalRequests to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * MemberRemovalRequest.approver
+   */
+  export type MemberRemovalRequest$approverArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * MemberRemovalRequest without action
+   */
+  export type MemberRemovalRequestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberRemovalRequest
+     */
+    select?: MemberRemovalRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberRemovalRequest
+     */
+    omit?: MemberRemovalRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberRemovalRequestInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -18917,6 +20411,7 @@ export namespace Prisma {
     profilePicture: 'profilePicture',
     role: 'role',
     isActive: 'isActive',
+    isApproved: 'isApproved',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     lastLogin: 'lastLogin',
@@ -18937,7 +20432,9 @@ export namespace Prisma {
     createdBy: 'createdBy',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
-    archived: 'archived'
+    archived: 'archived',
+    approved: 'approved',
+    approvedAt: 'approvedAt'
   };
 
   export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
@@ -19083,6 +20580,21 @@ export namespace Prisma {
   };
 
   export type PublicShareScalarFieldEnum = (typeof PublicShareScalarFieldEnum)[keyof typeof PublicShareScalarFieldEnum]
+
+
+  export const MemberRemovalRequestScalarFieldEnum: {
+    id: 'id',
+    projectId: 'projectId',
+    userId: 'userId',
+    requestedBy: 'requestedBy',
+    reason: 'reason',
+    status: 'status',
+    approvedBy: 'approvedBy',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type MemberRemovalRequestScalarFieldEnum = (typeof MemberRemovalRequestScalarFieldEnum)[keyof typeof MemberRemovalRequestScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -19251,6 +20763,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'RequestStatus'
+   */
+  export type EnumRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RequestStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'RequestStatus[]'
+   */
+  export type ListEnumRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RequestStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -19279,6 +20805,7 @@ export namespace Prisma {
     profilePicture?: StringNullableFilter<"User"> | string | null
     role?: EnumRoleFilter<"User"> | $Enums.Role
     isActive?: BoolFilter<"User"> | boolean
+    isApproved?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     lastLogin?: DateTimeNullableFilter<"User"> | Date | string | null
@@ -19294,6 +20821,9 @@ export namespace Prisma {
     activities?: ActivityLogListRelationFilter
     discussions?: DiscussionListRelationFilter
     replies?: ReplyListRelationFilter
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestListRelationFilter
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestListRelationFilter
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -19305,6 +20835,7 @@ export namespace Prisma {
     profilePicture?: SortOrderInput | SortOrder
     role?: SortOrder
     isActive?: SortOrder
+    isApproved?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     lastLogin?: SortOrderInput | SortOrder
@@ -19320,6 +20851,9 @@ export namespace Prisma {
     activities?: ActivityLogOrderByRelationAggregateInput
     discussions?: DiscussionOrderByRelationAggregateInput
     replies?: ReplyOrderByRelationAggregateInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestOrderByRelationAggregateInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestOrderByRelationAggregateInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -19335,6 +20869,7 @@ export namespace Prisma {
     profilePicture?: StringNullableFilter<"User"> | string | null
     role?: EnumRoleFilter<"User"> | $Enums.Role
     isActive?: BoolFilter<"User"> | boolean
+    isApproved?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     lastLogin?: DateTimeNullableFilter<"User"> | Date | string | null
@@ -19349,6 +20884,9 @@ export namespace Prisma {
     activities?: ActivityLogListRelationFilter
     discussions?: DiscussionListRelationFilter
     replies?: ReplyListRelationFilter
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestListRelationFilter
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestListRelationFilter
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestListRelationFilter
   }, "id" | "username" | "email" | "resetToken">
 
   export type UserOrderByWithAggregationInput = {
@@ -19360,6 +20898,7 @@ export namespace Prisma {
     profilePicture?: SortOrderInput | SortOrder
     role?: SortOrder
     isActive?: SortOrder
+    isApproved?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     lastLogin?: SortOrderInput | SortOrder
@@ -19384,6 +20923,7 @@ export namespace Prisma {
     profilePicture?: StringNullableWithAggregatesFilter<"User"> | string | null
     role?: EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
     isActive?: BoolWithAggregatesFilter<"User"> | boolean
+    isApproved?: BoolWithAggregatesFilter<"User"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     lastLogin?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
@@ -19405,6 +20945,8 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Project"> | Date | string
     updatedAt?: DateTimeFilter<"Project"> | Date | string
     archived?: BoolFilter<"Project"> | boolean
+    approved?: BoolFilter<"Project"> | boolean
+    approvedAt?: DateTimeNullableFilter<"Project"> | Date | string | null
     creator?: XOR<UserScalarRelationFilter, UserWhereInput>
     members?: ProjectMemberListRelationFilter
     tasks?: TaskListRelationFilter
@@ -19413,6 +20955,7 @@ export namespace Prisma {
     discussions?: DiscussionListRelationFilter
     tags?: ProjectTagListRelationFilter
     shares?: PublicShareListRelationFilter
+    removalRequests?: MemberRemovalRequestListRelationFilter
   }
 
   export type ProjectOrderByWithRelationInput = {
@@ -19426,6 +20969,8 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     archived?: SortOrder
+    approved?: SortOrder
+    approvedAt?: SortOrderInput | SortOrder
     creator?: UserOrderByWithRelationInput
     members?: ProjectMemberOrderByRelationAggregateInput
     tasks?: TaskOrderByRelationAggregateInput
@@ -19434,6 +20979,7 @@ export namespace Prisma {
     discussions?: DiscussionOrderByRelationAggregateInput
     tags?: ProjectTagOrderByRelationAggregateInput
     shares?: PublicShareOrderByRelationAggregateInput
+    removalRequests?: MemberRemovalRequestOrderByRelationAggregateInput
   }
 
   export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -19450,6 +20996,8 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Project"> | Date | string
     updatedAt?: DateTimeFilter<"Project"> | Date | string
     archived?: BoolFilter<"Project"> | boolean
+    approved?: BoolFilter<"Project"> | boolean
+    approvedAt?: DateTimeNullableFilter<"Project"> | Date | string | null
     creator?: XOR<UserScalarRelationFilter, UserWhereInput>
     members?: ProjectMemberListRelationFilter
     tasks?: TaskListRelationFilter
@@ -19458,6 +21006,7 @@ export namespace Prisma {
     discussions?: DiscussionListRelationFilter
     tags?: ProjectTagListRelationFilter
     shares?: PublicShareListRelationFilter
+    removalRequests?: MemberRemovalRequestListRelationFilter
   }, "id">
 
   export type ProjectOrderByWithAggregationInput = {
@@ -19471,6 +21020,8 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     archived?: SortOrder
+    approved?: SortOrder
+    approvedAt?: SortOrderInput | SortOrder
     _count?: ProjectCountOrderByAggregateInput
     _avg?: ProjectAvgOrderByAggregateInput
     _max?: ProjectMaxOrderByAggregateInput
@@ -19492,6 +21043,8 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"Project"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Project"> | Date | string
     archived?: BoolWithAggregatesFilter<"Project"> | boolean
+    approved?: BoolWithAggregatesFilter<"Project"> | boolean
+    approvedAt?: DateTimeNullableWithAggregatesFilter<"Project"> | Date | string | null
   }
 
   export type ProjectMemberWhereInput = {
@@ -20279,6 +21832,92 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"PublicShare"> | Date | string
   }
 
+  export type MemberRemovalRequestWhereInput = {
+    AND?: MemberRemovalRequestWhereInput | MemberRemovalRequestWhereInput[]
+    OR?: MemberRemovalRequestWhereInput[]
+    NOT?: MemberRemovalRequestWhereInput | MemberRemovalRequestWhereInput[]
+    id?: IntFilter<"MemberRemovalRequest"> | number
+    projectId?: IntFilter<"MemberRemovalRequest"> | number
+    userId?: IntFilter<"MemberRemovalRequest"> | number
+    requestedBy?: IntFilter<"MemberRemovalRequest"> | number
+    reason?: StringFilter<"MemberRemovalRequest"> | string
+    status?: EnumRequestStatusFilter<"MemberRemovalRequest"> | $Enums.RequestStatus
+    approvedBy?: IntNullableFilter<"MemberRemovalRequest"> | number | null
+    createdAt?: DateTimeFilter<"MemberRemovalRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"MemberRemovalRequest"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    requester?: XOR<UserScalarRelationFilter, UserWhereInput>
+    approver?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }
+
+  export type MemberRemovalRequestOrderByWithRelationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    userId?: SortOrder
+    requestedBy?: SortOrder
+    reason?: SortOrder
+    status?: SortOrder
+    approvedBy?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    project?: ProjectOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+    requester?: UserOrderByWithRelationInput
+    approver?: UserOrderByWithRelationInput
+  }
+
+  export type MemberRemovalRequestWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: MemberRemovalRequestWhereInput | MemberRemovalRequestWhereInput[]
+    OR?: MemberRemovalRequestWhereInput[]
+    NOT?: MemberRemovalRequestWhereInput | MemberRemovalRequestWhereInput[]
+    projectId?: IntFilter<"MemberRemovalRequest"> | number
+    userId?: IntFilter<"MemberRemovalRequest"> | number
+    requestedBy?: IntFilter<"MemberRemovalRequest"> | number
+    reason?: StringFilter<"MemberRemovalRequest"> | string
+    status?: EnumRequestStatusFilter<"MemberRemovalRequest"> | $Enums.RequestStatus
+    approvedBy?: IntNullableFilter<"MemberRemovalRequest"> | number | null
+    createdAt?: DateTimeFilter<"MemberRemovalRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"MemberRemovalRequest"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    requester?: XOR<UserScalarRelationFilter, UserWhereInput>
+    approver?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "id">
+
+  export type MemberRemovalRequestOrderByWithAggregationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    userId?: SortOrder
+    requestedBy?: SortOrder
+    reason?: SortOrder
+    status?: SortOrder
+    approvedBy?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: MemberRemovalRequestCountOrderByAggregateInput
+    _avg?: MemberRemovalRequestAvgOrderByAggregateInput
+    _max?: MemberRemovalRequestMaxOrderByAggregateInput
+    _min?: MemberRemovalRequestMinOrderByAggregateInput
+    _sum?: MemberRemovalRequestSumOrderByAggregateInput
+  }
+
+  export type MemberRemovalRequestScalarWhereWithAggregatesInput = {
+    AND?: MemberRemovalRequestScalarWhereWithAggregatesInput | MemberRemovalRequestScalarWhereWithAggregatesInput[]
+    OR?: MemberRemovalRequestScalarWhereWithAggregatesInput[]
+    NOT?: MemberRemovalRequestScalarWhereWithAggregatesInput | MemberRemovalRequestScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"MemberRemovalRequest"> | number
+    projectId?: IntWithAggregatesFilter<"MemberRemovalRequest"> | number
+    userId?: IntWithAggregatesFilter<"MemberRemovalRequest"> | number
+    requestedBy?: IntWithAggregatesFilter<"MemberRemovalRequest"> | number
+    reason?: StringWithAggregatesFilter<"MemberRemovalRequest"> | string
+    status?: EnumRequestStatusWithAggregatesFilter<"MemberRemovalRequest"> | $Enums.RequestStatus
+    approvedBy?: IntNullableWithAggregatesFilter<"MemberRemovalRequest"> | number | null
+    createdAt?: DateTimeWithAggregatesFilter<"MemberRemovalRequest"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"MemberRemovalRequest"> | Date | string
+  }
+
   export type UserCreateInput = {
     fullName: string
     username: string
@@ -20287,6 +21926,7 @@ export namespace Prisma {
     profilePicture?: string | null
     role?: $Enums.Role
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     lastLogin?: Date | string | null
@@ -20302,6 +21942,9 @@ export namespace Prisma {
     activities?: ActivityLogCreateNestedManyWithoutUserInput
     discussions?: DiscussionCreateNestedManyWithoutUserInput
     replies?: ReplyCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestCreateNestedManyWithoutApproverInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -20313,6 +21956,7 @@ export namespace Prisma {
     profilePicture?: string | null
     role?: $Enums.Role
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     lastLogin?: Date | string | null
@@ -20328,6 +21972,9 @@ export namespace Prisma {
     activities?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     discussions?: DiscussionUncheckedCreateNestedManyWithoutUserInput
     replies?: ReplyUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedCreateNestedManyWithoutApproverInput
   }
 
   export type UserUpdateInput = {
@@ -20338,6 +21985,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -20353,6 +22001,9 @@ export namespace Prisma {
     activities?: ActivityLogUpdateManyWithoutUserNestedInput
     discussions?: DiscussionUpdateManyWithoutUserNestedInput
     replies?: ReplyUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUpdateManyWithoutApproverNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -20364,6 +22015,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -20379,6 +22031,9 @@ export namespace Prisma {
     activities?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     discussions?: DiscussionUncheckedUpdateManyWithoutUserNestedInput
     replies?: ReplyUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedUpdateManyWithoutApproverNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -20390,6 +22045,7 @@ export namespace Prisma {
     profilePicture?: string | null
     role?: $Enums.Role
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     lastLogin?: Date | string | null
@@ -20405,6 +22061,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -20421,6 +22078,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -20437,6 +22095,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     archived?: boolean
+    approved?: boolean
+    approvedAt?: Date | string | null
     creator: UserCreateNestedOneWithoutCreatedProjectsInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     tasks?: TaskCreateNestedManyWithoutProjectInput
@@ -20445,6 +22105,7 @@ export namespace Prisma {
     discussions?: DiscussionCreateNestedManyWithoutProjectInput
     tags?: ProjectTagCreateNestedManyWithoutProjectInput
     shares?: PublicShareCreateNestedManyWithoutProjectInput
+    removalRequests?: MemberRemovalRequestCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateInput = {
@@ -20458,6 +22119,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     archived?: boolean
+    approved?: boolean
+    approvedAt?: Date | string | null
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     tasks?: TaskUncheckedCreateNestedManyWithoutProjectInput
     comments?: CommentUncheckedCreateNestedManyWithoutProjectInput
@@ -20465,6 +22128,7 @@ export namespace Prisma {
     discussions?: DiscussionUncheckedCreateNestedManyWithoutProjectInput
     tags?: ProjectTagUncheckedCreateNestedManyWithoutProjectInput
     shares?: PublicShareUncheckedCreateNestedManyWithoutProjectInput
+    removalRequests?: MemberRemovalRequestUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUpdateInput = {
@@ -20476,6 +22140,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     archived?: BoolFieldUpdateOperationsInput | boolean
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     creator?: UserUpdateOneRequiredWithoutCreatedProjectsNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     tasks?: TaskUpdateManyWithoutProjectNestedInput
@@ -20484,6 +22150,7 @@ export namespace Prisma {
     discussions?: DiscussionUpdateManyWithoutProjectNestedInput
     tags?: ProjectTagUpdateManyWithoutProjectNestedInput
     shares?: PublicShareUpdateManyWithoutProjectNestedInput
+    removalRequests?: MemberRemovalRequestUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateInput = {
@@ -20497,6 +22164,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     archived?: BoolFieldUpdateOperationsInput | boolean
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     tasks?: TaskUncheckedUpdateManyWithoutProjectNestedInput
     comments?: CommentUncheckedUpdateManyWithoutProjectNestedInput
@@ -20504,6 +22173,7 @@ export namespace Prisma {
     discussions?: DiscussionUncheckedUpdateManyWithoutProjectNestedInput
     tags?: ProjectTagUncheckedUpdateManyWithoutProjectNestedInput
     shares?: PublicShareUncheckedUpdateManyWithoutProjectNestedInput
+    removalRequests?: MemberRemovalRequestUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateManyInput = {
@@ -20517,6 +22187,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     archived?: boolean
+    approved?: boolean
+    approvedAt?: Date | string | null
   }
 
   export type ProjectUpdateManyMutationInput = {
@@ -20528,6 +22200,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     archived?: BoolFieldUpdateOperationsInput | boolean
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ProjectUncheckedUpdateManyInput = {
@@ -20541,6 +22215,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     archived?: BoolFieldUpdateOperationsInput | boolean
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ProjectMemberCreateInput = {
@@ -21262,6 +22938,83 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type MemberRemovalRequestCreateInput = {
+    reason: string
+    status?: $Enums.RequestStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutRemovalRequestsInput
+    user: UserCreateNestedOneWithoutMemberRemovalRequestsAsTargetInput
+    requester: UserCreateNestedOneWithoutMemberRemovalRequestsAsRequesterInput
+    approver?: UserCreateNestedOneWithoutMemberRemovalRequestsAsApproverInput
+  }
+
+  export type MemberRemovalRequestUncheckedCreateInput = {
+    id?: number
+    projectId: number
+    userId: number
+    requestedBy: number
+    reason: string
+    status?: $Enums.RequestStatus
+    approvedBy?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MemberRemovalRequestUpdateInput = {
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutRemovalRequestsNestedInput
+    user?: UserUpdateOneRequiredWithoutMemberRemovalRequestsAsTargetNestedInput
+    requester?: UserUpdateOneRequiredWithoutMemberRemovalRequestsAsRequesterNestedInput
+    approver?: UserUpdateOneWithoutMemberRemovalRequestsAsApproverNestedInput
+  }
+
+  export type MemberRemovalRequestUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    projectId?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    requestedBy?: IntFieldUpdateOperationsInput | number
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    approvedBy?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MemberRemovalRequestCreateManyInput = {
+    id?: number
+    projectId: number
+    userId: number
+    requestedBy: number
+    reason: string
+    status?: $Enums.RequestStatus
+    approvedBy?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MemberRemovalRequestUpdateManyMutationInput = {
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MemberRemovalRequestUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    projectId?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    requestedBy?: IntFieldUpdateOperationsInput | number
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    approvedBy?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -21391,6 +23144,12 @@ export namespace Prisma {
     none?: ReplyWhereInput
   }
 
+  export type MemberRemovalRequestListRelationFilter = {
+    every?: MemberRemovalRequestWhereInput
+    some?: MemberRemovalRequestWhereInput
+    none?: MemberRemovalRequestWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -21432,6 +23191,10 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type MemberRemovalRequestOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
     fullName?: SortOrder
@@ -21441,6 +23204,7 @@ export namespace Prisma {
     profilePicture?: SortOrder
     role?: SortOrder
     isActive?: SortOrder
+    isApproved?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     lastLogin?: SortOrder
@@ -21461,6 +23225,7 @@ export namespace Prisma {
     profilePicture?: SortOrder
     role?: SortOrder
     isActive?: SortOrder
+    isApproved?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     lastLogin?: SortOrder
@@ -21477,6 +23242,7 @@ export namespace Prisma {
     profilePicture?: SortOrder
     role?: SortOrder
     isActive?: SortOrder
+    isApproved?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     lastLogin?: SortOrder
@@ -21629,6 +23395,8 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     archived?: SortOrder
+    approved?: SortOrder
+    approvedAt?: SortOrder
   }
 
   export type ProjectAvgOrderByAggregateInput = {
@@ -21647,6 +23415,8 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     archived?: SortOrder
+    approved?: SortOrder
+    approvedAt?: SortOrder
   }
 
   export type ProjectMinOrderByAggregateInput = {
@@ -21660,6 +23430,8 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     archived?: SortOrder
+    approved?: SortOrder
+    approvedAt?: SortOrder
   }
 
   export type ProjectSumOrderByAggregateInput = {
@@ -22303,6 +24075,75 @@ export namespace Prisma {
     projectId?: SortOrder
   }
 
+  export type EnumRequestStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.RequestStatus | EnumRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RequestStatus[] | ListEnumRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RequestStatus[] | ListEnumRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRequestStatusFilter<$PrismaModel> | $Enums.RequestStatus
+  }
+
+  export type MemberRemovalRequestCountOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    userId?: SortOrder
+    requestedBy?: SortOrder
+    reason?: SortOrder
+    status?: SortOrder
+    approvedBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MemberRemovalRequestAvgOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    userId?: SortOrder
+    requestedBy?: SortOrder
+    approvedBy?: SortOrder
+  }
+
+  export type MemberRemovalRequestMaxOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    userId?: SortOrder
+    requestedBy?: SortOrder
+    reason?: SortOrder
+    status?: SortOrder
+    approvedBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MemberRemovalRequestMinOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    userId?: SortOrder
+    requestedBy?: SortOrder
+    reason?: SortOrder
+    status?: SortOrder
+    approvedBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MemberRemovalRequestSumOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    userId?: SortOrder
+    requestedBy?: SortOrder
+    approvedBy?: SortOrder
+  }
+
+  export type EnumRequestStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RequestStatus | EnumRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RequestStatus[] | ListEnumRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RequestStatus[] | ListEnumRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRequestStatusWithAggregatesFilter<$PrismaModel> | $Enums.RequestStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRequestStatusFilter<$PrismaModel>
+    _max?: NestedEnumRequestStatusFilter<$PrismaModel>
+  }
+
   export type ProjectCreateNestedManyWithoutCreatorInput = {
     create?: XOR<ProjectCreateWithoutCreatorInput, ProjectUncheckedCreateWithoutCreatorInput> | ProjectCreateWithoutCreatorInput[] | ProjectUncheckedCreateWithoutCreatorInput[]
     connectOrCreate?: ProjectCreateOrConnectWithoutCreatorInput | ProjectCreateOrConnectWithoutCreatorInput[]
@@ -22373,6 +24214,27 @@ export namespace Prisma {
     connect?: ReplyWhereUniqueInput | ReplyWhereUniqueInput[]
   }
 
+  export type MemberRemovalRequestCreateNestedManyWithoutUserInput = {
+    create?: XOR<MemberRemovalRequestCreateWithoutUserInput, MemberRemovalRequestUncheckedCreateWithoutUserInput> | MemberRemovalRequestCreateWithoutUserInput[] | MemberRemovalRequestUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: MemberRemovalRequestCreateOrConnectWithoutUserInput | MemberRemovalRequestCreateOrConnectWithoutUserInput[]
+    createMany?: MemberRemovalRequestCreateManyUserInputEnvelope
+    connect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+  }
+
+  export type MemberRemovalRequestCreateNestedManyWithoutRequesterInput = {
+    create?: XOR<MemberRemovalRequestCreateWithoutRequesterInput, MemberRemovalRequestUncheckedCreateWithoutRequesterInput> | MemberRemovalRequestCreateWithoutRequesterInput[] | MemberRemovalRequestUncheckedCreateWithoutRequesterInput[]
+    connectOrCreate?: MemberRemovalRequestCreateOrConnectWithoutRequesterInput | MemberRemovalRequestCreateOrConnectWithoutRequesterInput[]
+    createMany?: MemberRemovalRequestCreateManyRequesterInputEnvelope
+    connect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+  }
+
+  export type MemberRemovalRequestCreateNestedManyWithoutApproverInput = {
+    create?: XOR<MemberRemovalRequestCreateWithoutApproverInput, MemberRemovalRequestUncheckedCreateWithoutApproverInput> | MemberRemovalRequestCreateWithoutApproverInput[] | MemberRemovalRequestUncheckedCreateWithoutApproverInput[]
+    connectOrCreate?: MemberRemovalRequestCreateOrConnectWithoutApproverInput | MemberRemovalRequestCreateOrConnectWithoutApproverInput[]
+    createMany?: MemberRemovalRequestCreateManyApproverInputEnvelope
+    connect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+  }
+
   export type ProjectUncheckedCreateNestedManyWithoutCreatorInput = {
     create?: XOR<ProjectCreateWithoutCreatorInput, ProjectUncheckedCreateWithoutCreatorInput> | ProjectCreateWithoutCreatorInput[] | ProjectUncheckedCreateWithoutCreatorInput[]
     connectOrCreate?: ProjectCreateOrConnectWithoutCreatorInput | ProjectCreateOrConnectWithoutCreatorInput[]
@@ -22441,6 +24303,27 @@ export namespace Prisma {
     connectOrCreate?: ReplyCreateOrConnectWithoutUserInput | ReplyCreateOrConnectWithoutUserInput[]
     createMany?: ReplyCreateManyUserInputEnvelope
     connect?: ReplyWhereUniqueInput | ReplyWhereUniqueInput[]
+  }
+
+  export type MemberRemovalRequestUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<MemberRemovalRequestCreateWithoutUserInput, MemberRemovalRequestUncheckedCreateWithoutUserInput> | MemberRemovalRequestCreateWithoutUserInput[] | MemberRemovalRequestUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: MemberRemovalRequestCreateOrConnectWithoutUserInput | MemberRemovalRequestCreateOrConnectWithoutUserInput[]
+    createMany?: MemberRemovalRequestCreateManyUserInputEnvelope
+    connect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+  }
+
+  export type MemberRemovalRequestUncheckedCreateNestedManyWithoutRequesterInput = {
+    create?: XOR<MemberRemovalRequestCreateWithoutRequesterInput, MemberRemovalRequestUncheckedCreateWithoutRequesterInput> | MemberRemovalRequestCreateWithoutRequesterInput[] | MemberRemovalRequestUncheckedCreateWithoutRequesterInput[]
+    connectOrCreate?: MemberRemovalRequestCreateOrConnectWithoutRequesterInput | MemberRemovalRequestCreateOrConnectWithoutRequesterInput[]
+    createMany?: MemberRemovalRequestCreateManyRequesterInputEnvelope
+    connect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+  }
+
+  export type MemberRemovalRequestUncheckedCreateNestedManyWithoutApproverInput = {
+    create?: XOR<MemberRemovalRequestCreateWithoutApproverInput, MemberRemovalRequestUncheckedCreateWithoutApproverInput> | MemberRemovalRequestCreateWithoutApproverInput[] | MemberRemovalRequestUncheckedCreateWithoutApproverInput[]
+    connectOrCreate?: MemberRemovalRequestCreateOrConnectWithoutApproverInput | MemberRemovalRequestCreateOrConnectWithoutApproverInput[]
+    createMany?: MemberRemovalRequestCreateManyApproverInputEnvelope
+    connect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -22607,6 +24490,48 @@ export namespace Prisma {
     deleteMany?: ReplyScalarWhereInput | ReplyScalarWhereInput[]
   }
 
+  export type MemberRemovalRequestUpdateManyWithoutUserNestedInput = {
+    create?: XOR<MemberRemovalRequestCreateWithoutUserInput, MemberRemovalRequestUncheckedCreateWithoutUserInput> | MemberRemovalRequestCreateWithoutUserInput[] | MemberRemovalRequestUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: MemberRemovalRequestCreateOrConnectWithoutUserInput | MemberRemovalRequestCreateOrConnectWithoutUserInput[]
+    upsert?: MemberRemovalRequestUpsertWithWhereUniqueWithoutUserInput | MemberRemovalRequestUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: MemberRemovalRequestCreateManyUserInputEnvelope
+    set?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    disconnect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    delete?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    connect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    update?: MemberRemovalRequestUpdateWithWhereUniqueWithoutUserInput | MemberRemovalRequestUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: MemberRemovalRequestUpdateManyWithWhereWithoutUserInput | MemberRemovalRequestUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: MemberRemovalRequestScalarWhereInput | MemberRemovalRequestScalarWhereInput[]
+  }
+
+  export type MemberRemovalRequestUpdateManyWithoutRequesterNestedInput = {
+    create?: XOR<MemberRemovalRequestCreateWithoutRequesterInput, MemberRemovalRequestUncheckedCreateWithoutRequesterInput> | MemberRemovalRequestCreateWithoutRequesterInput[] | MemberRemovalRequestUncheckedCreateWithoutRequesterInput[]
+    connectOrCreate?: MemberRemovalRequestCreateOrConnectWithoutRequesterInput | MemberRemovalRequestCreateOrConnectWithoutRequesterInput[]
+    upsert?: MemberRemovalRequestUpsertWithWhereUniqueWithoutRequesterInput | MemberRemovalRequestUpsertWithWhereUniqueWithoutRequesterInput[]
+    createMany?: MemberRemovalRequestCreateManyRequesterInputEnvelope
+    set?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    disconnect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    delete?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    connect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    update?: MemberRemovalRequestUpdateWithWhereUniqueWithoutRequesterInput | MemberRemovalRequestUpdateWithWhereUniqueWithoutRequesterInput[]
+    updateMany?: MemberRemovalRequestUpdateManyWithWhereWithoutRequesterInput | MemberRemovalRequestUpdateManyWithWhereWithoutRequesterInput[]
+    deleteMany?: MemberRemovalRequestScalarWhereInput | MemberRemovalRequestScalarWhereInput[]
+  }
+
+  export type MemberRemovalRequestUpdateManyWithoutApproverNestedInput = {
+    create?: XOR<MemberRemovalRequestCreateWithoutApproverInput, MemberRemovalRequestUncheckedCreateWithoutApproverInput> | MemberRemovalRequestCreateWithoutApproverInput[] | MemberRemovalRequestUncheckedCreateWithoutApproverInput[]
+    connectOrCreate?: MemberRemovalRequestCreateOrConnectWithoutApproverInput | MemberRemovalRequestCreateOrConnectWithoutApproverInput[]
+    upsert?: MemberRemovalRequestUpsertWithWhereUniqueWithoutApproverInput | MemberRemovalRequestUpsertWithWhereUniqueWithoutApproverInput[]
+    createMany?: MemberRemovalRequestCreateManyApproverInputEnvelope
+    set?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    disconnect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    delete?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    connect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    update?: MemberRemovalRequestUpdateWithWhereUniqueWithoutApproverInput | MemberRemovalRequestUpdateWithWhereUniqueWithoutApproverInput[]
+    updateMany?: MemberRemovalRequestUpdateManyWithWhereWithoutApproverInput | MemberRemovalRequestUpdateManyWithWhereWithoutApproverInput[]
+    deleteMany?: MemberRemovalRequestScalarWhereInput | MemberRemovalRequestScalarWhereInput[]
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -22755,6 +24680,48 @@ export namespace Prisma {
     deleteMany?: ReplyScalarWhereInput | ReplyScalarWhereInput[]
   }
 
+  export type MemberRemovalRequestUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<MemberRemovalRequestCreateWithoutUserInput, MemberRemovalRequestUncheckedCreateWithoutUserInput> | MemberRemovalRequestCreateWithoutUserInput[] | MemberRemovalRequestUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: MemberRemovalRequestCreateOrConnectWithoutUserInput | MemberRemovalRequestCreateOrConnectWithoutUserInput[]
+    upsert?: MemberRemovalRequestUpsertWithWhereUniqueWithoutUserInput | MemberRemovalRequestUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: MemberRemovalRequestCreateManyUserInputEnvelope
+    set?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    disconnect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    delete?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    connect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    update?: MemberRemovalRequestUpdateWithWhereUniqueWithoutUserInput | MemberRemovalRequestUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: MemberRemovalRequestUpdateManyWithWhereWithoutUserInput | MemberRemovalRequestUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: MemberRemovalRequestScalarWhereInput | MemberRemovalRequestScalarWhereInput[]
+  }
+
+  export type MemberRemovalRequestUncheckedUpdateManyWithoutRequesterNestedInput = {
+    create?: XOR<MemberRemovalRequestCreateWithoutRequesterInput, MemberRemovalRequestUncheckedCreateWithoutRequesterInput> | MemberRemovalRequestCreateWithoutRequesterInput[] | MemberRemovalRequestUncheckedCreateWithoutRequesterInput[]
+    connectOrCreate?: MemberRemovalRequestCreateOrConnectWithoutRequesterInput | MemberRemovalRequestCreateOrConnectWithoutRequesterInput[]
+    upsert?: MemberRemovalRequestUpsertWithWhereUniqueWithoutRequesterInput | MemberRemovalRequestUpsertWithWhereUniqueWithoutRequesterInput[]
+    createMany?: MemberRemovalRequestCreateManyRequesterInputEnvelope
+    set?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    disconnect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    delete?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    connect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    update?: MemberRemovalRequestUpdateWithWhereUniqueWithoutRequesterInput | MemberRemovalRequestUpdateWithWhereUniqueWithoutRequesterInput[]
+    updateMany?: MemberRemovalRequestUpdateManyWithWhereWithoutRequesterInput | MemberRemovalRequestUpdateManyWithWhereWithoutRequesterInput[]
+    deleteMany?: MemberRemovalRequestScalarWhereInput | MemberRemovalRequestScalarWhereInput[]
+  }
+
+  export type MemberRemovalRequestUncheckedUpdateManyWithoutApproverNestedInput = {
+    create?: XOR<MemberRemovalRequestCreateWithoutApproverInput, MemberRemovalRequestUncheckedCreateWithoutApproverInput> | MemberRemovalRequestCreateWithoutApproverInput[] | MemberRemovalRequestUncheckedCreateWithoutApproverInput[]
+    connectOrCreate?: MemberRemovalRequestCreateOrConnectWithoutApproverInput | MemberRemovalRequestCreateOrConnectWithoutApproverInput[]
+    upsert?: MemberRemovalRequestUpsertWithWhereUniqueWithoutApproverInput | MemberRemovalRequestUpsertWithWhereUniqueWithoutApproverInput[]
+    createMany?: MemberRemovalRequestCreateManyApproverInputEnvelope
+    set?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    disconnect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    delete?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    connect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    update?: MemberRemovalRequestUpdateWithWhereUniqueWithoutApproverInput | MemberRemovalRequestUpdateWithWhereUniqueWithoutApproverInput[]
+    updateMany?: MemberRemovalRequestUpdateManyWithWhereWithoutApproverInput | MemberRemovalRequestUpdateManyWithWhereWithoutApproverInput[]
+    deleteMany?: MemberRemovalRequestScalarWhereInput | MemberRemovalRequestScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutCreatedProjectsInput = {
     create?: XOR<UserCreateWithoutCreatedProjectsInput, UserUncheckedCreateWithoutCreatedProjectsInput>
     connectOrCreate?: UserCreateOrConnectWithoutCreatedProjectsInput
@@ -22810,6 +24777,13 @@ export namespace Prisma {
     connect?: PublicShareWhereUniqueInput | PublicShareWhereUniqueInput[]
   }
 
+  export type MemberRemovalRequestCreateNestedManyWithoutProjectInput = {
+    create?: XOR<MemberRemovalRequestCreateWithoutProjectInput, MemberRemovalRequestUncheckedCreateWithoutProjectInput> | MemberRemovalRequestCreateWithoutProjectInput[] | MemberRemovalRequestUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: MemberRemovalRequestCreateOrConnectWithoutProjectInput | MemberRemovalRequestCreateOrConnectWithoutProjectInput[]
+    createMany?: MemberRemovalRequestCreateManyProjectInputEnvelope
+    connect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+  }
+
   export type ProjectMemberUncheckedCreateNestedManyWithoutProjectInput = {
     create?: XOR<ProjectMemberCreateWithoutProjectInput, ProjectMemberUncheckedCreateWithoutProjectInput> | ProjectMemberCreateWithoutProjectInput[] | ProjectMemberUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: ProjectMemberCreateOrConnectWithoutProjectInput | ProjectMemberCreateOrConnectWithoutProjectInput[]
@@ -22857,6 +24831,13 @@ export namespace Prisma {
     connectOrCreate?: PublicShareCreateOrConnectWithoutProjectInput | PublicShareCreateOrConnectWithoutProjectInput[]
     createMany?: PublicShareCreateManyProjectInputEnvelope
     connect?: PublicShareWhereUniqueInput | PublicShareWhereUniqueInput[]
+  }
+
+  export type MemberRemovalRequestUncheckedCreateNestedManyWithoutProjectInput = {
+    create?: XOR<MemberRemovalRequestCreateWithoutProjectInput, MemberRemovalRequestUncheckedCreateWithoutProjectInput> | MemberRemovalRequestCreateWithoutProjectInput[] | MemberRemovalRequestUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: MemberRemovalRequestCreateOrConnectWithoutProjectInput | MemberRemovalRequestCreateOrConnectWithoutProjectInput[]
+    createMany?: MemberRemovalRequestCreateManyProjectInputEnvelope
+    connect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
   }
 
   export type EnumProjectStatusFieldUpdateOperationsInput = {
@@ -22969,6 +24950,20 @@ export namespace Prisma {
     deleteMany?: PublicShareScalarWhereInput | PublicShareScalarWhereInput[]
   }
 
+  export type MemberRemovalRequestUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<MemberRemovalRequestCreateWithoutProjectInput, MemberRemovalRequestUncheckedCreateWithoutProjectInput> | MemberRemovalRequestCreateWithoutProjectInput[] | MemberRemovalRequestUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: MemberRemovalRequestCreateOrConnectWithoutProjectInput | MemberRemovalRequestCreateOrConnectWithoutProjectInput[]
+    upsert?: MemberRemovalRequestUpsertWithWhereUniqueWithoutProjectInput | MemberRemovalRequestUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: MemberRemovalRequestCreateManyProjectInputEnvelope
+    set?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    disconnect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    delete?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    connect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    update?: MemberRemovalRequestUpdateWithWhereUniqueWithoutProjectInput | MemberRemovalRequestUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: MemberRemovalRequestUpdateManyWithWhereWithoutProjectInput | MemberRemovalRequestUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: MemberRemovalRequestScalarWhereInput | MemberRemovalRequestScalarWhereInput[]
+  }
+
   export type ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput = {
     create?: XOR<ProjectMemberCreateWithoutProjectInput, ProjectMemberUncheckedCreateWithoutProjectInput> | ProjectMemberCreateWithoutProjectInput[] | ProjectMemberUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: ProjectMemberCreateOrConnectWithoutProjectInput | ProjectMemberCreateOrConnectWithoutProjectInput[]
@@ -23065,6 +25060,20 @@ export namespace Prisma {
     update?: PublicShareUpdateWithWhereUniqueWithoutProjectInput | PublicShareUpdateWithWhereUniqueWithoutProjectInput[]
     updateMany?: PublicShareUpdateManyWithWhereWithoutProjectInput | PublicShareUpdateManyWithWhereWithoutProjectInput[]
     deleteMany?: PublicShareScalarWhereInput | PublicShareScalarWhereInput[]
+  }
+
+  export type MemberRemovalRequestUncheckedUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<MemberRemovalRequestCreateWithoutProjectInput, MemberRemovalRequestUncheckedCreateWithoutProjectInput> | MemberRemovalRequestCreateWithoutProjectInput[] | MemberRemovalRequestUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: MemberRemovalRequestCreateOrConnectWithoutProjectInput | MemberRemovalRequestCreateOrConnectWithoutProjectInput[]
+    upsert?: MemberRemovalRequestUpsertWithWhereUniqueWithoutProjectInput | MemberRemovalRequestUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: MemberRemovalRequestCreateManyProjectInputEnvelope
+    set?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    disconnect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    delete?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    connect?: MemberRemovalRequestWhereUniqueInput | MemberRemovalRequestWhereUniqueInput[]
+    update?: MemberRemovalRequestUpdateWithWhereUniqueWithoutProjectInput | MemberRemovalRequestUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: MemberRemovalRequestUpdateManyWithWhereWithoutProjectInput | MemberRemovalRequestUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: MemberRemovalRequestScalarWhereInput | MemberRemovalRequestScalarWhereInput[]
   }
 
   export type ProjectCreateNestedOneWithoutMembersInput = {
@@ -23653,6 +25662,68 @@ export namespace Prisma {
     update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutSharesInput, ProjectUpdateWithoutSharesInput>, ProjectUncheckedUpdateWithoutSharesInput>
   }
 
+  export type ProjectCreateNestedOneWithoutRemovalRequestsInput = {
+    create?: XOR<ProjectCreateWithoutRemovalRequestsInput, ProjectUncheckedCreateWithoutRemovalRequestsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutRemovalRequestsInput
+    connect?: ProjectWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutMemberRemovalRequestsAsTargetInput = {
+    create?: XOR<UserCreateWithoutMemberRemovalRequestsAsTargetInput, UserUncheckedCreateWithoutMemberRemovalRequestsAsTargetInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMemberRemovalRequestsAsTargetInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutMemberRemovalRequestsAsRequesterInput = {
+    create?: XOR<UserCreateWithoutMemberRemovalRequestsAsRequesterInput, UserUncheckedCreateWithoutMemberRemovalRequestsAsRequesterInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMemberRemovalRequestsAsRequesterInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutMemberRemovalRequestsAsApproverInput = {
+    create?: XOR<UserCreateWithoutMemberRemovalRequestsAsApproverInput, UserUncheckedCreateWithoutMemberRemovalRequestsAsApproverInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMemberRemovalRequestsAsApproverInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumRequestStatusFieldUpdateOperationsInput = {
+    set?: $Enums.RequestStatus
+  }
+
+  export type ProjectUpdateOneRequiredWithoutRemovalRequestsNestedInput = {
+    create?: XOR<ProjectCreateWithoutRemovalRequestsInput, ProjectUncheckedCreateWithoutRemovalRequestsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutRemovalRequestsInput
+    upsert?: ProjectUpsertWithoutRemovalRequestsInput
+    connect?: ProjectWhereUniqueInput
+    update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutRemovalRequestsInput, ProjectUpdateWithoutRemovalRequestsInput>, ProjectUncheckedUpdateWithoutRemovalRequestsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutMemberRemovalRequestsAsTargetNestedInput = {
+    create?: XOR<UserCreateWithoutMemberRemovalRequestsAsTargetInput, UserUncheckedCreateWithoutMemberRemovalRequestsAsTargetInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMemberRemovalRequestsAsTargetInput
+    upsert?: UserUpsertWithoutMemberRemovalRequestsAsTargetInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutMemberRemovalRequestsAsTargetInput, UserUpdateWithoutMemberRemovalRequestsAsTargetInput>, UserUncheckedUpdateWithoutMemberRemovalRequestsAsTargetInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutMemberRemovalRequestsAsRequesterNestedInput = {
+    create?: XOR<UserCreateWithoutMemberRemovalRequestsAsRequesterInput, UserUncheckedCreateWithoutMemberRemovalRequestsAsRequesterInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMemberRemovalRequestsAsRequesterInput
+    upsert?: UserUpsertWithoutMemberRemovalRequestsAsRequesterInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutMemberRemovalRequestsAsRequesterInput, UserUpdateWithoutMemberRemovalRequestsAsRequesterInput>, UserUncheckedUpdateWithoutMemberRemovalRequestsAsRequesterInput>
+  }
+
+  export type UserUpdateOneWithoutMemberRemovalRequestsAsApproverNestedInput = {
+    create?: XOR<UserCreateWithoutMemberRemovalRequestsAsApproverInput, UserUncheckedCreateWithoutMemberRemovalRequestsAsApproverInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMemberRemovalRequestsAsApproverInput
+    upsert?: UserUpsertWithoutMemberRemovalRequestsAsApproverInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutMemberRemovalRequestsAsApproverInput, UserUpdateWithoutMemberRemovalRequestsAsApproverInput>, UserUncheckedUpdateWithoutMemberRemovalRequestsAsApproverInput>
+  }
+
   export type NestedIntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -23945,6 +26016,23 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
+  export type NestedEnumRequestStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.RequestStatus | EnumRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RequestStatus[] | ListEnumRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RequestStatus[] | ListEnumRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRequestStatusFilter<$PrismaModel> | $Enums.RequestStatus
+  }
+
+  export type NestedEnumRequestStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RequestStatus | EnumRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RequestStatus[] | ListEnumRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RequestStatus[] | ListEnumRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRequestStatusWithAggregatesFilter<$PrismaModel> | $Enums.RequestStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRequestStatusFilter<$PrismaModel>
+    _max?: NestedEnumRequestStatusFilter<$PrismaModel>
+  }
+
   export type ProjectCreateWithoutCreatorInput = {
     name: string
     description?: string | null
@@ -23954,6 +26042,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     archived?: boolean
+    approved?: boolean
+    approvedAt?: Date | string | null
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     tasks?: TaskCreateNestedManyWithoutProjectInput
     comments?: CommentCreateNestedManyWithoutProjectInput
@@ -23961,6 +26051,7 @@ export namespace Prisma {
     discussions?: DiscussionCreateNestedManyWithoutProjectInput
     tags?: ProjectTagCreateNestedManyWithoutProjectInput
     shares?: PublicShareCreateNestedManyWithoutProjectInput
+    removalRequests?: MemberRemovalRequestCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutCreatorInput = {
@@ -23973,6 +26064,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     archived?: boolean
+    approved?: boolean
+    approvedAt?: Date | string | null
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     tasks?: TaskUncheckedCreateNestedManyWithoutProjectInput
     comments?: CommentUncheckedCreateNestedManyWithoutProjectInput
@@ -23980,6 +26073,7 @@ export namespace Prisma {
     discussions?: DiscussionUncheckedCreateNestedManyWithoutProjectInput
     tags?: ProjectTagUncheckedCreateNestedManyWithoutProjectInput
     shares?: PublicShareUncheckedCreateNestedManyWithoutProjectInput
+    removalRequests?: MemberRemovalRequestUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutCreatorInput = {
@@ -24260,6 +26354,99 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type MemberRemovalRequestCreateWithoutUserInput = {
+    reason: string
+    status?: $Enums.RequestStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutRemovalRequestsInput
+    requester: UserCreateNestedOneWithoutMemberRemovalRequestsAsRequesterInput
+    approver?: UserCreateNestedOneWithoutMemberRemovalRequestsAsApproverInput
+  }
+
+  export type MemberRemovalRequestUncheckedCreateWithoutUserInput = {
+    id?: number
+    projectId: number
+    requestedBy: number
+    reason: string
+    status?: $Enums.RequestStatus
+    approvedBy?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MemberRemovalRequestCreateOrConnectWithoutUserInput = {
+    where: MemberRemovalRequestWhereUniqueInput
+    create: XOR<MemberRemovalRequestCreateWithoutUserInput, MemberRemovalRequestUncheckedCreateWithoutUserInput>
+  }
+
+  export type MemberRemovalRequestCreateManyUserInputEnvelope = {
+    data: MemberRemovalRequestCreateManyUserInput | MemberRemovalRequestCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type MemberRemovalRequestCreateWithoutRequesterInput = {
+    reason: string
+    status?: $Enums.RequestStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutRemovalRequestsInput
+    user: UserCreateNestedOneWithoutMemberRemovalRequestsAsTargetInput
+    approver?: UserCreateNestedOneWithoutMemberRemovalRequestsAsApproverInput
+  }
+
+  export type MemberRemovalRequestUncheckedCreateWithoutRequesterInput = {
+    id?: number
+    projectId: number
+    userId: number
+    reason: string
+    status?: $Enums.RequestStatus
+    approvedBy?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MemberRemovalRequestCreateOrConnectWithoutRequesterInput = {
+    where: MemberRemovalRequestWhereUniqueInput
+    create: XOR<MemberRemovalRequestCreateWithoutRequesterInput, MemberRemovalRequestUncheckedCreateWithoutRequesterInput>
+  }
+
+  export type MemberRemovalRequestCreateManyRequesterInputEnvelope = {
+    data: MemberRemovalRequestCreateManyRequesterInput | MemberRemovalRequestCreateManyRequesterInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type MemberRemovalRequestCreateWithoutApproverInput = {
+    reason: string
+    status?: $Enums.RequestStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutRemovalRequestsInput
+    user: UserCreateNestedOneWithoutMemberRemovalRequestsAsTargetInput
+    requester: UserCreateNestedOneWithoutMemberRemovalRequestsAsRequesterInput
+  }
+
+  export type MemberRemovalRequestUncheckedCreateWithoutApproverInput = {
+    id?: number
+    projectId: number
+    userId: number
+    requestedBy: number
+    reason: string
+    status?: $Enums.RequestStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MemberRemovalRequestCreateOrConnectWithoutApproverInput = {
+    where: MemberRemovalRequestWhereUniqueInput
+    create: XOR<MemberRemovalRequestCreateWithoutApproverInput, MemberRemovalRequestUncheckedCreateWithoutApproverInput>
+  }
+
+  export type MemberRemovalRequestCreateManyApproverInputEnvelope = {
+    data: MemberRemovalRequestCreateManyApproverInput | MemberRemovalRequestCreateManyApproverInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ProjectUpsertWithWhereUniqueWithoutCreatorInput = {
     where: ProjectWhereUniqueInput
     update: XOR<ProjectUpdateWithoutCreatorInput, ProjectUncheckedUpdateWithoutCreatorInput>
@@ -24290,6 +26477,8 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Project"> | Date | string
     updatedAt?: DateTimeFilter<"Project"> | Date | string
     archived?: BoolFilter<"Project"> | boolean
+    approved?: BoolFilter<"Project"> | boolean
+    approvedAt?: DateTimeNullableFilter<"Project"> | Date | string | null
   }
 
   export type ProjectMemberUpsertWithWhereUniqueWithoutUserInput = {
@@ -24541,6 +26730,69 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Reply"> | Date | string
   }
 
+  export type MemberRemovalRequestUpsertWithWhereUniqueWithoutUserInput = {
+    where: MemberRemovalRequestWhereUniqueInput
+    update: XOR<MemberRemovalRequestUpdateWithoutUserInput, MemberRemovalRequestUncheckedUpdateWithoutUserInput>
+    create: XOR<MemberRemovalRequestCreateWithoutUserInput, MemberRemovalRequestUncheckedCreateWithoutUserInput>
+  }
+
+  export type MemberRemovalRequestUpdateWithWhereUniqueWithoutUserInput = {
+    where: MemberRemovalRequestWhereUniqueInput
+    data: XOR<MemberRemovalRequestUpdateWithoutUserInput, MemberRemovalRequestUncheckedUpdateWithoutUserInput>
+  }
+
+  export type MemberRemovalRequestUpdateManyWithWhereWithoutUserInput = {
+    where: MemberRemovalRequestScalarWhereInput
+    data: XOR<MemberRemovalRequestUpdateManyMutationInput, MemberRemovalRequestUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type MemberRemovalRequestScalarWhereInput = {
+    AND?: MemberRemovalRequestScalarWhereInput | MemberRemovalRequestScalarWhereInput[]
+    OR?: MemberRemovalRequestScalarWhereInput[]
+    NOT?: MemberRemovalRequestScalarWhereInput | MemberRemovalRequestScalarWhereInput[]
+    id?: IntFilter<"MemberRemovalRequest"> | number
+    projectId?: IntFilter<"MemberRemovalRequest"> | number
+    userId?: IntFilter<"MemberRemovalRequest"> | number
+    requestedBy?: IntFilter<"MemberRemovalRequest"> | number
+    reason?: StringFilter<"MemberRemovalRequest"> | string
+    status?: EnumRequestStatusFilter<"MemberRemovalRequest"> | $Enums.RequestStatus
+    approvedBy?: IntNullableFilter<"MemberRemovalRequest"> | number | null
+    createdAt?: DateTimeFilter<"MemberRemovalRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"MemberRemovalRequest"> | Date | string
+  }
+
+  export type MemberRemovalRequestUpsertWithWhereUniqueWithoutRequesterInput = {
+    where: MemberRemovalRequestWhereUniqueInput
+    update: XOR<MemberRemovalRequestUpdateWithoutRequesterInput, MemberRemovalRequestUncheckedUpdateWithoutRequesterInput>
+    create: XOR<MemberRemovalRequestCreateWithoutRequesterInput, MemberRemovalRequestUncheckedCreateWithoutRequesterInput>
+  }
+
+  export type MemberRemovalRequestUpdateWithWhereUniqueWithoutRequesterInput = {
+    where: MemberRemovalRequestWhereUniqueInput
+    data: XOR<MemberRemovalRequestUpdateWithoutRequesterInput, MemberRemovalRequestUncheckedUpdateWithoutRequesterInput>
+  }
+
+  export type MemberRemovalRequestUpdateManyWithWhereWithoutRequesterInput = {
+    where: MemberRemovalRequestScalarWhereInput
+    data: XOR<MemberRemovalRequestUpdateManyMutationInput, MemberRemovalRequestUncheckedUpdateManyWithoutRequesterInput>
+  }
+
+  export type MemberRemovalRequestUpsertWithWhereUniqueWithoutApproverInput = {
+    where: MemberRemovalRequestWhereUniqueInput
+    update: XOR<MemberRemovalRequestUpdateWithoutApproverInput, MemberRemovalRequestUncheckedUpdateWithoutApproverInput>
+    create: XOR<MemberRemovalRequestCreateWithoutApproverInput, MemberRemovalRequestUncheckedCreateWithoutApproverInput>
+  }
+
+  export type MemberRemovalRequestUpdateWithWhereUniqueWithoutApproverInput = {
+    where: MemberRemovalRequestWhereUniqueInput
+    data: XOR<MemberRemovalRequestUpdateWithoutApproverInput, MemberRemovalRequestUncheckedUpdateWithoutApproverInput>
+  }
+
+  export type MemberRemovalRequestUpdateManyWithWhereWithoutApproverInput = {
+    where: MemberRemovalRequestScalarWhereInput
+    data: XOR<MemberRemovalRequestUpdateManyMutationInput, MemberRemovalRequestUncheckedUpdateManyWithoutApproverInput>
+  }
+
   export type UserCreateWithoutCreatedProjectsInput = {
     fullName: string
     username: string
@@ -24549,6 +26801,7 @@ export namespace Prisma {
     profilePicture?: string | null
     role?: $Enums.Role
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     lastLogin?: Date | string | null
@@ -24563,6 +26816,9 @@ export namespace Prisma {
     activities?: ActivityLogCreateNestedManyWithoutUserInput
     discussions?: DiscussionCreateNestedManyWithoutUserInput
     replies?: ReplyCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestCreateNestedManyWithoutApproverInput
   }
 
   export type UserUncheckedCreateWithoutCreatedProjectsInput = {
@@ -24574,6 +26830,7 @@ export namespace Prisma {
     profilePicture?: string | null
     role?: $Enums.Role
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     lastLogin?: Date | string | null
@@ -24588,6 +26845,9 @@ export namespace Prisma {
     activities?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     discussions?: DiscussionUncheckedCreateNestedManyWithoutUserInput
     replies?: ReplyUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedCreateNestedManyWithoutApproverInput
   }
 
   export type UserCreateOrConnectWithoutCreatedProjectsInput = {
@@ -24784,6 +27044,37 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type MemberRemovalRequestCreateWithoutProjectInput = {
+    reason: string
+    status?: $Enums.RequestStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutMemberRemovalRequestsAsTargetInput
+    requester: UserCreateNestedOneWithoutMemberRemovalRequestsAsRequesterInput
+    approver?: UserCreateNestedOneWithoutMemberRemovalRequestsAsApproverInput
+  }
+
+  export type MemberRemovalRequestUncheckedCreateWithoutProjectInput = {
+    id?: number
+    userId: number
+    requestedBy: number
+    reason: string
+    status?: $Enums.RequestStatus
+    approvedBy?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MemberRemovalRequestCreateOrConnectWithoutProjectInput = {
+    where: MemberRemovalRequestWhereUniqueInput
+    create: XOR<MemberRemovalRequestCreateWithoutProjectInput, MemberRemovalRequestUncheckedCreateWithoutProjectInput>
+  }
+
+  export type MemberRemovalRequestCreateManyProjectInputEnvelope = {
+    data: MemberRemovalRequestCreateManyProjectInput | MemberRemovalRequestCreateManyProjectInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutCreatedProjectsInput = {
     update: XOR<UserUpdateWithoutCreatedProjectsInput, UserUncheckedUpdateWithoutCreatedProjectsInput>
     create: XOR<UserCreateWithoutCreatedProjectsInput, UserUncheckedCreateWithoutCreatedProjectsInput>
@@ -24803,6 +27094,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -24817,6 +27109,9 @@ export namespace Prisma {
     activities?: ActivityLogUpdateManyWithoutUserNestedInput
     discussions?: DiscussionUpdateManyWithoutUserNestedInput
     replies?: ReplyUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUpdateManyWithoutApproverNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedProjectsInput = {
@@ -24828,6 +27123,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -24842,6 +27138,9 @@ export namespace Prisma {
     activities?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     discussions?: DiscussionUncheckedUpdateManyWithoutUserNestedInput
     replies?: ReplyUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedUpdateManyWithoutApproverNestedInput
   }
 
   export type ProjectMemberUpsertWithWhereUniqueWithoutProjectInput = {
@@ -24975,6 +27274,22 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"PublicShare"> | Date | string
   }
 
+  export type MemberRemovalRequestUpsertWithWhereUniqueWithoutProjectInput = {
+    where: MemberRemovalRequestWhereUniqueInput
+    update: XOR<MemberRemovalRequestUpdateWithoutProjectInput, MemberRemovalRequestUncheckedUpdateWithoutProjectInput>
+    create: XOR<MemberRemovalRequestCreateWithoutProjectInput, MemberRemovalRequestUncheckedCreateWithoutProjectInput>
+  }
+
+  export type MemberRemovalRequestUpdateWithWhereUniqueWithoutProjectInput = {
+    where: MemberRemovalRequestWhereUniqueInput
+    data: XOR<MemberRemovalRequestUpdateWithoutProjectInput, MemberRemovalRequestUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type MemberRemovalRequestUpdateManyWithWhereWithoutProjectInput = {
+    where: MemberRemovalRequestScalarWhereInput
+    data: XOR<MemberRemovalRequestUpdateManyMutationInput, MemberRemovalRequestUncheckedUpdateManyWithoutProjectInput>
+  }
+
   export type ProjectCreateWithoutMembersInput = {
     name: string
     description?: string | null
@@ -24984,6 +27299,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     archived?: boolean
+    approved?: boolean
+    approvedAt?: Date | string | null
     creator: UserCreateNestedOneWithoutCreatedProjectsInput
     tasks?: TaskCreateNestedManyWithoutProjectInput
     comments?: CommentCreateNestedManyWithoutProjectInput
@@ -24991,6 +27308,7 @@ export namespace Prisma {
     discussions?: DiscussionCreateNestedManyWithoutProjectInput
     tags?: ProjectTagCreateNestedManyWithoutProjectInput
     shares?: PublicShareCreateNestedManyWithoutProjectInput
+    removalRequests?: MemberRemovalRequestCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutMembersInput = {
@@ -25004,12 +27322,15 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     archived?: boolean
+    approved?: boolean
+    approvedAt?: Date | string | null
     tasks?: TaskUncheckedCreateNestedManyWithoutProjectInput
     comments?: CommentUncheckedCreateNestedManyWithoutProjectInput
     files?: FileUncheckedCreateNestedManyWithoutProjectInput
     discussions?: DiscussionUncheckedCreateNestedManyWithoutProjectInput
     tags?: ProjectTagUncheckedCreateNestedManyWithoutProjectInput
     shares?: PublicShareUncheckedCreateNestedManyWithoutProjectInput
+    removalRequests?: MemberRemovalRequestUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutMembersInput = {
@@ -25025,6 +27346,7 @@ export namespace Prisma {
     profilePicture?: string | null
     role?: $Enums.Role
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     lastLogin?: Date | string | null
@@ -25039,6 +27361,9 @@ export namespace Prisma {
     activities?: ActivityLogCreateNestedManyWithoutUserInput
     discussions?: DiscussionCreateNestedManyWithoutUserInput
     replies?: ReplyCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestCreateNestedManyWithoutApproverInput
   }
 
   export type UserUncheckedCreateWithoutProjectMembersInput = {
@@ -25050,6 +27375,7 @@ export namespace Prisma {
     profilePicture?: string | null
     role?: $Enums.Role
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     lastLogin?: Date | string | null
@@ -25064,6 +27390,9 @@ export namespace Prisma {
     activities?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     discussions?: DiscussionUncheckedCreateNestedManyWithoutUserInput
     replies?: ReplyUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedCreateNestedManyWithoutApproverInput
   }
 
   export type UserCreateOrConnectWithoutProjectMembersInput = {
@@ -25091,6 +27420,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     archived?: BoolFieldUpdateOperationsInput | boolean
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     creator?: UserUpdateOneRequiredWithoutCreatedProjectsNestedInput
     tasks?: TaskUpdateManyWithoutProjectNestedInput
     comments?: CommentUpdateManyWithoutProjectNestedInput
@@ -25098,6 +27429,7 @@ export namespace Prisma {
     discussions?: DiscussionUpdateManyWithoutProjectNestedInput
     tags?: ProjectTagUpdateManyWithoutProjectNestedInput
     shares?: PublicShareUpdateManyWithoutProjectNestedInput
+    removalRequests?: MemberRemovalRequestUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutMembersInput = {
@@ -25111,12 +27443,15 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     archived?: BoolFieldUpdateOperationsInput | boolean
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tasks?: TaskUncheckedUpdateManyWithoutProjectNestedInput
     comments?: CommentUncheckedUpdateManyWithoutProjectNestedInput
     files?: FileUncheckedUpdateManyWithoutProjectNestedInput
     discussions?: DiscussionUncheckedUpdateManyWithoutProjectNestedInput
     tags?: ProjectTagUncheckedUpdateManyWithoutProjectNestedInput
     shares?: PublicShareUncheckedUpdateManyWithoutProjectNestedInput
+    removalRequests?: MemberRemovalRequestUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutProjectMembersInput = {
@@ -25138,6 +27473,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -25152,6 +27488,9 @@ export namespace Prisma {
     activities?: ActivityLogUpdateManyWithoutUserNestedInput
     discussions?: DiscussionUpdateManyWithoutUserNestedInput
     replies?: ReplyUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUpdateManyWithoutApproverNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectMembersInput = {
@@ -25163,6 +27502,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -25177,6 +27517,9 @@ export namespace Prisma {
     activities?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     discussions?: DiscussionUncheckedUpdateManyWithoutUserNestedInput
     replies?: ReplyUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedUpdateManyWithoutApproverNestedInput
   }
 
   export type ProjectCreateWithoutTasksInput = {
@@ -25188,6 +27531,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     archived?: boolean
+    approved?: boolean
+    approvedAt?: Date | string | null
     creator: UserCreateNestedOneWithoutCreatedProjectsInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     comments?: CommentCreateNestedManyWithoutProjectInput
@@ -25195,6 +27540,7 @@ export namespace Prisma {
     discussions?: DiscussionCreateNestedManyWithoutProjectInput
     tags?: ProjectTagCreateNestedManyWithoutProjectInput
     shares?: PublicShareCreateNestedManyWithoutProjectInput
+    removalRequests?: MemberRemovalRequestCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutTasksInput = {
@@ -25208,12 +27554,15 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     archived?: boolean
+    approved?: boolean
+    approvedAt?: Date | string | null
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     comments?: CommentUncheckedCreateNestedManyWithoutProjectInput
     files?: FileUncheckedCreateNestedManyWithoutProjectInput
     discussions?: DiscussionUncheckedCreateNestedManyWithoutProjectInput
     tags?: ProjectTagUncheckedCreateNestedManyWithoutProjectInput
     shares?: PublicShareUncheckedCreateNestedManyWithoutProjectInput
+    removalRequests?: MemberRemovalRequestUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutTasksInput = {
@@ -25229,6 +27578,7 @@ export namespace Prisma {
     profilePicture?: string | null
     role?: $Enums.Role
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     lastLogin?: Date | string | null
@@ -25243,6 +27593,9 @@ export namespace Prisma {
     activities?: ActivityLogCreateNestedManyWithoutUserInput
     discussions?: DiscussionCreateNestedManyWithoutUserInput
     replies?: ReplyCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestCreateNestedManyWithoutApproverInput
   }
 
   export type UserUncheckedCreateWithoutAssignedTasksInput = {
@@ -25254,6 +27607,7 @@ export namespace Prisma {
     profilePicture?: string | null
     role?: $Enums.Role
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     lastLogin?: Date | string | null
@@ -25268,6 +27622,9 @@ export namespace Prisma {
     activities?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     discussions?: DiscussionUncheckedCreateNestedManyWithoutUserInput
     replies?: ReplyUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedCreateNestedManyWithoutApproverInput
   }
 
   export type UserCreateOrConnectWithoutAssignedTasksInput = {
@@ -25283,6 +27640,7 @@ export namespace Prisma {
     profilePicture?: string | null
     role?: $Enums.Role
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     lastLogin?: Date | string | null
@@ -25297,6 +27655,9 @@ export namespace Prisma {
     activities?: ActivityLogCreateNestedManyWithoutUserInput
     discussions?: DiscussionCreateNestedManyWithoutUserInput
     replies?: ReplyCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestCreateNestedManyWithoutApproverInput
   }
 
   export type UserUncheckedCreateWithoutCreatedTasksInput = {
@@ -25308,6 +27669,7 @@ export namespace Prisma {
     profilePicture?: string | null
     role?: $Enums.Role
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     lastLogin?: Date | string | null
@@ -25322,6 +27684,9 @@ export namespace Prisma {
     activities?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     discussions?: DiscussionUncheckedCreateNestedManyWithoutUserInput
     replies?: ReplyUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedCreateNestedManyWithoutApproverInput
   }
 
   export type UserCreateOrConnectWithoutCreatedTasksInput = {
@@ -25425,6 +27790,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     archived?: BoolFieldUpdateOperationsInput | boolean
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     creator?: UserUpdateOneRequiredWithoutCreatedProjectsNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     comments?: CommentUpdateManyWithoutProjectNestedInput
@@ -25432,6 +27799,7 @@ export namespace Prisma {
     discussions?: DiscussionUpdateManyWithoutProjectNestedInput
     tags?: ProjectTagUpdateManyWithoutProjectNestedInput
     shares?: PublicShareUpdateManyWithoutProjectNestedInput
+    removalRequests?: MemberRemovalRequestUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutTasksInput = {
@@ -25445,12 +27813,15 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     archived?: BoolFieldUpdateOperationsInput | boolean
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     comments?: CommentUncheckedUpdateManyWithoutProjectNestedInput
     files?: FileUncheckedUpdateManyWithoutProjectNestedInput
     discussions?: DiscussionUncheckedUpdateManyWithoutProjectNestedInput
     tags?: ProjectTagUncheckedUpdateManyWithoutProjectNestedInput
     shares?: PublicShareUncheckedUpdateManyWithoutProjectNestedInput
+    removalRequests?: MemberRemovalRequestUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutAssignedTasksInput = {
@@ -25472,6 +27843,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -25486,6 +27858,9 @@ export namespace Prisma {
     activities?: ActivityLogUpdateManyWithoutUserNestedInput
     discussions?: DiscussionUpdateManyWithoutUserNestedInput
     replies?: ReplyUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUpdateManyWithoutApproverNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedTasksInput = {
@@ -25497,6 +27872,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -25511,6 +27887,9 @@ export namespace Prisma {
     activities?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     discussions?: DiscussionUncheckedUpdateManyWithoutUserNestedInput
     replies?: ReplyUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedUpdateManyWithoutApproverNestedInput
   }
 
   export type UserUpsertWithoutCreatedTasksInput = {
@@ -25532,6 +27911,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -25546,6 +27926,9 @@ export namespace Prisma {
     activities?: ActivityLogUpdateManyWithoutUserNestedInput
     discussions?: DiscussionUpdateManyWithoutUserNestedInput
     replies?: ReplyUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUpdateManyWithoutApproverNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedTasksInput = {
@@ -25557,6 +27940,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -25571,6 +27955,9 @@ export namespace Prisma {
     activities?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     discussions?: DiscussionUncheckedUpdateManyWithoutUserNestedInput
     replies?: ReplyUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedUpdateManyWithoutApproverNestedInput
   }
 
   export type CommentUpsertWithWhereUniqueWithoutTaskInput = {
@@ -25637,6 +28024,7 @@ export namespace Prisma {
     profilePicture?: string | null
     role?: $Enums.Role
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     lastLogin?: Date | string | null
@@ -25651,6 +28039,9 @@ export namespace Prisma {
     activities?: ActivityLogCreateNestedManyWithoutUserInput
     discussions?: DiscussionCreateNestedManyWithoutUserInput
     replies?: ReplyCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestCreateNestedManyWithoutApproverInput
   }
 
   export type UserUncheckedCreateWithoutCommentsInput = {
@@ -25662,6 +28053,7 @@ export namespace Prisma {
     profilePicture?: string | null
     role?: $Enums.Role
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     lastLogin?: Date | string | null
@@ -25676,6 +28068,9 @@ export namespace Prisma {
     activities?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     discussions?: DiscussionUncheckedCreateNestedManyWithoutUserInput
     replies?: ReplyUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedCreateNestedManyWithoutApproverInput
   }
 
   export type UserCreateOrConnectWithoutCommentsInput = {
@@ -25728,6 +28123,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     archived?: boolean
+    approved?: boolean
+    approvedAt?: Date | string | null
     creator: UserCreateNestedOneWithoutCreatedProjectsInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     tasks?: TaskCreateNestedManyWithoutProjectInput
@@ -25735,6 +28132,7 @@ export namespace Prisma {
     discussions?: DiscussionCreateNestedManyWithoutProjectInput
     tags?: ProjectTagCreateNestedManyWithoutProjectInput
     shares?: PublicShareCreateNestedManyWithoutProjectInput
+    removalRequests?: MemberRemovalRequestCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutCommentsInput = {
@@ -25748,12 +28146,15 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     archived?: boolean
+    approved?: boolean
+    approvedAt?: Date | string | null
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     tasks?: TaskUncheckedCreateNestedManyWithoutProjectInput
     files?: FileUncheckedCreateNestedManyWithoutProjectInput
     discussions?: DiscussionUncheckedCreateNestedManyWithoutProjectInput
     tags?: ProjectTagUncheckedCreateNestedManyWithoutProjectInput
     shares?: PublicShareUncheckedCreateNestedManyWithoutProjectInput
+    removalRequests?: MemberRemovalRequestUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutCommentsInput = {
@@ -25780,6 +28181,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -25794,6 +28196,9 @@ export namespace Prisma {
     activities?: ActivityLogUpdateManyWithoutUserNestedInput
     discussions?: DiscussionUpdateManyWithoutUserNestedInput
     replies?: ReplyUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUpdateManyWithoutApproverNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommentsInput = {
@@ -25805,6 +28210,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -25819,6 +28225,9 @@ export namespace Prisma {
     activities?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     discussions?: DiscussionUncheckedUpdateManyWithoutUserNestedInput
     replies?: ReplyUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedUpdateManyWithoutApproverNestedInput
   }
 
   export type TaskUpsertWithoutCommentsInput = {
@@ -25883,6 +28292,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     archived?: BoolFieldUpdateOperationsInput | boolean
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     creator?: UserUpdateOneRequiredWithoutCreatedProjectsNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     tasks?: TaskUpdateManyWithoutProjectNestedInput
@@ -25890,6 +28301,7 @@ export namespace Prisma {
     discussions?: DiscussionUpdateManyWithoutProjectNestedInput
     tags?: ProjectTagUpdateManyWithoutProjectNestedInput
     shares?: PublicShareUpdateManyWithoutProjectNestedInput
+    removalRequests?: MemberRemovalRequestUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutCommentsInput = {
@@ -25903,12 +28315,15 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     archived?: BoolFieldUpdateOperationsInput | boolean
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     tasks?: TaskUncheckedUpdateManyWithoutProjectNestedInput
     files?: FileUncheckedUpdateManyWithoutProjectNestedInput
     discussions?: DiscussionUncheckedUpdateManyWithoutProjectNestedInput
     tags?: ProjectTagUncheckedUpdateManyWithoutProjectNestedInput
     shares?: PublicShareUncheckedUpdateManyWithoutProjectNestedInput
+    removalRequests?: MemberRemovalRequestUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserCreateWithoutFilesInput = {
@@ -25919,6 +28334,7 @@ export namespace Prisma {
     profilePicture?: string | null
     role?: $Enums.Role
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     lastLogin?: Date | string | null
@@ -25933,6 +28349,9 @@ export namespace Prisma {
     activities?: ActivityLogCreateNestedManyWithoutUserInput
     discussions?: DiscussionCreateNestedManyWithoutUserInput
     replies?: ReplyCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestCreateNestedManyWithoutApproverInput
   }
 
   export type UserUncheckedCreateWithoutFilesInput = {
@@ -25944,6 +28363,7 @@ export namespace Prisma {
     profilePicture?: string | null
     role?: $Enums.Role
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     lastLogin?: Date | string | null
@@ -25958,6 +28378,9 @@ export namespace Prisma {
     activities?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     discussions?: DiscussionUncheckedCreateNestedManyWithoutUserInput
     replies?: ReplyUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedCreateNestedManyWithoutApproverInput
   }
 
   export type UserCreateOrConnectWithoutFilesInput = {
@@ -25974,6 +28397,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     archived?: boolean
+    approved?: boolean
+    approvedAt?: Date | string | null
     creator: UserCreateNestedOneWithoutCreatedProjectsInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     tasks?: TaskCreateNestedManyWithoutProjectInput
@@ -25981,6 +28406,7 @@ export namespace Prisma {
     discussions?: DiscussionCreateNestedManyWithoutProjectInput
     tags?: ProjectTagCreateNestedManyWithoutProjectInput
     shares?: PublicShareCreateNestedManyWithoutProjectInput
+    removalRequests?: MemberRemovalRequestCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutFilesInput = {
@@ -25994,12 +28420,15 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     archived?: boolean
+    approved?: boolean
+    approvedAt?: Date | string | null
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     tasks?: TaskUncheckedCreateNestedManyWithoutProjectInput
     comments?: CommentUncheckedCreateNestedManyWithoutProjectInput
     discussions?: DiscussionUncheckedCreateNestedManyWithoutProjectInput
     tags?: ProjectTagUncheckedCreateNestedManyWithoutProjectInput
     shares?: PublicShareUncheckedCreateNestedManyWithoutProjectInput
+    removalRequests?: MemberRemovalRequestUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutFilesInput = {
@@ -26062,6 +28491,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -26076,6 +28506,9 @@ export namespace Prisma {
     activities?: ActivityLogUpdateManyWithoutUserNestedInput
     discussions?: DiscussionUpdateManyWithoutUserNestedInput
     replies?: ReplyUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUpdateManyWithoutApproverNestedInput
   }
 
   export type UserUncheckedUpdateWithoutFilesInput = {
@@ -26087,6 +28520,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -26101,6 +28535,9 @@ export namespace Prisma {
     activities?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     discussions?: DiscussionUncheckedUpdateManyWithoutUserNestedInput
     replies?: ReplyUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedUpdateManyWithoutApproverNestedInput
   }
 
   export type ProjectUpsertWithoutFilesInput = {
@@ -26123,6 +28560,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     archived?: BoolFieldUpdateOperationsInput | boolean
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     creator?: UserUpdateOneRequiredWithoutCreatedProjectsNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     tasks?: TaskUpdateManyWithoutProjectNestedInput
@@ -26130,6 +28569,7 @@ export namespace Prisma {
     discussions?: DiscussionUpdateManyWithoutProjectNestedInput
     tags?: ProjectTagUpdateManyWithoutProjectNestedInput
     shares?: PublicShareUpdateManyWithoutProjectNestedInput
+    removalRequests?: MemberRemovalRequestUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutFilesInput = {
@@ -26143,12 +28583,15 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     archived?: BoolFieldUpdateOperationsInput | boolean
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     tasks?: TaskUncheckedUpdateManyWithoutProjectNestedInput
     comments?: CommentUncheckedUpdateManyWithoutProjectNestedInput
     discussions?: DiscussionUncheckedUpdateManyWithoutProjectNestedInput
     tags?: ProjectTagUncheckedUpdateManyWithoutProjectNestedInput
     shares?: PublicShareUncheckedUpdateManyWithoutProjectNestedInput
+    removalRequests?: MemberRemovalRequestUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type TaskUpsertWithoutFilesInput = {
@@ -26201,6 +28644,7 @@ export namespace Prisma {
     profilePicture?: string | null
     role?: $Enums.Role
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     lastLogin?: Date | string | null
@@ -26215,6 +28659,9 @@ export namespace Prisma {
     activities?: ActivityLogCreateNestedManyWithoutUserInput
     discussions?: DiscussionCreateNestedManyWithoutUserInput
     replies?: ReplyCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestCreateNestedManyWithoutApproverInput
   }
 
   export type UserUncheckedCreateWithoutPasswordResetsInput = {
@@ -26226,6 +28673,7 @@ export namespace Prisma {
     profilePicture?: string | null
     role?: $Enums.Role
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     lastLogin?: Date | string | null
@@ -26240,6 +28688,9 @@ export namespace Prisma {
     activities?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     discussions?: DiscussionUncheckedCreateNestedManyWithoutUserInput
     replies?: ReplyUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedCreateNestedManyWithoutApproverInput
   }
 
   export type UserCreateOrConnectWithoutPasswordResetsInput = {
@@ -26266,6 +28717,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -26280,6 +28732,9 @@ export namespace Prisma {
     activities?: ActivityLogUpdateManyWithoutUserNestedInput
     discussions?: DiscussionUpdateManyWithoutUserNestedInput
     replies?: ReplyUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUpdateManyWithoutApproverNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPasswordResetsInput = {
@@ -26291,6 +28746,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -26305,6 +28761,9 @@ export namespace Prisma {
     activities?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     discussions?: DiscussionUncheckedUpdateManyWithoutUserNestedInput
     replies?: ReplyUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedUpdateManyWithoutApproverNestedInput
   }
 
   export type UserCreateWithoutActivitiesInput = {
@@ -26315,6 +28774,7 @@ export namespace Prisma {
     profilePicture?: string | null
     role?: $Enums.Role
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     lastLogin?: Date | string | null
@@ -26329,6 +28789,9 @@ export namespace Prisma {
     passwordResets?: PasswordResetCreateNestedManyWithoutUserInput
     discussions?: DiscussionCreateNestedManyWithoutUserInput
     replies?: ReplyCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestCreateNestedManyWithoutApproverInput
   }
 
   export type UserUncheckedCreateWithoutActivitiesInput = {
@@ -26340,6 +28803,7 @@ export namespace Prisma {
     profilePicture?: string | null
     role?: $Enums.Role
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     lastLogin?: Date | string | null
@@ -26354,6 +28818,9 @@ export namespace Prisma {
     passwordResets?: PasswordResetUncheckedCreateNestedManyWithoutUserInput
     discussions?: DiscussionUncheckedCreateNestedManyWithoutUserInput
     replies?: ReplyUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedCreateNestedManyWithoutApproverInput
   }
 
   export type UserCreateOrConnectWithoutActivitiesInput = {
@@ -26380,6 +28847,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -26394,6 +28862,9 @@ export namespace Prisma {
     passwordResets?: PasswordResetUpdateManyWithoutUserNestedInput
     discussions?: DiscussionUpdateManyWithoutUserNestedInput
     replies?: ReplyUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUpdateManyWithoutApproverNestedInput
   }
 
   export type UserUncheckedUpdateWithoutActivitiesInput = {
@@ -26405,6 +28876,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -26419,6 +28891,9 @@ export namespace Prisma {
     passwordResets?: PasswordResetUncheckedUpdateManyWithoutUserNestedInput
     discussions?: DiscussionUncheckedUpdateManyWithoutUserNestedInput
     replies?: ReplyUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedUpdateManyWithoutApproverNestedInput
   }
 
   export type UserCreateWithoutDiscussionsInput = {
@@ -26429,6 +28904,7 @@ export namespace Prisma {
     profilePicture?: string | null
     role?: $Enums.Role
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     lastLogin?: Date | string | null
@@ -26443,6 +28919,9 @@ export namespace Prisma {
     passwordResets?: PasswordResetCreateNestedManyWithoutUserInput
     activities?: ActivityLogCreateNestedManyWithoutUserInput
     replies?: ReplyCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestCreateNestedManyWithoutApproverInput
   }
 
   export type UserUncheckedCreateWithoutDiscussionsInput = {
@@ -26454,6 +28933,7 @@ export namespace Prisma {
     profilePicture?: string | null
     role?: $Enums.Role
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     lastLogin?: Date | string | null
@@ -26468,6 +28948,9 @@ export namespace Prisma {
     passwordResets?: PasswordResetUncheckedCreateNestedManyWithoutUserInput
     activities?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     replies?: ReplyUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedCreateNestedManyWithoutApproverInput
   }
 
   export type UserCreateOrConnectWithoutDiscussionsInput = {
@@ -26484,6 +28967,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     archived?: boolean
+    approved?: boolean
+    approvedAt?: Date | string | null
     creator: UserCreateNestedOneWithoutCreatedProjectsInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     tasks?: TaskCreateNestedManyWithoutProjectInput
@@ -26491,6 +28976,7 @@ export namespace Prisma {
     files?: FileCreateNestedManyWithoutProjectInput
     tags?: ProjectTagCreateNestedManyWithoutProjectInput
     shares?: PublicShareCreateNestedManyWithoutProjectInput
+    removalRequests?: MemberRemovalRequestCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutDiscussionsInput = {
@@ -26504,12 +28990,15 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     archived?: boolean
+    approved?: boolean
+    approvedAt?: Date | string | null
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     tasks?: TaskUncheckedCreateNestedManyWithoutProjectInput
     comments?: CommentUncheckedCreateNestedManyWithoutProjectInput
     files?: FileUncheckedCreateNestedManyWithoutProjectInput
     tags?: ProjectTagUncheckedCreateNestedManyWithoutProjectInput
     shares?: PublicShareUncheckedCreateNestedManyWithoutProjectInput
+    removalRequests?: MemberRemovalRequestUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutDiscussionsInput = {
@@ -26561,6 +29050,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -26575,6 +29065,9 @@ export namespace Prisma {
     passwordResets?: PasswordResetUpdateManyWithoutUserNestedInput
     activities?: ActivityLogUpdateManyWithoutUserNestedInput
     replies?: ReplyUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUpdateManyWithoutApproverNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDiscussionsInput = {
@@ -26586,6 +29079,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -26600,6 +29094,9 @@ export namespace Prisma {
     passwordResets?: PasswordResetUncheckedUpdateManyWithoutUserNestedInput
     activities?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     replies?: ReplyUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedUpdateManyWithoutApproverNestedInput
   }
 
   export type ProjectUpsertWithoutDiscussionsInput = {
@@ -26622,6 +29119,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     archived?: BoolFieldUpdateOperationsInput | boolean
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     creator?: UserUpdateOneRequiredWithoutCreatedProjectsNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     tasks?: TaskUpdateManyWithoutProjectNestedInput
@@ -26629,6 +29128,7 @@ export namespace Prisma {
     files?: FileUpdateManyWithoutProjectNestedInput
     tags?: ProjectTagUpdateManyWithoutProjectNestedInput
     shares?: PublicShareUpdateManyWithoutProjectNestedInput
+    removalRequests?: MemberRemovalRequestUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutDiscussionsInput = {
@@ -26642,12 +29142,15 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     archived?: BoolFieldUpdateOperationsInput | boolean
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     tasks?: TaskUncheckedUpdateManyWithoutProjectNestedInput
     comments?: CommentUncheckedUpdateManyWithoutProjectNestedInput
     files?: FileUncheckedUpdateManyWithoutProjectNestedInput
     tags?: ProjectTagUncheckedUpdateManyWithoutProjectNestedInput
     shares?: PublicShareUncheckedUpdateManyWithoutProjectNestedInput
+    removalRequests?: MemberRemovalRequestUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ReplyUpsertWithWhereUniqueWithoutDiscussionInput = {
@@ -26674,6 +29177,7 @@ export namespace Prisma {
     profilePicture?: string | null
     role?: $Enums.Role
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     lastLogin?: Date | string | null
@@ -26688,6 +29192,9 @@ export namespace Prisma {
     passwordResets?: PasswordResetCreateNestedManyWithoutUserInput
     activities?: ActivityLogCreateNestedManyWithoutUserInput
     discussions?: DiscussionCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestCreateNestedManyWithoutApproverInput
   }
 
   export type UserUncheckedCreateWithoutRepliesInput = {
@@ -26699,6 +29206,7 @@ export namespace Prisma {
     profilePicture?: string | null
     role?: $Enums.Role
     isActive?: boolean
+    isApproved?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     lastLogin?: Date | string | null
@@ -26713,6 +29221,9 @@ export namespace Prisma {
     passwordResets?: PasswordResetUncheckedCreateNestedManyWithoutUserInput
     activities?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
     discussions?: DiscussionUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedCreateNestedManyWithoutApproverInput
   }
 
   export type UserCreateOrConnectWithoutRepliesInput = {
@@ -26763,6 +29274,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -26777,6 +29289,9 @@ export namespace Prisma {
     passwordResets?: PasswordResetUpdateManyWithoutUserNestedInput
     activities?: ActivityLogUpdateManyWithoutUserNestedInput
     discussions?: DiscussionUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUpdateManyWithoutApproverNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRepliesInput = {
@@ -26788,6 +29303,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -26802,6 +29318,9 @@ export namespace Prisma {
     passwordResets?: PasswordResetUncheckedUpdateManyWithoutUserNestedInput
     activities?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
     discussions?: DiscussionUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedUpdateManyWithoutApproverNestedInput
   }
 
   export type DiscussionUpsertWithoutRepliesInput = {
@@ -26911,6 +29430,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     archived?: boolean
+    approved?: boolean
+    approvedAt?: Date | string | null
     creator: UserCreateNestedOneWithoutCreatedProjectsInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     tasks?: TaskCreateNestedManyWithoutProjectInput
@@ -26918,6 +29439,7 @@ export namespace Prisma {
     files?: FileCreateNestedManyWithoutProjectInput
     discussions?: DiscussionCreateNestedManyWithoutProjectInput
     shares?: PublicShareCreateNestedManyWithoutProjectInput
+    removalRequests?: MemberRemovalRequestCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutTagsInput = {
@@ -26931,12 +29453,15 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     archived?: boolean
+    approved?: boolean
+    approvedAt?: Date | string | null
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     tasks?: TaskUncheckedCreateNestedManyWithoutProjectInput
     comments?: CommentUncheckedCreateNestedManyWithoutProjectInput
     files?: FileUncheckedCreateNestedManyWithoutProjectInput
     discussions?: DiscussionUncheckedCreateNestedManyWithoutProjectInput
     shares?: PublicShareUncheckedCreateNestedManyWithoutProjectInput
+    removalRequests?: MemberRemovalRequestUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutTagsInput = {
@@ -26984,6 +29509,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     archived?: BoolFieldUpdateOperationsInput | boolean
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     creator?: UserUpdateOneRequiredWithoutCreatedProjectsNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     tasks?: TaskUpdateManyWithoutProjectNestedInput
@@ -26991,6 +29518,7 @@ export namespace Prisma {
     files?: FileUpdateManyWithoutProjectNestedInput
     discussions?: DiscussionUpdateManyWithoutProjectNestedInput
     shares?: PublicShareUpdateManyWithoutProjectNestedInput
+    removalRequests?: MemberRemovalRequestUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutTagsInput = {
@@ -27004,12 +29532,15 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     archived?: BoolFieldUpdateOperationsInput | boolean
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     tasks?: TaskUncheckedUpdateManyWithoutProjectNestedInput
     comments?: CommentUncheckedUpdateManyWithoutProjectNestedInput
     files?: FileUncheckedUpdateManyWithoutProjectNestedInput
     discussions?: DiscussionUncheckedUpdateManyWithoutProjectNestedInput
     shares?: PublicShareUncheckedUpdateManyWithoutProjectNestedInput
+    removalRequests?: MemberRemovalRequestUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type TagUpsertWithoutProjectsInput = {
@@ -27171,6 +29702,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     archived?: boolean
+    approved?: boolean
+    approvedAt?: Date | string | null
     creator: UserCreateNestedOneWithoutCreatedProjectsInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     tasks?: TaskCreateNestedManyWithoutProjectInput
@@ -27178,6 +29711,7 @@ export namespace Prisma {
     files?: FileCreateNestedManyWithoutProjectInput
     discussions?: DiscussionCreateNestedManyWithoutProjectInput
     tags?: ProjectTagCreateNestedManyWithoutProjectInput
+    removalRequests?: MemberRemovalRequestCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutSharesInput = {
@@ -27191,12 +29725,15 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     archived?: boolean
+    approved?: boolean
+    approvedAt?: Date | string | null
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     tasks?: TaskUncheckedCreateNestedManyWithoutProjectInput
     comments?: CommentUncheckedCreateNestedManyWithoutProjectInput
     files?: FileUncheckedCreateNestedManyWithoutProjectInput
     discussions?: DiscussionUncheckedCreateNestedManyWithoutProjectInput
     tags?: ProjectTagUncheckedCreateNestedManyWithoutProjectInput
+    removalRequests?: MemberRemovalRequestUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutSharesInput = {
@@ -27224,6 +29761,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     archived?: BoolFieldUpdateOperationsInput | boolean
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     creator?: UserUpdateOneRequiredWithoutCreatedProjectsNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     tasks?: TaskUpdateManyWithoutProjectNestedInput
@@ -27231,6 +29770,7 @@ export namespace Prisma {
     files?: FileUpdateManyWithoutProjectNestedInput
     discussions?: DiscussionUpdateManyWithoutProjectNestedInput
     tags?: ProjectTagUpdateManyWithoutProjectNestedInput
+    removalRequests?: MemberRemovalRequestUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutSharesInput = {
@@ -27244,12 +29784,507 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     archived?: BoolFieldUpdateOperationsInput | boolean
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     tasks?: TaskUncheckedUpdateManyWithoutProjectNestedInput
     comments?: CommentUncheckedUpdateManyWithoutProjectNestedInput
     files?: FileUncheckedUpdateManyWithoutProjectNestedInput
     discussions?: DiscussionUncheckedUpdateManyWithoutProjectNestedInput
     tags?: ProjectTagUncheckedUpdateManyWithoutProjectNestedInput
+    removalRequests?: MemberRemovalRequestUncheckedUpdateManyWithoutProjectNestedInput
+  }
+
+  export type ProjectCreateWithoutRemovalRequestsInput = {
+    name: string
+    description?: string | null
+    startDate: Date | string
+    endDate?: Date | string | null
+    status?: $Enums.ProjectStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    archived?: boolean
+    approved?: boolean
+    approvedAt?: Date | string | null
+    creator: UserCreateNestedOneWithoutCreatedProjectsInput
+    members?: ProjectMemberCreateNestedManyWithoutProjectInput
+    tasks?: TaskCreateNestedManyWithoutProjectInput
+    comments?: CommentCreateNestedManyWithoutProjectInput
+    files?: FileCreateNestedManyWithoutProjectInput
+    discussions?: DiscussionCreateNestedManyWithoutProjectInput
+    tags?: ProjectTagCreateNestedManyWithoutProjectInput
+    shares?: PublicShareCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectUncheckedCreateWithoutRemovalRequestsInput = {
+    id?: number
+    name: string
+    description?: string | null
+    startDate: Date | string
+    endDate?: Date | string | null
+    status?: $Enums.ProjectStatus
+    createdBy: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    archived?: boolean
+    approved?: boolean
+    approvedAt?: Date | string | null
+    members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+    tasks?: TaskUncheckedCreateNestedManyWithoutProjectInput
+    comments?: CommentUncheckedCreateNestedManyWithoutProjectInput
+    files?: FileUncheckedCreateNestedManyWithoutProjectInput
+    discussions?: DiscussionUncheckedCreateNestedManyWithoutProjectInput
+    tags?: ProjectTagUncheckedCreateNestedManyWithoutProjectInput
+    shares?: PublicShareUncheckedCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectCreateOrConnectWithoutRemovalRequestsInput = {
+    where: ProjectWhereUniqueInput
+    create: XOR<ProjectCreateWithoutRemovalRequestsInput, ProjectUncheckedCreateWithoutRemovalRequestsInput>
+  }
+
+  export type UserCreateWithoutMemberRemovalRequestsAsTargetInput = {
+    fullName: string
+    username: string
+    email: string
+    passwordHash: string
+    profilePicture?: string | null
+    role?: $Enums.Role
+    isActive?: boolean
+    isApproved?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lastLogin?: Date | string | null
+    resetToken?: string | null
+    resetTokenExpiry?: Date | string | null
+    createdProjects?: ProjectCreateNestedManyWithoutCreatorInput
+    projectMembers?: ProjectMemberCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssigneeInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatorInput
+    comments?: CommentCreateNestedManyWithoutUserInput
+    files?: FileCreateNestedManyWithoutUploaderInput
+    passwordResets?: PasswordResetCreateNestedManyWithoutUserInput
+    activities?: ActivityLogCreateNestedManyWithoutUserInput
+    discussions?: DiscussionCreateNestedManyWithoutUserInput
+    replies?: ReplyCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestCreateNestedManyWithoutApproverInput
+  }
+
+  export type UserUncheckedCreateWithoutMemberRemovalRequestsAsTargetInput = {
+    id?: number
+    fullName: string
+    username: string
+    email: string
+    passwordHash: string
+    profilePicture?: string | null
+    role?: $Enums.Role
+    isActive?: boolean
+    isApproved?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lastLogin?: Date | string | null
+    resetToken?: string | null
+    resetTokenExpiry?: Date | string | null
+    createdProjects?: ProjectUncheckedCreateNestedManyWithoutCreatorInput
+    projectMembers?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssigneeInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatorInput
+    comments?: CommentUncheckedCreateNestedManyWithoutUserInput
+    files?: FileUncheckedCreateNestedManyWithoutUploaderInput
+    passwordResets?: PasswordResetUncheckedCreateNestedManyWithoutUserInput
+    activities?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
+    discussions?: DiscussionUncheckedCreateNestedManyWithoutUserInput
+    replies?: ReplyUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedCreateNestedManyWithoutRequesterInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedCreateNestedManyWithoutApproverInput
+  }
+
+  export type UserCreateOrConnectWithoutMemberRemovalRequestsAsTargetInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutMemberRemovalRequestsAsTargetInput, UserUncheckedCreateWithoutMemberRemovalRequestsAsTargetInput>
+  }
+
+  export type UserCreateWithoutMemberRemovalRequestsAsRequesterInput = {
+    fullName: string
+    username: string
+    email: string
+    passwordHash: string
+    profilePicture?: string | null
+    role?: $Enums.Role
+    isActive?: boolean
+    isApproved?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lastLogin?: Date | string | null
+    resetToken?: string | null
+    resetTokenExpiry?: Date | string | null
+    createdProjects?: ProjectCreateNestedManyWithoutCreatorInput
+    projectMembers?: ProjectMemberCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssigneeInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatorInput
+    comments?: CommentCreateNestedManyWithoutUserInput
+    files?: FileCreateNestedManyWithoutUploaderInput
+    passwordResets?: PasswordResetCreateNestedManyWithoutUserInput
+    activities?: ActivityLogCreateNestedManyWithoutUserInput
+    discussions?: DiscussionCreateNestedManyWithoutUserInput
+    replies?: ReplyCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestCreateNestedManyWithoutApproverInput
+  }
+
+  export type UserUncheckedCreateWithoutMemberRemovalRequestsAsRequesterInput = {
+    id?: number
+    fullName: string
+    username: string
+    email: string
+    passwordHash: string
+    profilePicture?: string | null
+    role?: $Enums.Role
+    isActive?: boolean
+    isApproved?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lastLogin?: Date | string | null
+    resetToken?: string | null
+    resetTokenExpiry?: Date | string | null
+    createdProjects?: ProjectUncheckedCreateNestedManyWithoutCreatorInput
+    projectMembers?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssigneeInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatorInput
+    comments?: CommentUncheckedCreateNestedManyWithoutUserInput
+    files?: FileUncheckedCreateNestedManyWithoutUploaderInput
+    passwordResets?: PasswordResetUncheckedCreateNestedManyWithoutUserInput
+    activities?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
+    discussions?: DiscussionUncheckedCreateNestedManyWithoutUserInput
+    replies?: ReplyUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedCreateNestedManyWithoutApproverInput
+  }
+
+  export type UserCreateOrConnectWithoutMemberRemovalRequestsAsRequesterInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutMemberRemovalRequestsAsRequesterInput, UserUncheckedCreateWithoutMemberRemovalRequestsAsRequesterInput>
+  }
+
+  export type UserCreateWithoutMemberRemovalRequestsAsApproverInput = {
+    fullName: string
+    username: string
+    email: string
+    passwordHash: string
+    profilePicture?: string | null
+    role?: $Enums.Role
+    isActive?: boolean
+    isApproved?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lastLogin?: Date | string | null
+    resetToken?: string | null
+    resetTokenExpiry?: Date | string | null
+    createdProjects?: ProjectCreateNestedManyWithoutCreatorInput
+    projectMembers?: ProjectMemberCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssigneeInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatorInput
+    comments?: CommentCreateNestedManyWithoutUserInput
+    files?: FileCreateNestedManyWithoutUploaderInput
+    passwordResets?: PasswordResetCreateNestedManyWithoutUserInput
+    activities?: ActivityLogCreateNestedManyWithoutUserInput
+    discussions?: DiscussionCreateNestedManyWithoutUserInput
+    replies?: ReplyCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestCreateNestedManyWithoutRequesterInput
+  }
+
+  export type UserUncheckedCreateWithoutMemberRemovalRequestsAsApproverInput = {
+    id?: number
+    fullName: string
+    username: string
+    email: string
+    passwordHash: string
+    profilePicture?: string | null
+    role?: $Enums.Role
+    isActive?: boolean
+    isApproved?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lastLogin?: Date | string | null
+    resetToken?: string | null
+    resetTokenExpiry?: Date | string | null
+    createdProjects?: ProjectUncheckedCreateNestedManyWithoutCreatorInput
+    projectMembers?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssigneeInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatorInput
+    comments?: CommentUncheckedCreateNestedManyWithoutUserInput
+    files?: FileUncheckedCreateNestedManyWithoutUploaderInput
+    passwordResets?: PasswordResetUncheckedCreateNestedManyWithoutUserInput
+    activities?: ActivityLogUncheckedCreateNestedManyWithoutUserInput
+    discussions?: DiscussionUncheckedCreateNestedManyWithoutUserInput
+    replies?: ReplyUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedCreateNestedManyWithoutUserInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedCreateNestedManyWithoutRequesterInput
+  }
+
+  export type UserCreateOrConnectWithoutMemberRemovalRequestsAsApproverInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutMemberRemovalRequestsAsApproverInput, UserUncheckedCreateWithoutMemberRemovalRequestsAsApproverInput>
+  }
+
+  export type ProjectUpsertWithoutRemovalRequestsInput = {
+    update: XOR<ProjectUpdateWithoutRemovalRequestsInput, ProjectUncheckedUpdateWithoutRemovalRequestsInput>
+    create: XOR<ProjectCreateWithoutRemovalRequestsInput, ProjectUncheckedCreateWithoutRemovalRequestsInput>
+    where?: ProjectWhereInput
+  }
+
+  export type ProjectUpdateToOneWithWhereWithoutRemovalRequestsInput = {
+    where?: ProjectWhereInput
+    data: XOR<ProjectUpdateWithoutRemovalRequestsInput, ProjectUncheckedUpdateWithoutRemovalRequestsInput>
+  }
+
+  export type ProjectUpdateWithoutRemovalRequestsInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    archived?: BoolFieldUpdateOperationsInput | boolean
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    creator?: UserUpdateOneRequiredWithoutCreatedProjectsNestedInput
+    members?: ProjectMemberUpdateManyWithoutProjectNestedInput
+    tasks?: TaskUpdateManyWithoutProjectNestedInput
+    comments?: CommentUpdateManyWithoutProjectNestedInput
+    files?: FileUpdateManyWithoutProjectNestedInput
+    discussions?: DiscussionUpdateManyWithoutProjectNestedInput
+    tags?: ProjectTagUpdateManyWithoutProjectNestedInput
+    shares?: PublicShareUpdateManyWithoutProjectNestedInput
+  }
+
+  export type ProjectUncheckedUpdateWithoutRemovalRequestsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    createdBy?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    archived?: BoolFieldUpdateOperationsInput | boolean
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+    tasks?: TaskUncheckedUpdateManyWithoutProjectNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutProjectNestedInput
+    files?: FileUncheckedUpdateManyWithoutProjectNestedInput
+    discussions?: DiscussionUncheckedUpdateManyWithoutProjectNestedInput
+    tags?: ProjectTagUncheckedUpdateManyWithoutProjectNestedInput
+    shares?: PublicShareUncheckedUpdateManyWithoutProjectNestedInput
+  }
+
+  export type UserUpsertWithoutMemberRemovalRequestsAsTargetInput = {
+    update: XOR<UserUpdateWithoutMemberRemovalRequestsAsTargetInput, UserUncheckedUpdateWithoutMemberRemovalRequestsAsTargetInput>
+    create: XOR<UserCreateWithoutMemberRemovalRequestsAsTargetInput, UserUncheckedCreateWithoutMemberRemovalRequestsAsTargetInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutMemberRemovalRequestsAsTargetInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutMemberRemovalRequestsAsTargetInput, UserUncheckedUpdateWithoutMemberRemovalRequestsAsTargetInput>
+  }
+
+  export type UserUpdateWithoutMemberRemovalRequestsAsTargetInput = {
+    fullName?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdProjects?: ProjectUpdateManyWithoutCreatorNestedInput
+    projectMembers?: ProjectMemberUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssigneeNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatorNestedInput
+    comments?: CommentUpdateManyWithoutUserNestedInput
+    files?: FileUpdateManyWithoutUploaderNestedInput
+    passwordResets?: PasswordResetUpdateManyWithoutUserNestedInput
+    activities?: ActivityLogUpdateManyWithoutUserNestedInput
+    discussions?: DiscussionUpdateManyWithoutUserNestedInput
+    replies?: ReplyUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUpdateManyWithoutApproverNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutMemberRemovalRequestsAsTargetInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    fullName?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdProjects?: ProjectUncheckedUpdateManyWithoutCreatorNestedInput
+    projectMembers?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssigneeNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatorNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
+    files?: FileUncheckedUpdateManyWithoutUploaderNestedInput
+    passwordResets?: PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+    activities?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+    discussions?: DiscussionUncheckedUpdateManyWithoutUserNestedInput
+    replies?: ReplyUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedUpdateManyWithoutRequesterNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedUpdateManyWithoutApproverNestedInput
+  }
+
+  export type UserUpsertWithoutMemberRemovalRequestsAsRequesterInput = {
+    update: XOR<UserUpdateWithoutMemberRemovalRequestsAsRequesterInput, UserUncheckedUpdateWithoutMemberRemovalRequestsAsRequesterInput>
+    create: XOR<UserCreateWithoutMemberRemovalRequestsAsRequesterInput, UserUncheckedCreateWithoutMemberRemovalRequestsAsRequesterInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutMemberRemovalRequestsAsRequesterInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutMemberRemovalRequestsAsRequesterInput, UserUncheckedUpdateWithoutMemberRemovalRequestsAsRequesterInput>
+  }
+
+  export type UserUpdateWithoutMemberRemovalRequestsAsRequesterInput = {
+    fullName?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdProjects?: ProjectUpdateManyWithoutCreatorNestedInput
+    projectMembers?: ProjectMemberUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssigneeNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatorNestedInput
+    comments?: CommentUpdateManyWithoutUserNestedInput
+    files?: FileUpdateManyWithoutUploaderNestedInput
+    passwordResets?: PasswordResetUpdateManyWithoutUserNestedInput
+    activities?: ActivityLogUpdateManyWithoutUserNestedInput
+    discussions?: DiscussionUpdateManyWithoutUserNestedInput
+    replies?: ReplyUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUpdateManyWithoutApproverNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutMemberRemovalRequestsAsRequesterInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    fullName?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdProjects?: ProjectUncheckedUpdateManyWithoutCreatorNestedInput
+    projectMembers?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssigneeNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatorNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
+    files?: FileUncheckedUpdateManyWithoutUploaderNestedInput
+    passwordResets?: PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+    activities?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+    discussions?: DiscussionUncheckedUpdateManyWithoutUserNestedInput
+    replies?: ReplyUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsApprover?: MemberRemovalRequestUncheckedUpdateManyWithoutApproverNestedInput
+  }
+
+  export type UserUpsertWithoutMemberRemovalRequestsAsApproverInput = {
+    update: XOR<UserUpdateWithoutMemberRemovalRequestsAsApproverInput, UserUncheckedUpdateWithoutMemberRemovalRequestsAsApproverInput>
+    create: XOR<UserCreateWithoutMemberRemovalRequestsAsApproverInput, UserUncheckedCreateWithoutMemberRemovalRequestsAsApproverInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutMemberRemovalRequestsAsApproverInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutMemberRemovalRequestsAsApproverInput, UserUncheckedUpdateWithoutMemberRemovalRequestsAsApproverInput>
+  }
+
+  export type UserUpdateWithoutMemberRemovalRequestsAsApproverInput = {
+    fullName?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdProjects?: ProjectUpdateManyWithoutCreatorNestedInput
+    projectMembers?: ProjectMemberUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssigneeNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatorNestedInput
+    comments?: CommentUpdateManyWithoutUserNestedInput
+    files?: FileUpdateManyWithoutUploaderNestedInput
+    passwordResets?: PasswordResetUpdateManyWithoutUserNestedInput
+    activities?: ActivityLogUpdateManyWithoutUserNestedInput
+    discussions?: DiscussionUpdateManyWithoutUserNestedInput
+    replies?: ReplyUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUpdateManyWithoutRequesterNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutMemberRemovalRequestsAsApproverInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    fullName?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdProjects?: ProjectUncheckedUpdateManyWithoutCreatorNestedInput
+    projectMembers?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssigneeNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatorNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
+    files?: FileUncheckedUpdateManyWithoutUploaderNestedInput
+    passwordResets?: PasswordResetUncheckedUpdateManyWithoutUserNestedInput
+    activities?: ActivityLogUncheckedUpdateManyWithoutUserNestedInput
+    discussions?: DiscussionUncheckedUpdateManyWithoutUserNestedInput
+    replies?: ReplyUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsTarget?: MemberRemovalRequestUncheckedUpdateManyWithoutUserNestedInput
+    memberRemovalRequestsAsRequester?: MemberRemovalRequestUncheckedUpdateManyWithoutRequesterNestedInput
   }
 
   export type ProjectCreateManyCreatorInput = {
@@ -27262,6 +30297,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     archived?: boolean
+    approved?: boolean
+    approvedAt?: Date | string | null
   }
 
   export type ProjectMemberCreateManyUserInput = {
@@ -27350,6 +30387,39 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type MemberRemovalRequestCreateManyUserInput = {
+    id?: number
+    projectId: number
+    requestedBy: number
+    reason: string
+    status?: $Enums.RequestStatus
+    approvedBy?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MemberRemovalRequestCreateManyRequesterInput = {
+    id?: number
+    projectId: number
+    userId: number
+    reason: string
+    status?: $Enums.RequestStatus
+    approvedBy?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MemberRemovalRequestCreateManyApproverInput = {
+    id?: number
+    projectId: number
+    userId: number
+    requestedBy: number
+    reason: string
+    status?: $Enums.RequestStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type ProjectUpdateWithoutCreatorInput = {
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27359,6 +30429,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     archived?: BoolFieldUpdateOperationsInput | boolean
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     tasks?: TaskUpdateManyWithoutProjectNestedInput
     comments?: CommentUpdateManyWithoutProjectNestedInput
@@ -27366,6 +30438,7 @@ export namespace Prisma {
     discussions?: DiscussionUpdateManyWithoutProjectNestedInput
     tags?: ProjectTagUpdateManyWithoutProjectNestedInput
     shares?: PublicShareUpdateManyWithoutProjectNestedInput
+    removalRequests?: MemberRemovalRequestUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutCreatorInput = {
@@ -27378,6 +30451,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     archived?: BoolFieldUpdateOperationsInput | boolean
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     tasks?: TaskUncheckedUpdateManyWithoutProjectNestedInput
     comments?: CommentUncheckedUpdateManyWithoutProjectNestedInput
@@ -27385,6 +30460,7 @@ export namespace Prisma {
     discussions?: DiscussionUncheckedUpdateManyWithoutProjectNestedInput
     tags?: ProjectTagUncheckedUpdateManyWithoutProjectNestedInput
     shares?: PublicShareUncheckedUpdateManyWithoutProjectNestedInput
+    removalRequests?: MemberRemovalRequestUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateManyWithoutCreatorInput = {
@@ -27397,6 +30473,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     archived?: BoolFieldUpdateOperationsInput | boolean
+    approved?: BoolFieldUpdateOperationsInput | boolean
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ProjectMemberUpdateWithoutUserInput = {
@@ -27663,6 +30741,102 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type MemberRemovalRequestUpdateWithoutUserInput = {
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutRemovalRequestsNestedInput
+    requester?: UserUpdateOneRequiredWithoutMemberRemovalRequestsAsRequesterNestedInput
+    approver?: UserUpdateOneWithoutMemberRemovalRequestsAsApproverNestedInput
+  }
+
+  export type MemberRemovalRequestUncheckedUpdateWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    projectId?: IntFieldUpdateOperationsInput | number
+    requestedBy?: IntFieldUpdateOperationsInput | number
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    approvedBy?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MemberRemovalRequestUncheckedUpdateManyWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    projectId?: IntFieldUpdateOperationsInput | number
+    requestedBy?: IntFieldUpdateOperationsInput | number
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    approvedBy?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MemberRemovalRequestUpdateWithoutRequesterInput = {
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutRemovalRequestsNestedInput
+    user?: UserUpdateOneRequiredWithoutMemberRemovalRequestsAsTargetNestedInput
+    approver?: UserUpdateOneWithoutMemberRemovalRequestsAsApproverNestedInput
+  }
+
+  export type MemberRemovalRequestUncheckedUpdateWithoutRequesterInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    projectId?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    approvedBy?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MemberRemovalRequestUncheckedUpdateManyWithoutRequesterInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    projectId?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    approvedBy?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MemberRemovalRequestUpdateWithoutApproverInput = {
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutRemovalRequestsNestedInput
+    user?: UserUpdateOneRequiredWithoutMemberRemovalRequestsAsTargetNestedInput
+    requester?: UserUpdateOneRequiredWithoutMemberRemovalRequestsAsRequesterNestedInput
+  }
+
+  export type MemberRemovalRequestUncheckedUpdateWithoutApproverInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    projectId?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    requestedBy?: IntFieldUpdateOperationsInput | number
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MemberRemovalRequestUncheckedUpdateManyWithoutApproverInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    projectId?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    requestedBy?: IntFieldUpdateOperationsInput | number
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ProjectMemberCreateManyProjectInput = {
     userId: number
     joinedAt?: Date | string
@@ -27719,6 +30893,17 @@ export namespace Prisma {
     token: string
     expiresAt?: Date | string | null
     createdAt?: Date | string
+  }
+
+  export type MemberRemovalRequestCreateManyProjectInput = {
+    id?: number
+    userId: number
+    requestedBy: number
+    reason: string
+    status?: $Enums.RequestStatus
+    approvedBy?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type ProjectMemberUpdateWithoutProjectInput = {
@@ -27896,6 +31081,38 @@ export namespace Prisma {
     token?: StringFieldUpdateOperationsInput | string
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MemberRemovalRequestUpdateWithoutProjectInput = {
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutMemberRemovalRequestsAsTargetNestedInput
+    requester?: UserUpdateOneRequiredWithoutMemberRemovalRequestsAsRequesterNestedInput
+    approver?: UserUpdateOneWithoutMemberRemovalRequestsAsApproverNestedInput
+  }
+
+  export type MemberRemovalRequestUncheckedUpdateWithoutProjectInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    requestedBy?: IntFieldUpdateOperationsInput | number
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    approvedBy?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MemberRemovalRequestUncheckedUpdateManyWithoutProjectInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    requestedBy?: IntFieldUpdateOperationsInput | number
+    reason?: StringFieldUpdateOperationsInput | string
+    status?: EnumRequestStatusFieldUpdateOperationsInput | $Enums.RequestStatus
+    approvedBy?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CommentCreateManyTaskInput = {

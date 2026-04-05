@@ -130,6 +130,7 @@ exports.Prisma.UserScalarFieldEnum = {
   profilePicture: 'profilePicture',
   role: 'role',
   isActive: 'isActive',
+  isApproved: 'isApproved',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   lastLogin: 'lastLogin',
@@ -147,7 +148,9 @@ exports.Prisma.ProjectScalarFieldEnum = {
   createdBy: 'createdBy',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  archived: 'archived'
+  archived: 'archived',
+  approved: 'approved',
+  approvedAt: 'approvedAt'
 };
 
 exports.Prisma.ProjectMemberScalarFieldEnum = {
@@ -256,6 +259,18 @@ exports.Prisma.PublicShareScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.MemberRemovalRequestScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  userId: 'userId',
+  requestedBy: 'requestedBy',
+  reason: 'reason',
+  status: 'status',
+  approvedBy: 'approvedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -306,6 +321,12 @@ exports.TaskStatus = exports.$Enums.TaskStatus = {
   overdue: 'overdue'
 };
 
+exports.RequestStatus = exports.$Enums.RequestStatus = {
+  pending: 'pending',
+  approved: 'approved',
+  rejected: 'rejected'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Project: 'Project',
@@ -320,7 +341,8 @@ exports.Prisma.ModelName = {
   Tag: 'Tag',
   ProjectTag: 'ProjectTag',
   TaskTag: 'TaskTag',
-  PublicShare: 'PublicShare'
+  PublicShare: 'PublicShare',
+  MemberRemovalRequest: 'MemberRemovalRequest'
 };
 
 /**
