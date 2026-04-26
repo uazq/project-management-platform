@@ -8,12 +8,6 @@
   isActive: boolean;
   createdAt: string;
 }
-export interface Tag {
-  id: number;
-  name: string;
-  color?: string;
-  createdAt?: string;
-}
 
 export interface LoginCredentials {
   username: string;
@@ -32,6 +26,13 @@ export interface AuthResponse {
   user: User;
 }
 
+export interface Tag {
+  id: number;
+  name: string;
+  color?: string;
+  createdAt?: string;
+}
+
 export interface Project {
   id: number;
   name: string;
@@ -44,8 +45,8 @@ export interface Project {
   members?: ProjectMember[];
   tasks?: Task[];
   _count?: { tasks: number; members: number };
-  archived?: boolean;   // ✅ إضافة
-  tags?: Tag[];         // ✅ إضافة
+  archived?: boolean;
+  tags?: Tag[];
 }
 
 export interface ProjectMember {
@@ -70,11 +71,12 @@ export interface Task {
   createdAt: string;
   comments?: Comment[];
   files?: File[];
-  tags?: Tag[];        // ✅ إضافة
-  project?: {          // ✅ إضافة (يستخدم في MyTasks لعرض اسم المشروع)
+  tags?: Tag[];
+  project?: {
     id: number;
     name: string;
-  }
+  };
+}
 
 export interface Comment {
   id: number;
@@ -97,4 +99,44 @@ export interface File {
   projectId?: number;
   taskId?: number;
   uploadedAt: string;
+}
+
+export interface Discussion {
+  id: number;
+  title: string;
+  content: string;
+  userId: number;
+  user: User;
+  projectId: number;
+  createdAt: string;
+  replies: Reply[];
+}
+
+export interface Reply {
+  id: number;
+  content: string;
+  userId: number;
+  user: User;
+  discussionId: number;
+  createdAt: string;
+}
+
+export interface Activity {
+  id: number;
+  action: string;
+  entityType: string;
+  details: any;
+  createdAt: string;
+  user: User;
+  projectId?: number;
+}
+
+export interface Notification {
+  id: string;
+  type: string;
+  message: string;
+  projectId?: number;
+  taskId?: number;
+  read: boolean;
+  createdAt: string;
 }
