@@ -1,134 +1,186 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAuthStore } from '../store/authStore';
-import api from '../services/api';
-import socket from '../services/socket';
-import { FiBell, FiCheckCircle, FiXCircle } from 'react-icons/fi';
+import { useNotificationStore } from '../store/notificationStore';
+import { Notification } from '../services/notificationService';
+import { FiBell, FiCheckCircle, FiTrash2, FiRefreshCw } from 'react-icons/fi';
 import Skeleton from '../components/Skeleton';
-
-interface Notification {
-  id: string;
-  type: string;
-  message: string;
-  projectId?: number;
-  timestamp: Date;
-  read: boolean;
-}
 
 const Notifications = () => {
   const { t } = useTranslation();
-  const { user } = useAuthStore();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    notifications,
+    unreadCount,
+    loading,
+    hasMore,
+    loadNotifications,
+    loadUnreadCount,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+  } = useNotificationStore();
 
+  const [filter, setFilter] = useState<'all' | 'unread'>('all');
+
+  // تحميل الإشعارات عند تغيير الفلتر أو أول مرة
   useEffect(() => {
-    // تحميل من localStorage
-    const saved = localStorage.getItem('notifications');
-    if (saved) setNotifications(JSON.parse(saved));
-    setLoading(false);
+    loadNotifications(true);
+    loadUnreadCount();
+  }, [filter, loadNotifications, loadUnreadCount]);
 
-    // الاستماع للإشعارات الجديدة
-    const handleNew = (data: any, type: string, defaultMsg: string) => {
-      const notif: Notification = {
-        id: `${Date.now()}-${Math.random()}`,
-        type,
-        message: data.message || defaultMsg,
-        projectId: data.projectId,
-        timestamp: new Date(),
-        read: false,
-      };
-      setNotifications(prev => {
-        const updated = [notif, ...prev].slice(0, 50);
-        localStorage.setItem('notifications', JSON.stringify(updated));
-        return updated;
-      });
-    };
-
-    socket.on('taskCreated', (d: any) => handleNew(d, 'taskCreated', '📌 ' + t('notification.taskCreated')));
-    socket.on('taskUpdated', (d: any) => handleNew(d, 'taskUpdated', '✏️ ' + t('notification.taskUpdated')));
-    socket.on('taskStatusChanged', (d: any) => handleNew(d, 'taskStatusChanged', `✅ ${t('notification.taskStatusChanged')} ${d.title || ''}`));
-    socket.on('taskDeleted', (d: any) => handleNew(d, 'taskDeleted', '🗑️ ' + t('notification.taskDeleted')));
-    socket.on('commentAdded', (d: any) => handleNew(d, 'commentAdded', '💬 ' + t('notification.commentAdded')));
-    socket.on('memberAdded', (d: any) => handleNew(d, 'memberAdded', '👤 ' + t('notification.memberAdded')));
-    socket.on('fileUploaded', (d: any) => handleNew(d, 'fileUploaded', '📎 ' + t('notification.fileUploaded')));
-
-    return () => {
-      socket.off('taskCreated');
-      socket.off('taskUpdated');
-      socket.off('taskStatusChanged');
-      socket.off('taskDeleted');
-      socket.off('commentAdded');
-      socket.off('memberAdded');
-      socket.off('fileUploaded');
-    };
-  }, [t]);
-
-  const markAllRead = () => {
-    setNotifications(prev => {
-      const updated = prev.map(n => ({ ...n, read: true }));
-      localStorage.setItem('notifications', JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  const clearAll = () => {
-    if (confirm(t('common.confirmDelete'))) {
-      setNotifications([]);
-      localStorage.removeItem('notifications');
+  // تحميل المزيد عند التمرير
+  const handleLoadMore = () => {
+    if (!loading && hasMore) {
+      loadNotifications();
     }
   };
 
-  const markRead = (id: string) => {
-    setNotifications(prev => {
-      const updated = prev.map(n => n.id === id ? { ...n, read: true } : n);
-      localStorage.setItem('notifications', JSON.stringify(updated));
-      return updated;
-    });
+  const handleMarkRead = async (id: number) => {
+    await markAsRead(id);
+    if (filter === 'unread') {
+      // إذا كنا في وضع "غير مقروءة فقط"، نعيد تحميل القائمة
+      loadNotifications(true);
+    }
+    loadUnreadCount();
   };
 
-  if (loading) return <Skeleton className="h-64 w-full rounded-xl" />;
+  const handleMarkAllRead = async () => {
+    await markAllAsRead();
+    if (filter === 'unread') {
+      loadNotifications(true);
+    }
+    loadUnreadCount();
+  };
+
+  const handleDelete = async (id: number) => {
+    if (confirm(t('common.confirmDelete'))) {
+      await deleteNotification(id);
+      loadUnreadCount();
+    }
+  };
+
+  const getTypeIcon = (type: string) => {
+    if (type.includes('task')) return '📌';
+    if (type.includes('comment')) return '💬';
+    if (type.includes('file')) return '📎';
+    if (type.includes('member')) return '👤';
+    if (type.includes('project')) return '📁';
+    return '🔔';
+  };
+
+  // تصفية الإشعارات حسب الاختيار (لأن الـ API يعيد الكل، نقوم بالتصفية المحلية)
+  const displayedNotifications = filter === 'unread' 
+    ? notifications.filter(n => !n.isRead)
+    : notifications;
+
+  if (loading && notifications.length === 0) {
+    return <Skeleton className="h-64 w-full rounded-xl" />;
+  }
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('notification.title')}</h1>
+      <div className="flex justify-between items-center flex-wrap gap-2">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          {t('notification.title')}
+          {unreadCount > 0 && (
+            <span className="mr-2 text-sm bg-red-500 text-white px-2 py-0.5 rounded-full">
+              {unreadCount} {t('notification.unread')}
+            </span>
+          )}
+        </h1>
         <div className="flex gap-2">
-          <button onClick={markAllRead} className="btn-primary inline-flex items-center gap-1 text-sm">
+          <div className="flex gap-1 bg-gray-100 dark:bg-dark-100 rounded-lg p-1">
+            <button
+              onClick={() => setFilter('all')}
+              className={`px-3 py-1 rounded-md text-sm transition ${filter === 'all' ? 'bg-white dark:bg-dark-200 shadow' : ''}`}
+            >
+              {t('common.all')}
+            </button>
+            <button
+              onClick={() => setFilter('unread')}
+              className={`px-3 py-1 rounded-md text-sm transition ${filter === 'unread' ? 'bg-white dark:bg-dark-200 shadow' : ''}`}
+            >
+              {t('notification.unread')}
+            </button>
+          </div>
+          <button
+            onClick={handleMarkAllRead}
+            className="btn-primary inline-flex items-center gap-1 text-sm"
+            disabled={unreadCount === 0}
+          >
             <FiCheckCircle size={16} /> {t('notification.markAllRead')}
-          </button>
-          <button onClick={clearAll} className="btn-secondary inline-flex items-center gap-1 text-sm">
-            <FiXCircle size={16} /> {t('common.clear')}
           </button>
         </div>
       </div>
 
       <div className="card">
-        {notifications.length === 0 ? (
-          <p className="text-center text-gray-500 py-8">{t('notification.noNotifications')}</p>
+        {displayedNotifications.length === 0 ? (
+          <div className="text-center py-12">
+            <FiBell className="mx-auto text-4xl text-gray-400 mb-2" />
+            <p className="text-gray-500">{t('notification.noNotifications')}</p>
+          </div>
         ) : (
           <div className="space-y-3">
-            {notifications.map(notif => (
+            {displayedNotifications.map((notif) => (
               <div
                 key={notif.id}
-                className={`p-4 rounded-xl border cursor-pointer hover:shadow-md transition ${
-                  notif.read
+                className={`p-4 rounded-xl border transition ${
+                  notif.isRead
                     ? 'bg-white dark:bg-dark-200 border-gray-200 dark:border-dark-100'
                     : 'bg-primary-50 dark:bg-primary-900/20 border-primary-200 dark:border-primary-800'
                 }`}
-                onClick={() => {
-                  markRead(notif.id);
-                  if (notif.projectId) window.location.href = `/projects/${notif.projectId}`;
-                }}
               >
-                <p className={`text-sm ${!notif.read && 'font-semibold text-gray-900 dark:text-white'}`}>
-                  {notif.message}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">
-                  {new Date(notif.timestamp).toLocaleString()}
-                </p>
+                <div className="flex justify-between items-start gap-3">
+                  <div
+                    className="flex-1 cursor-pointer"
+                    onClick={() => {
+                      if (!notif.isRead) handleMarkRead(notif.id);
+                      if (notif.projectId) window.location.href = `/projects/${notif.projectId}`;
+                    }}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-lg">{getTypeIcon(notif.type)}</span>
+                      <p className={`text-sm ${!notif.isRead && 'font-semibold text-gray-900 dark:text-white'}`}>
+                        {notif.message}
+                      </p>
+                    </div>
+                    <p className="text-xs text-gray-500">
+                      {new Date(notif.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+                  <div className="flex gap-1">
+                    {!notif.isRead && (
+                      <button
+                        onClick={() => handleMarkRead(notif.id)}
+                        className="p-1 text-blue-500 hover:bg-blue-100 rounded"
+                        title={t('notification.markRead')}
+                      >
+                        <FiCheckCircle size={16} />
+                      </button>
+                    )}
+                    <button
+                      onClick={() => handleDelete(notif.id)}
+                      className="p-1 text-red-500 hover:bg-red-100 rounded"
+                      title={t('common.delete')}
+                    >
+                      <FiTrash2 size={16} />
+                    </button>
+                  </div>
+                </div>
               </div>
             ))}
+            {hasMore && (
+              <div className="text-center pt-4">
+                <button
+                  onClick={handleLoadMore}
+                  disabled={loading}
+                  className="text-primary-600 hover:underline text-sm flex items-center gap-1 mx-auto"
+                >
+                  {loading ? t('common.loading') : t('common.loadMore')}
+                  {!loading && <FiRefreshCw size={14} />}
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

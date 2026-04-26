@@ -53,7 +53,9 @@
     "back": "Back",
     "next": "Next",
     "getStarted": "Get Started",
-    "close": "Close"
+    "close": "Close",
+    "loadMore": "Load More",
+    "create": "Create"
   },
   "dashboard": {
     "welcome": "Welcome, {{name}}",
@@ -65,7 +67,9 @@
     "projectsDistribution": "Projects Distribution",
     "memberPerformance": "Member Performance",
     "progress": "Progress",
-    "percentage": "Percentage"
+    "percentage": "Percentage",
+    "totalTasks": "Total Tasks",
+    "completedTasks": "Completed Tasks"
   },
   "project": {
     "title": "Projects",
@@ -92,6 +96,16 @@
     "createError": "Failed to create project",
     "updateSuccess": "Project updated successfully",
     "updateError": "Failed to update project"
+  },
+  "projects": {
+    "title": "Projects",
+    "newProject": "New Project",
+    "tasksCount": "Tasks: {{count}}",
+    "membersCount": "Members: {{count}}",
+    "noProjects": "No projects match your search",
+    "fetchError": "Failed to load projects",
+    "deleteSuccess": "Project deleted successfully",
+    "deleteError": "Failed to delete project"
   },
   "task": {
     "title": "Tasks",
@@ -122,7 +136,12 @@
     "updatedNotification": "✏️ Task updated",
     "statusChangedNotification": "✅ Status changed for: {{title}}",
     "deletedNotification": "🗑️ Task deleted",
-     "all": "All"
+    "all": "All",
+    "notStarted": "Not Started",
+    "inProgress": "In Progress",
+    "completed": "Completed",
+    "overdue": "Overdue",
+    "fetchError": "Failed to load tasks"
   },
   "member": {
     "title": "Team Members",
@@ -139,7 +158,18 @@
     "addSuccess": "Member added",
     "addError": "Failed to add member",
     "removeSuccess": "Member removed",
-    "removeError": "Failed to remove member"
+    "removeError": "Failed to remove member",
+    "roleUpdateSuccess": "Member role updated",
+    "roleUpdateError": "Failed to update role",
+    "joined": "Joined",
+    "projectsInvolved": "Projects Involved",
+    "assignedTasks": "Assigned Tasks",
+    "noProjects": "No projects",
+    "noTasks": "No tasks",
+    "totalTasks": "Total Tasks",
+    "completedTasks": "Completed Tasks",
+    "overdueTasks": "Overdue Tasks",
+    "completionRate": "Completion Rate"
   },
   "file": {
     "title": "Files",
@@ -153,7 +183,8 @@
     "dragAndDrop": "Drag and drop files here or click to select",
     "dragActive": "Drop files here...",
     "acceptedFormats": "Images, PDF, Word, Excel (Max 10 files)",
-    "recent": "Recent Files"
+    "recent": "Recent Files",
+    "all": "All Files"
   },
   "comment": {
     "title": "Comments",
@@ -176,7 +207,11 @@
     "taskDeleted": "Task deleted",
     "commentAdded": "New comment",
     "memberAdded": "New member",
-    "fileUploaded": "New file"
+    "fileUploaded": "New file",
+    "projectApproved": "Project approved",
+    "userApproved": "Account approved",
+    "unread": "Unread",
+    "markRead": "Mark as read"
   },
   "activity": {
     "title": "Activity Log",
@@ -192,6 +227,8 @@
     "addedComment": "commented: \"{{content}}\"",
     "uploadedFile": "uploaded file \"{{name}}\"",
     "addedMember": "added a member",
+    "updatedMember": "updated a member",
+    "deletedMember": "deleted a member",
     "removedMember": "removed a member"
   },
   "report": {
@@ -222,7 +259,8 @@
     "createSuccess": "Discussion created",
     "createError": "Failed to create discussion",
     "replyError": "Failed to add reply",
-    "deleteSuccess": "Deleted"
+    "deleteSuccess": "Deleted",
+    "deleteError": "Failed to delete"
   },
   "profile": {
     "title": "Profile",
@@ -244,7 +282,9 @@
     "passwordError": "Failed to change password",
     "pictureSuccess": "Profile picture updated",
     "pictureError": "Failed to upload picture",
-    "changePicture": "Change picture"
+    "changePicture": "Change picture",
+    "inactiveMessage": "Your account has been deactivated. Please contact admin.",
+    "inactiveWarning": "Your account is deactivated, you cannot edit information."
   },
   "users": {
     "title": "User Management",
@@ -257,15 +297,20 @@
     "roleError": "Failed to change role",
     "noUsers": "No users",
     "totalUsers": "Total Users",
-  "activeUsers": "Active",
-  "inactiveUsers": "Inactive",
-  "admins": "Admins",
-  "export": "Export CSV",
-  "exportSuccess": "Users list exported",
-  "sortBy": "Sort by",
-  "sortName": "Name",
-  "sortEmail": "Email",
-  "sortDate": "Join Date"
+    "activeUsers": "Active",
+    "inactiveUsers": "Inactive",
+    "admins": "Admins",
+    "export": "Export CSV",
+    "exportSuccess": "Users list exported",
+    "sortBy": "Sort by",
+    "sortName": "Name",
+    "sortEmail": "Email",
+    "sortDate": "Join Date"
+  },
+  "myTasks": {
+    "title": "My Tasks",
+    "noTasks": "No tasks assigned to you",
+    "project": "Project"
   },
   "login": {
     "subtitle": "Sign in to continue",
@@ -394,45 +439,46 @@
     "lastChecked": "Last checked",
     "refresh": "Refresh"
   },
-  "myTasks": {
-  "title": "My Tasks",
-  "noTasks": "No tasks assigned to you",
-  "project": "Project"
-},
-
   "admin": {
-  "approvals": "Approval Requests",
-  "pendingProjects": "Pending Projects",
-  "pendingUsers": "Pending Users",
-  "noPendingProjects": "No pending projects",
-  "noPendingUsers": "No pending users",
-  "createdBy": "Created by",
-  "approve": "Approve",
-  "projectApproved": "Project approved",
-  "userApproved": "User approved",
-  "approveError": "Approval failed",
-  "fetchError": "Failed to load data"
-},
-"removal": {
-  "title": "Member Removal Requests",
-  "pending": "Pending",
-  "approved": "Approved",
-  "rejected": "Rejected",
-  "reason": "Reason",
-  "requestedBy": "Requested by",
-  "approve": "Approve",
-  "reject": "Reject",
-  "approvedSuccess": "Removal request approved",
-  "rejectedSuccess": "Removal request rejected",
-  "fetchError": "Failed to load requests",
-  "actionError": "Failed to process request",
-  "noRequests": "No requests",
+    "approvals": "Approval Requests",
+    "pendingProjects": "Pending Projects",
+    "pendingUsers": "Pending Users",
+    "noPendingProjects": "No pending projects",
+    "noPendingUsers": "No pending users",
+    "createdBy": "Created by",
+    "approve": "Approve",
+    "projectApproved": "Project approved",
+    "userApproved": "User approved",
+    "approveError": "Approval failed",
+    "fetchError": "Failed to load data",
+    "reject": "Reject"
+  },
+  "removal": {
+    "title": "Member Removal Requests",
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "reason": "Reason",
+    "requestedBy": "Requested by",
+    "approve": "Approve",
+    "reject": "Reject",
+    "approvedSuccess": "Removal request approved",
+    "rejectedSuccess": "Removal request rejected",
+    "fetchError": "Failed to load requests",
+    "actionError": "Failed to process request",
+    "noRequests": "No requests",
     "request": "Request Removal",
-  "requestTitle": "Request Member Removal",
-  "confirmRemove": "Are you sure you want to request removal of {{name}}?",
-  "reasonPlaceholder": "Enter reason...",
-  "sendRequest": "Send Request",
-  "requestSent": "Removal request sent to admin",
-  "requestError": "Failed to send request"
-}
+    "requestTitle": "Request Member Removal",
+    "confirmRemove": "Are you sure you want to request removal of {{name}}?",
+    "reasonPlaceholder": "Enter reason...",
+    "sendRequest": "Send Request",
+    "requestSent": "Removal request sent to admin",
+    "requestError": "Failed to send request"
+  },
+  "verifyEmail": {
+    "success": "Email verified successfully",
+    "successMessage": "Your email has been verified successfully. You can now log in.",
+    "error": "Email verification failed",
+    "errorMessage": "Invalid or expired link."
+  }
 }

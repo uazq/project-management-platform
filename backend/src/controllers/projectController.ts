@@ -2,6 +2,7 @@ import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
 import prisma from '../lib/prisma';
 import { logActivity } from '../services/activityLog';
+import { notifyUser, notifyProjectMembers } from '../services/notificationService';
 
 // ==================== دوال المشاريع الأساسية ====================
 
@@ -9,6 +10,10 @@ export const createProject = async (req: AuthRequest, res: Response) => {
   try {
     const { name, description, startDate, endDate, status } = req.body;
     const createdBy = req.user!.userId;
+    const userRole = req.user!.role;
+
+    // ✅ الموافقة التلقائية فقط للأدمن (أما مدير المشروع فتحتاج موافقة الأدمن)
+    const isAutoApproved = userRole === 'admin';
 
     const project = await prisma.project.create({
       data: {
@@ -18,7 +23,7 @@ export const createProject = async (req: AuthRequest, res: Response) => {
         endDate: endDate ? new Date(endDate) : null,
         status,
         createdBy,
-        approved: false,
+        approved: isAutoApproved,
         members: { create: { userId: createdBy } },
       },
       include: { members: true },
@@ -50,6 +55,7 @@ export const getProjects = async (req: AuthRequest, res: Response) => {
 
     if (userRole !== 'admin') {
       whereClause.members = { some: { userId } };
+      // ✅ غير الأدمن (مدير المشروع أو العضو) يرى فقط المشاريع الموافق عليها
       whereClause.approved = true;
     }
 
@@ -79,6 +85,7 @@ export const getProjectById = async (req: AuthRequest, res: Response) => {
     if (isNaN(projectId)) return res.status(400).json({ message: 'Invalid project ID' });
 
     const userId = req.user!.userId;
+    const userRole = req.user!.role;
 
     const project = await prisma.project.findUnique({
       where: { id: projectId },
@@ -101,7 +108,7 @@ export const getProjectById = async (req: AuthRequest, res: Response) => {
     if (!project) return res.status(404).json({ message: 'Project not found' });
 
     const isMember = project.members.some(m => m.userId === userId);
-    if (req.user!.role !== 'admin' && !isMember) {
+    if (userRole !== 'admin' && !isMember) {
       return res.status(403).json({ message: 'Access denied' });
     }
 
@@ -197,19 +204,13 @@ export const addMember = async (req: AuthRequest, res: Response) => {
     const { userId } = req.body;
     const currentUserId = req.user!.userId;
 
-    console.log(`🔍 addMember called: projectId=${projectId}, currentUserId=${currentUserId}, role=${req.user!.role}`);
-
     const project = await prisma.project.findUnique({
       where: { id: projectId },
       select: { createdBy: true, name: true },
     });
     if (!project) return res.status(404).json({ message: 'Project not found' });
 
-    console.log(`📌 Project createdBy=${project.createdBy}`);
-
-    // التحقق من الصلاحية: منشئ المشروع أو أدمن
     if (project.createdBy !== currentUserId && req.user!.role !== 'admin') {
-      console.log(`❌ Access denied: createdBy=${project.createdBy}, currentUserId=${currentUserId}, role=${req.user!.role}`);
       return res.status(403).json({ message: 'Only the project creator can add members' });
     }
 
@@ -230,6 +231,16 @@ export const addMember = async (req: AuthRequest, res: Response) => {
       details: { memberId: memberUserId, projectId, projectName: project.name },
       projectId,
     });
+
+    await notifyUser(
+      memberUserId,
+      'member_added',
+      `👤 تمت إضافتك كمشروع "${project.name}"`,
+      'Project',
+      projectId,
+      projectId,
+      project.name
+    );
 
     if ((global as any).io) {
       (global as any).io.emit('memberAdded', { projectId, user: member.user });
@@ -415,6 +426,16 @@ export const approveProject = async (req: AuthRequest, res: Response) => {
       projectId,
     });
 
+    await notifyUser(
+      project.createdBy,
+      'project_approved',
+      `✅ تمت الموافقة على مشروعك "${project.name}"`,
+      'Project',
+      projectId,
+      projectId,
+      project.name
+    );
+
     if ((global as any).io) {
       (global as any).io.to(`user-${project.createdBy}`).emit('projectApproved', {
         projectId,
@@ -429,6 +450,41 @@ export const approveProject = async (req: AuthRequest, res: Response) => {
   }
 };
 
+// أضف هذه الدالة بعد دالة approveProject
+export const rejectProject = async (req: AuthRequest, res: Response) => {
+  try {
+    if (req.user!.role !== 'admin') {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+
+    const projectId = parseInt(String(req.params.id), 10);
+    if (isNaN(projectId)) return res.status(400).json({ message: 'Invalid project ID' });
+
+    const project = await prisma.project.findUnique({ where: { id: projectId } });
+    if (!project) return res.status(404).json({ message: 'Project not found' });
+    if (project.approved) {
+      return res.status(400).json({ message: 'Project is already approved, cannot reject' });
+    }
+
+    // حذف المشروع (أو يمكن تعطيله، لكن الحذف أنظف)
+    await prisma.project.delete({ where: { id: projectId } });
+
+    await logActivity({
+      userId: req.user!.userId,
+      action: 'REJECT_PROJECT',
+      entityType: 'Project',
+      entityId: projectId,
+      details: { name: project.name },
+    });
+
+    res.json({ message: 'Project rejected and deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
 // ==================== دوال طلب حذف العضو ====================
 
 export const createRemovalRequest = async (req: AuthRequest, res: Response) => {
@@ -440,6 +496,7 @@ export const createRemovalRequest = async (req: AuthRequest, res: Response) => {
     }
 
     const requesterId = req.user!.userId;
+    const requesterRole = req.user!.role;
     const { reason } = req.body;
     if (!reason || reason.trim() === '') {
       return res.status(400).json({ message: 'Reason is required' });
@@ -451,8 +508,9 @@ export const createRemovalRequest = async (req: AuthRequest, res: Response) => {
     });
     if (!project) return res.status(404).json({ message: 'Project not found' });
 
-    if (project.createdBy !== requesterId && req.user!.role !== 'admin') {
-      return res.status(403).json({ message: 'Only project manager can request member removal' });
+    // ✅ السماح لمدير المشروع (project_manager) والأدمن فقط
+    if (requesterRole !== 'admin' && requesterRole !== 'project_manager') {
+      return res.status(403).json({ message: 'Only project manager or admin can request member removal' });
     }
 
     const membership = await prisma.projectMember.findUnique({
@@ -513,7 +571,6 @@ export const getRemovalRequests = async (req: AuthRequest, res: Response) => {
     let whereClause: any = {};
     
     if (status !== undefined && status !== null && status !== '') {
-      // تحويل آمن إلى سلسلة نصية
       let statusStr: string;
       if (Array.isArray(status)) {
         statusStr = String(status[0]);
@@ -522,7 +579,6 @@ export const getRemovalRequests = async (req: AuthRequest, res: Response) => {
       }
       console.log('Converted status string:', statusStr);
       
-      // قبول القيم الصالحة فقط
       if (['pending', 'approved', 'rejected'].includes(statusStr)) {
         whereClause.status = statusStr;
       } else {

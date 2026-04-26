@@ -12,14 +12,18 @@ const FileUploader = ({ onUpload, uploading }: FileUploaderProps) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: onUpload,
     multiple: true,
+    maxSize: 20 * 1024 * 1024,
     accept: {
-      'image/*': [],
-      'application/pdf': [],
-      'application/msword': [],
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': [],
-      'application/vnd.ms-excel': [],
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
-    },
+      'image/*': ['.jpeg', '.jpg', '.png', '.gif', '.webp'],
+      'application/pdf': ['.pdf'],
+      'application/msword': ['.doc'],
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+      'application/vnd.ms-excel': ['.xls'],
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
+      'text/plain': ['.txt'],
+      'application/zip': ['.zip'],
+      'application/x-rar-compressed': ['.rar']
+    }
   });
 
   return (
@@ -27,8 +31,8 @@ const FileUploader = ({ onUpload, uploading }: FileUploaderProps) => {
       {...getRootProps()}
       className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition ${
         isDragActive
-          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-          : 'border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500'
+          ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
+          : 'border-gray-300 dark:border-gray-600 hover:border-primary-400'
       }`}
     >
       <input {...getInputProps()} />
@@ -36,11 +40,12 @@ const FileUploader = ({ onUpload, uploading }: FileUploaderProps) => {
       {uploading ? (
         <p className="text-gray-600 dark:text-gray-300">{t('common.loading')}</p>
       ) : isDragActive ? (
-        <p className="text-blue-600 dark:text-blue-400">{t('file.dragActive')}</p>
+        <p className="text-primary-600 dark:text-primary-400">{t('file.dragActive')}</p>
       ) : (
         <div>
           <p className="text-gray-600 dark:text-gray-300 mb-1">{t('file.dragAndDrop')}</p>
           <p className="text-xs text-gray-500">{t('file.acceptedFormats')}</p>
+          <p className="text-xs text-gray-400 mt-1">(حد أقصى 20 ميجابايت لكل ملف)</p>
         </div>
       )}
     </div>

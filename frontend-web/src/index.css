@@ -7,7 +7,8 @@
 
 @layer base {
   body {
-    @apply bg-gradient-to-br from-gray-50 to-gray-100 dark:from-dark-100 dark:to-dark-200;
+    @apply bg-gradient-to-br from-gray-50 to-gray-100 dark:from-dark-200 dark:to-dark-300;
+    font-family: 'Inter', 'Cairo', system-ui, sans-serif;
   }
 }
 
@@ -24,14 +25,14 @@
   }
 
   .card {
-    @apply bg-white dark:bg-dark-200 rounded-2xl shadow-soft hover:shadow-medium 
-           transition-all duration-300 p-6 border border-gray-100 dark:border-dark-100;
+    @apply bg-white dark:bg-dark-100 rounded-2xl shadow-soft hover:shadow-medium 
+           transition-all duration-300 p-6 border border-gray-100 dark:border-dark-200;
   }
 
   .input-field {
-    @apply w-full px-4 py-2 border border-gray-200 dark:border-dark-100 rounded-xl 
-           bg-white dark:bg-dark-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent
-           outline-none transition-all;
+    @apply w-full px-4 py-2 border border-gray-200 dark:border-dark-300 rounded-xl 
+           bg-white dark:bg-dark-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent
+           outline-none transition-all text-gray-900 dark:text-gray-100;
   }
 
   .badge {
@@ -39,19 +40,19 @@
   }
 
   .badge-success {
-    @apply bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400;
+    @apply bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300;
   }
 
   .badge-warning {
-    @apply bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400;
+    @apply bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300;
   }
 
   .badge-danger {
-    @apply bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400;
+    @apply bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300;
   }
 
   .badge-info {
-    @apply bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400;
+    @apply bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300;
   }
 }
 
@@ -71,4 +72,114 @@
 /* تحسين الجداول للجوال */
 .overflow-x-auto {
   -webkit-overflow-scrolling: touch;
+}
+
+/* ==================== تحسينات الوضع المظلم ==================== */
+.dark {
+  color-scheme: dark;
+}
+
+/* النصوص الأساسية */
+.dark body,
+.dark .text-gray-500,
+.dark .text-gray-600,
+.dark .text-gray-400 {
+  color: #cbd5e1 !important; /* slate-300 */
+}
+
+.dark .text-gray-700,
+.dark .text-gray-800,
+.dark .text-gray-900 {
+  color: #f1f5f9 !important; /* slate-100 */
+}
+
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6,
+.dark .font-semibold, .dark .font-bold, .dark .font-medium {
+  color: #f8fafc;
+}
+
+/* خلفيات العناصر */
+.dark .bg-gray-50,
+.dark .bg-gray-100 {
+  background-color: #1e1e2f;
+}
+
+.dark .bg-gray-200 {
+  background-color: #2d2d44;
+}
+
+/* الحدود */
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark .border-gray-300 {
+  border-color: #2d2d44;
+}
+
+/* الروابط */
+.dark a:not(.btn-primary):not(.btn-secondary):not(.btn-outline) {
+  color: #a78bfa;
+}
+.dark a:not(.btn-primary):not(.btn-secondary):not(.btn-outline):hover {
+  color: #c4b5fd;
+}
+
+/* الجداول */
+.dark table td,
+.dark table th {
+  border-color: #2d2d44;
+  color: #e2e8f0;
+}
+
+.dark thead {
+  background-color: #1e1e2f;
+}
+
+/* hover effects */
+.dark .hover\:bg-gray-50:hover,
+.dark .hover\:bg-gray-100:hover {
+  background-color: #2d2d44 !important;
+}
+
+/* النصوص داخل البطاقات */
+.dark .card p,
+.dark .card span:not(.badge):not([class*="text-primary"]):not([class*="text-secondary"]):not([class*="text-accent"]):not([class*="text-red"]):not([class*="text-green"]):not([class*="text-blue"]):not([class*="text-yellow"]) {
+  color: #e2e8f0;
+}
+
+/* select options */
+.dark select option {
+  background-color: #1e1e2f;
+  color: #f1f5f9;
+}
+
+/* placeholders */
+.dark .input-field::placeholder,
+.dark textarea::placeholder {
+  color: #64748b;
+}
+
+/* الأزرار الثانوية */
+.dark .btn-secondary {
+  background-color: #1e1e2f;
+  color: #e2e8f0;
+  border-color: #2d2d44;
+}
+.dark .btn-secondary:hover {
+  background-color: #2d2d44;
+}
+
+/* شريط التمرير */
+.dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.dark ::-webkit-scrollbar-track {
+  background: #1e1e2f;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #3a3a5a;
+  border-radius: 4px;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #5a5a8a;
 }

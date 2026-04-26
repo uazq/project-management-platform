@@ -60,11 +60,22 @@ export const useAuthStore = create<AuthState>((set) => {
       set({ isLoading: true });
       try {
         const response = await apiLogin({ username, password });
+        
+        // ✅ التأكد من وجود isActive في كائن المستخدم
+        let userData = response.user;
+        if (userData && userData.isActive === undefined) {
+          console.warn('⚠️ isActive مفقود من استجابة الخادم، سيتم تعيينه افتراضياً إلى true');
+          userData = { ...userData, isActive: true };
+        }
+        
+        console.log('✅ مستخدم مسجل دخوله:', userData);
+        
         safeLocalStorage.setItem('token', response.token);
-        safeLocalStorage.setItem('user', JSON.stringify(response.user));
-        set({ user: response.user, token: response.token, isLoading: false });
+        safeLocalStorage.setItem('user', JSON.stringify(userData));
+        set({ user: userData, token: response.token, isLoading: false });
         toast.success('تم تسجيل الدخول بنجاح');
       } catch (error) {
+        console.error('❌ فشل تسجيل الدخول:', error);
         set({ isLoading: false });
       }
     },
@@ -73,24 +84,37 @@ export const useAuthStore = create<AuthState>((set) => {
       set({ isLoading: true });
       try {
         const response = await apiRegister(data);
+        
+        let userData = response.user;
+        if (userData && userData.isActive === undefined) {
+          userData = { ...userData, isActive: true };
+        }
+        
         safeLocalStorage.setItem('token', response.token);
-        safeLocalStorage.setItem('user', JSON.stringify(response.user));
-        set({ user: response.user, token: response.token, isLoading: false });
+        safeLocalStorage.setItem('user', JSON.stringify(userData));
+        set({ user: userData, token: response.token, isLoading: false });
         toast.success('تم إنشاء الحساب بنجاح');
       } catch (error) {
+        console.error('❌ فشل التسجيل:', error);
         set({ isLoading: false });
       }
     },
 
     logout: () => {
-  safeLocalStorage.removeItem('token');
-  safeLocalStorage.removeItem('user');
-  set({ user: null, token: null });
-  toast.success('تم تسجيل الخروج');
-},
+      safeLocalStorage.removeItem('token');
+      safeLocalStorage.removeItem('user');
+      set({ user: null, token: null });
+      toast.success('تم تسجيل الخروج');
+    },
+    
     setUser: (user) => {
-      safeLocalStorage.setItem('user', JSON.stringify(user));
-      set({ user });
+      // التأكد من وجود isActive عند تحديث المستخدم
+      let updatedUser = user;
+      if (updatedUser && updatedUser.isActive === undefined) {
+        updatedUser = { ...updatedUser, isActive: true };
+      }
+      safeLocalStorage.setItem('user', JSON.stringify(updatedUser));
+      set({ user: updatedUser });
     }
   };
 });

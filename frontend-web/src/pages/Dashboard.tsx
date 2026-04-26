@@ -109,8 +109,8 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       {/* الترحيب */}
-      <div className="flex items-center gap-3">
-        <div className="p-3 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl text-white">
+      <div className="flex items-center gap-3 animate-fade-in">
+        <div className="p-3 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl text-white shadow-lg">
           <FiTrendingUp className="text-2xl" />
         </div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -120,7 +120,7 @@ const Dashboard = () => {
 
       {/* بطاقات الإحصائيات */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="card flex items-center gap-4">
+        <div className="card flex items-center gap-4 hover:shadow-md transition-all duration-200">
           <div className="p-3 bg-primary-100 dark:bg-primary-900/30 rounded-xl">
             <FiFolder className="text-primary-600 dark:text-primary-400 text-xl" />
           </div>
@@ -130,7 +130,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="card flex items-center gap-4">
+        <div className="card flex items-center gap-4 hover:shadow-md transition-all duration-200">
           <div className="p-3 bg-secondary-100 dark:bg-secondary-900/30 rounded-xl">
             <FiCheckCircle className="text-secondary-600 dark:text-secondary-400 text-xl" />
           </div>
@@ -140,7 +140,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="card flex items-center gap-4">
+        <div className="card flex items-center gap-4 hover:shadow-md transition-all duration-200">
           <div className="p-3 bg-accent-100 dark:bg-accent-900/30 rounded-xl">
             <FiClock className="text-accent-600 dark:text-accent-400 text-xl" />
           </div>
@@ -150,7 +150,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="card flex items-center gap-4">
+        <div className="card flex items-center gap-4 hover:shadow-md transition-all duration-200">
           <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
             <FiUsers className="text-purple-600 dark:text-purple-400 text-xl" />
           </div>
@@ -164,7 +164,7 @@ const Dashboard = () => {
       {/* الرسوم البيانية */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="card">
-          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
             <FiBarChart2 className="text-primary-500" />
             {t('dashboard.projectsProgress')}
           </h2>
@@ -179,12 +179,12 @@ const Dashboard = () => {
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <p className="text-center text-gray-500 py-8">{t('common.noData')}</p>
+            <p className="text-center text-gray-500 dark:text-gray-400 py-8">{t('common.noData')}</p>
           )}
         </div>
 
         <div className="card">
-          <h2 className="text-lg font-semibold mb-4">{t('dashboard.projectsDistribution')}</h2>
+          <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{t('dashboard.projectsDistribution')}</h2>
           {projectStatusData.length > 0 ? (
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
@@ -207,59 +207,73 @@ const Dashboard = () => {
               </PieChart>
             </ResponsiveContainer>
           ) : (
-            <p className="text-center text-gray-500 py-8">{t('common.noData')}</p>
+            <p className="text-center text-gray-500 dark:text-gray-400 py-8">{t('common.noData')}</p>
           )}
         </div>
       </div>
 
       {/* تقدم المشاريع */}
       <div className="card">
-        <h2 className="text-lg font-semibold mb-4">{t('dashboard.projectsProgress')}</h2>
+        <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{t('dashboard.projectsProgress')}</h2>
         {stats?.projectProgress?.length ? (
           <div className="space-y-4">
             {stats.projectProgress.map(proj => (
-              <div key={proj.id}>
+              <div key={proj.id} className="animate-fade-in">
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="font-medium">{proj.name}</span>
+                  <span className="font-medium text-gray-700 dark:text-gray-300">{proj.name}</span>
                   <span className="text-gray-600 dark:text-gray-400">{proj.progress}%</span>
                 </div>
-                <div className="w-full bg-gray-200 dark:bg-dark-100 rounded-full h-2">
+                <div className="w-full bg-gray-200 dark:bg-dark-200 rounded-full h-2">
                   <div className="bg-gradient-to-r from-primary-500 to-secondary-500 h-2 rounded-full transition-all duration-500" style={{ width: `${proj.progress}%` }} />
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <p className="text-center text-gray-500 py-4">{t('common.noData')}</p>
+          <p className="text-center text-gray-500 dark:text-gray-400 py-4">{t('common.noData')}</p>
         )}
       </div>
 
       {/* أداء الأعضاء */}
       {stats?.memberStats?.length > 0 && (
         <div className="card">
-          <h2 className="text-lg font-semibold mb-4">{t('dashboard.memberPerformance')}</h2>
+          <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{t('dashboard.memberPerformance')}</h2>
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-dark-100">
-              <thead>
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-dark-200">
+              <thead className="bg-gray-50 dark:bg-dark-200">
                 <tr>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">{t('common.member')}</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">{t('dashboard.completedTasks')}</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">{t('dashboard.totalTasks')}</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">{t('dashboard.percentage')}</th>
-                 </tr>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    {t('common.member')}
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    {t('dashboard.completedTasks')}
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    {t('dashboard.totalTasks')}
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    {t('dashboard.percentage')}
+                  </th>
+                </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-dark-100">
+              <tbody className="divide-y divide-gray-200 dark:divide-dark-200">
                 {stats.memberStats.map((member, idx) => {
                   const percentage = member.totalTasks ? Math.round((member.completedTasks / member.totalTasks) * 100) : 0;
                   return (
-                    <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-dark-100 transition">
-                      <td className="px-4 py-3 whitespace-nowrap font-medium">{member.fullName}</td>
-                      <td className="px-4 py-3 whitespace-nowrap text-gray-600 dark:text-gray-400">{member.completedTasks}</td>
-                      <td className="px-4 py-3 whitespace-nowrap text-gray-600 dark:text-gray-400">{member.totalTasks}</td>
-                      <td className="px-4 py-3 whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          <span className="w-12 text-sm">{percentage}%</span>
-                          <div className="w-20 bg-gray-200 dark:bg-dark-100 rounded-full h-2">
+                    <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-dark-200 transition duration-150">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white text-right">
+                        {member.fullName}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400 text-right">
+                        {member.completedTasks}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400 text-right">
+                        {member.totalTasks}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
+                        <div className="flex items-center justify-end gap-2">
+                          <span className="w-12 text-right">{percentage}%</span>
+                          <div className="w-20 bg-gray-200 dark:bg-dark-300 rounded-full h-2">
                             <div className="bg-gradient-to-r from-primary-500 to-secondary-500 h-2 rounded-full" style={{ width: `${percentage}%` }} />
                           </div>
                         </div>
@@ -273,29 +287,29 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* الملفات الحديثة */}
+      {/* الملفات الحديثة - تظهر لجميع الأدوار (أدمن، مدير، عضو) */}
       <div className="card">
-        <h2 className="text-lg font-semibold mb-4">{t('file.recent')}</h2>
+        <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{t('file.recent')}</h2>
         {loadingFiles ? (
           <Skeleton className="h-32 w-full" />
         ) : recentFiles.length === 0 ? (
-          <p className="text-center text-gray-500 py-4">{t('file.noFiles')}</p>
+          <p className="text-center text-gray-500 dark:text-gray-400 py-4">{t('file.noFiles')}</p>
         ) : (
           <div className="space-y-3">
             {recentFiles.map(file => (
-              <div key={file.id} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-dark-100 rounded-lg">
+              <div key={file.id} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-dark-200 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-300 transition">
                 <div className="flex items-center gap-3">
                   {getFileIcon(file.fileName, 'text-xl text-primary-500')}
                   <div>
-                    <p className="text-sm font-medium">{file.fileName}</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">{file.fileName}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
                       {file.project?.name || file.task?.project?.name} • {file.uploader.fullName}
                     </p>
                   </div>
                 </div>
                 <a
                   href={`http://localhost:5000/api/files/${file.id}/download`}
-                  className="p-1 text-primary-600 hover:bg-primary-100 rounded"
+                  className="p-1 text-primary-600 hover:bg-primary-100 dark:hover:bg-primary-900/30 rounded transition"
                   download
                 >
                   <FiDownload size={16} />

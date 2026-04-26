@@ -26,7 +26,8 @@ export const register = async (req: Request, res: Response) => {
         username,
         email,
         passwordHash: hashedPassword,
-        isApproved: false, // ✅ يحتاج موافقة الأدمن
+        isApproved: false,
+        isActive: true,
       },
     });
 
@@ -57,7 +58,6 @@ export const login = async (req: Request, res: Response) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // ✅ التحقق من موافقة الأدمن
     if (!user.isApproved) {
       return res.status(403).json({ message: 'Your account is pending admin approval.' });
     }
@@ -72,31 +72,33 @@ export const login = async (req: Request, res: Response) => {
       data: { lastLogin: new Date() }
     });
 
+    // ✅ إضافة fullName إلى الـ JWT
     const token = jwt.sign(
-      { userId: user.id, role: user.role },
+      { userId: user.id, role: user.role, fullName: user.fullName },
       process.env.JWT_SECRET!,
       { expiresIn: '7d' }
     );
 
     res.json({
-      token,
-      user: {
-        id: user.id,
-        fullName: user.fullName,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-        profilePicture: user.profilePicture,
-        isApproved: user.isApproved,
-      },
-    });
+  token,
+  user: {
+    id: user.id,
+    fullName: user.fullName,
+    username: user.username,
+    email: user.email,
+    role: user.role,
+    profilePicture: user.profilePicture,
+    isApproved: user.isApproved,
+    isActive: user.isActive, // ✅ يجب أن يكون موجوداً
+  },
+});
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
 };
 
-// ==================== تغيير كلمة المرور (للمستخدم المسجل) ====================
+// ==================== تغيير كلمة المرور ====================
 export const changePassword = async (req: AuthRequest, res: Response) => {
   try {
     const { currentPassword, newPassword } = req.body;
@@ -129,7 +131,7 @@ export const changePassword = async (req: AuthRequest, res: Response) => {
   }
 };
 
-// ==================== طلب إعادة تعيين كلمة المرور (نسيت كلمة المرور) ====================
+// ==================== طلب إعادة تعيين كلمة المرور ====================
 export const forgotPassword = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
@@ -140,12 +142,11 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      // لأغراض أمنية، لا تخبر المستخدم بأن البريد غير موجود
       return res.json({ message: 'If your email is registered, you will receive a reset link.' });
     }
 
     const resetToken = crypto.randomBytes(32).toString('hex');
-    const resetTokenExpiry = new Date(Date.now() + 3600000); // ساعة
+    const resetTokenExpiry = new Date(Date.now() + 3600000);
 
     await prisma.user.update({
       where: { id: user.id },

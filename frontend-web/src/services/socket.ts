@@ -35,4 +35,12 @@ socket.on('error', (error) => {
   console.error('❌ خطأ WebSocket:', error);
 });
 
+// دالة لتسجيل المستخدم في غرفته الخاصة
+export const registerUser = (userId: number) => {
+  if (socket && userId) {
+    socket.emit('register-user', userId);
+    console.log(`📡 تم تسجيل المستخدم ${userId} في WebSocket`);
+  }
+};
+
 export default socket;

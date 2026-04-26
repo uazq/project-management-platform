@@ -53,7 +53,9 @@
     "back": "رجوع",
     "next": "التالي",
     "getStarted": "ابدأ الآن",
-    "close": "إغلاق"
+    "close": "إغلاق",
+    "loadMore": "تحميل المزيد",
+    "create": "إنشاء"
   },
   "dashboard": {
     "welcome": "مرحباً {{name}}",
@@ -65,7 +67,9 @@
     "projectsDistribution": "توزيع المشاريع",
     "memberPerformance": "أداء الأعضاء",
     "progress": "نسبة الإنجاز",
-    "percentage": "النسبة"
+    "percentage": "النسبة",
+    "totalTasks": "إجمالي المهام",
+    "completedTasks": "المهام المكتملة"
   },
   "project": {
     "title": "المشاريع",
@@ -92,6 +96,16 @@
     "createError": "فشل إنشاء المشروع",
     "updateSuccess": "تم تحديث المشروع بنجاح",
     "updateError": "فشل تحديث المشروع"
+  },
+  "projects": {
+    "title": "المشاريع",
+    "newProject": "مشروع جديد",
+    "tasksCount": "المهام: {{count}}",
+    "membersCount": "الأعضاء: {{count}}",
+    "noProjects": "لا توجد مشاريع تطابق معايير البحث",
+    "fetchError": "فشل في تحميل المشاريع",
+    "deleteSuccess": "تم حذف المشروع بنجاح",
+    "deleteError": "فشل في حذف المشروع"
   },
   "task": {
     "title": "المهام",
@@ -126,7 +140,8 @@
     "notStarted": "لم تبدأ",
     "inProgress": "قيد التنفيذ",
     "completed": "مكتملة",
-    "overdue": "متأخرة"
+    "overdue": "متأخرة",
+    "fetchError": "فشل تحميل المهام"
   },
   "member": {
     "title": "أعضاء الفريق",
@@ -145,8 +160,16 @@
     "removeSuccess": "تم إزالة العضو",
     "removeError": "فشل في إزالة العضو",
     "roleUpdateSuccess": "تم تحديث دور العضو",
-    "roleUpdateError": "فشل في تحديث دور العضو"
-
+    "roleUpdateError": "فشل في تحديث دور العضو",
+    "joined": "تاريخ الانضمام",
+    "projectsInvolved": "المشاريع المشارك فيها",
+    "assignedTasks": "المهام المسندة",
+    "noProjects": "لا توجد مشاريع",
+    "noTasks": "لا توجد مهام",
+    "totalTasks": "إجمالي المهام",
+    "completedTasks": "المهام المكتملة",
+    "overdueTasks": "المهام المتأخرة",
+    "completionRate": "نسبة الإنجاز"
   },
   "file": {
     "title": "الملفات",
@@ -162,7 +185,6 @@
     "acceptedFormats": "الصور, PDF, Word, Excel (حد أقصى 10 ملفات)",
     "recent": "الملفات الحديثة",
     "all": "جميع الملفات"
-
   },
   "comment": {
     "title": "التعليقات",
@@ -172,7 +194,6 @@
     "addSuccess": "تم إضافة التعليق",
     "addError": "فشل في إضافة التعليق",
     "deleteSuccess": "تم حذف التعليق",
-
     "deleteError": "فشل في حذف التعليق"
   },
   "notification": {
@@ -186,7 +207,11 @@
     "taskDeleted": "تم حذف مهمة",
     "commentAdded": "تعليق جديد",
     "memberAdded": "عضو جديد",
-    "fileUploaded": "ملف جديد"
+    "fileUploaded": "ملف جديد",
+    "projectApproved": "تمت الموافقة على المشروع",
+    "userApproved": "تمت الموافقة على الحساب",
+    "unread": "غير مقروءة",
+    "markRead": "تحديد كمقروء"
   },
   "activity": {
     "title": "سجل النشاطات",
@@ -217,7 +242,6 @@
     "pendingTasks": "المهام المتبقية",
     "percentage": "النسبة",
     "timeline": "تقدم المهام خلال آخر 7 أيام",
-
     "completed": "مكتملة",
     "created": "منشأة"
   },
@@ -235,7 +259,8 @@
     "createSuccess": "تم إنشاء المناقشة",
     "createError": "فشل إنشاء المناقشة",
     "replyError": "فشل إضافة الرد",
-    "deleteSuccess": "تم الحذف"
+    "deleteSuccess": "تم الحذف",
+    "deleteError": "فشل الحذف"
   },
   "profile": {
     "title": "الملف الشخصي",
@@ -257,8 +282,9 @@
     "passwordError": "فشل تغيير كلمة المرور",
     "pictureSuccess": "تم تحديث الصورة",
     "pictureError": "فشل رفع الصورة",
-    
-    "changePicture": "تغيير الصورة"
+    "changePicture": "تغيير الصورة",
+    "inactiveMessage": "حسابك معطل. يرجى التواصل مع المسؤول.",
+    "inactiveWarning": "حسابك معطل، لا يمكنك تعديل المعلومات."
   },
   "users": {
     "title": "إدارة المستخدمين",
@@ -270,23 +296,22 @@
     "roleSuccess": "تم تغيير الدور",
     "roleError": "فشل تغيير الدور",
     "noUsers": "لا يوجد مستخدمين",
-    
-  "totalUsers": "إجمالي المستخدمين",
-  "activeUsers": "النشطاء",
-  "inactiveUsers": "غير النشطاء",
-  "admins": "المسؤولون",
-  "export": "تصدير CSV",
-  "exportSuccess": "تم تصدير قائمة المستخدمين",
-  "sortBy": "ترتيب حسب",
-  "sortName": "الاسم",
-  "sortEmail": "البريد",
-  "sortDate": "تاريخ التسجيل"
+    "totalUsers": "إجمالي المستخدمين",
+    "activeUsers": "النشطاء",
+    "inactiveUsers": "غير النشطاء",
+    "admins": "المسؤولون",
+    "export": "تصدير CSV",
+    "exportSuccess": "تم تصدير قائمة المستخدمين",
+    "sortBy": "ترتيب حسب",
+    "sortName": "الاسم",
+    "sortEmail": "البريد",
+    "sortDate": "تاريخ التسجيل"
   },
   "myTasks": {
-  "title": "مهامي",
-  "noTasks": "لا توجد مهام مسندة إليك",
-  "project": "المشروع"
-},
+    "title": "مهامي",
+    "noTasks": "لا توجد مهام مسندة إليك",
+    "project": "المشروع"
+  },
   "login": {
     "subtitle": "سجل دخولك للمتابعة",
     "username": "اسم المستخدم أو البريد",
@@ -415,38 +440,45 @@
     "refresh": "تحديث"
   },
   "admin": {
-  "approvals": "طلبات الموافقة",
-  "pendingProjects": "المشاريع المعلقة",
-  "pendingUsers": "المستخدمون المعلقون",
-  "noPendingProjects": "لا توجد مشاريع معلقة",
-  "noPendingUsers": "لا يوجد مستخدمون معلقون",
-  "createdBy": "تم الإنشاء بواسطة",
-  "approve": "موافقة",
-  "projectApproved": "تمت الموافقة على المشروع",
-  "userApproved": "تمت الموافقة على المستخدم",
-  "approveError": "فشلت الموافقة",
-  "fetchError": "فشل تحميل البيانات"
+    "approvals": "طلبات الموافقة",
+    "pendingProjects": "المشاريع المعلقة",
+    "pendingUsers": "المستخدمون المعلقون",
+    "noPendingProjects": "لا توجد مشاريع معلقة",
+    "noPendingUsers": "لا يوجد مستخدمون معلقون",
+    "createdBy": "تم الإنشاء بواسطة",
+    "approve": "موافقة",
+    "projectApproved": "تمت الموافقة على المشروع",
+    "userApproved": "تمت الموافقة على المستخدم",
+    "approveError": "فشلت الموافقة",
+    "fetchError": "فشل تحميل البيانات",
+    "reject": "رفض"
   },
   "removal": {
-  "title": "طلبات حذف الأعضاء",
-  "pending": "قيد الانتظار",
-  "approved": "تمت الموافقة",
-  "rejected": "مرفوض",
-  "reason": "السبب",
-  "requestedBy": "طلب بواسطة",
-  "approve": "موافقة",
-  "reject": "رفض",
-  "approvedSuccess": "تمت الموافقة على طلب الحذف",
-  "rejectedSuccess": "تم رفض الطلب",
-  "fetchError": "فشل تحميل الطلبات",
-  "actionError": "فشل معالجة الطلب",
-  "noRequests": "لا توجد طلبات",
-  "request": "طلب حذف",
-  "requestTitle": "طلب حذف عضو",
-  "confirmRemove": "هل تريد طلب حذف العضو {{name}}؟",
-  "reasonPlaceholder": "اكتب سبب الطلب...",
-  "sendRequest": "إرسال الطلب",
-  "requestSent": "تم إرسال طلب الحذف إلى المسؤول",
-  "requestError": "فشل إرسال الطلب"
-}
+    "title": "طلبات حذف الأعضاء",
+    "pending": "قيد الانتظار",
+    "approved": "تمت الموافقة",
+    "rejected": "مرفوض",
+    "reason": "السبب",
+    "requestedBy": "طلب بواسطة",
+    "approve": "موافقة",
+    "reject": "رفض",
+    "approvedSuccess": "تمت الموافقة على طلب الحذف",
+    "rejectedSuccess": "تم رفض الطلب",
+    "fetchError": "فشل تحميل الطلبات",
+    "actionError": "فشل معالجة الطلب",
+    "noRequests": "لا توجد طلبات",
+    "request": "طلب حذف",
+    "requestTitle": "طلب حذف عضو",
+    "confirmRemove": "هل تريد طلب حذف العضو {{name}}؟",
+    "reasonPlaceholder": "اكتب سبب الطلب...",
+    "sendRequest": "إرسال الطلب",
+    "requestSent": "تم إرسال طلب الحذف إلى المسؤول",
+    "requestError": "فشل إرسال الطلب"
+  },
+  "verifyEmail": {
+    "success": "تم تأكيد بريدك الإلكتروني بنجاح",
+    "successMessage": "تم تأكيد بريدك الإلكتروني بنجاح. يمكنك الآن تسجيل الدخول.",
+    "error": "فشل تأكيد البريد الإلكتروني",
+    "errorMessage": "الرابط غير صالح أو منتهي الصلاحية."
+  }
 }

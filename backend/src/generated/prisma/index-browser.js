@@ -271,6 +271,19 @@ exports.Prisma.MemberRemovalRequestScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.NotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  title: 'title',
+  message: 'message',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  projectId: 'projectId',
+  isRead: 'isRead',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -342,7 +355,8 @@ exports.Prisma.ModelName = {
   ProjectTag: 'ProjectTag',
   TaskTag: 'TaskTag',
   PublicShare: 'PublicShare',
-  MemberRemovalRequest: 'MemberRemovalRequest'
+  MemberRemovalRequest: 'MemberRemovalRequest',
+  Notification: 'Notification'
 };
 
 /**

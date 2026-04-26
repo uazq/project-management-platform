@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import prisma from '../lib/prisma';
 
 export interface AuthRequest extends Request {
-  user?: { userId: number; role: string };
+  user?: { userId: number; role: string; fullName: string };
 }
 
 export const authenticate = async (req: AuthRequest, res: Response, next: NextFunction) => {
@@ -13,7 +13,7 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
       return res.status(401).json({ message: 'Access denied. No token provided.' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: number; role: string };
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: number; role: string; fullName: string };
     
     // التحقق من أن المستخدم لا يزال نشطاً
     const user = await prisma.user.findUnique({

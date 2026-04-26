@@ -26,7 +26,7 @@ interface Discussion {
 
 interface DiscussionsProps {
   projectId: string;
-  archived?: boolean; // ✅ إضافة الخاصية (اختيارية)
+  archived?: boolean;
 }
 
 const Discussions = ({ projectId, archived = false }: DiscussionsProps) => {
@@ -63,7 +63,12 @@ const Discussions = ({ projectId, archived = false }: DiscussionsProps) => {
   const fetchDiscussions = async () => {
     try {
       const res = await api.get(`/projects/${projectId}/discussions`);
-      setDiscussions(res.data);
+      // التأكد من أن replies مصفوفة وليست undefined
+      const discussionsWithReplies = res.data.map((d: any) => ({
+        ...d,
+        replies: d.replies || []
+      }));
+      setDiscussions(discussionsWithReplies);
     } catch {
       toast.error(t('discussions.fetchError'));
     }
@@ -123,7 +128,6 @@ const Discussions = ({ projectId, archived = false }: DiscussionsProps) => {
 
   return (
     <div className="space-y-4">
-      {/* زر إضافة مناقشة - يظهر فقط إذا لم يكن المشروع مؤرشفاً */}
       {!archived && (
         <div className="flex justify-end">
           <button
@@ -135,7 +139,6 @@ const Discussions = ({ projectId, archived = false }: DiscussionsProps) => {
         </div>
       )}
 
-      {/* نموذج إضافة مناقشة - يظهر فقط إذا لم يكن المشروع مؤرشفاً */}
       {!archived && showForm && (
         <form onSubmit={handleCreateDiscussion} className="bg-gray-50 dark:bg-dark-100 p-4 rounded-lg space-y-3">
           <input
@@ -163,7 +166,6 @@ const Discussions = ({ projectId, archived = false }: DiscussionsProps) => {
         </form>
       )}
 
-      {/* قائمة المناقشات (تظهر دائماً) */}
       {discussions.length === 0 ? (
         <p className="text-center text-gray-500 py-8">{t('discussions.noDiscussions')}</p>
       ) : (
@@ -186,7 +188,7 @@ const Discussions = ({ projectId, archived = false }: DiscussionsProps) => {
 
             {/* الردود */}
             <div className="mr-6 space-y-3">
-              {discussion.replies.map(reply => (
+              {(discussion.replies || []).map(reply => (
                 <div key={reply.id} className="bg-gray-50 dark:bg-dark-100 p-3 rounded-lg flex justify-between items-start">
                   <div>
                     <p className="text-xs text-gray-500">{reply.user.fullName} • {new Date(reply.createdAt).toLocaleString()}</p>
@@ -201,7 +203,6 @@ const Discussions = ({ projectId, archived = false }: DiscussionsProps) => {
               ))}
             </div>
 
-            {/* إضافة رد - يظهر فقط إذا لم يكن المشروع مؤرشفاً */}
             {!archived && (
               <div className="mt-3 flex gap-2">
                 <input

@@ -13,6 +13,7 @@ import {
   unarchiveProject,
   getPendingProjects,
   approveProject,
+  rejectProject, // ✅ إضافة دالة الرفض
   createRemovalRequest,
   getRemovalRequests,
   handleRemovalRequest,
@@ -35,6 +36,7 @@ router.get('/:id', getProjectById);
 router.put('/:id', allowRoles('admin', 'project_manager'), updateProject);
 router.delete('/:id', allowRoles('admin', 'project_manager'), deleteProject);
 router.post('/:id/approve', allowRoles('admin'), approveProject);
+router.post('/:id/reject', allowRoles('admin'), rejectProject); // ✅ مسار رفض المشروع
 router.patch('/:id/archive', allowRoles('admin', 'project_manager'), archiveProject);
 router.patch('/:id/unarchive', allowRoles('admin', 'project_manager'), unarchiveProject);
 
@@ -44,7 +46,6 @@ router.delete('/:id/members/:userId', allowRoles('admin', 'project_manager'), re
 router.post('/:id/members/:userId/removal-request', allowRoles('admin', 'project_manager'), createRemovalRequest);
 
 // ==================== مسار معالجة طلبات الحذف (لا يحتوي على :id) ====================
-// هذا المسار موجود بالفعل في الأعلى (قبل /:id) – لا نضيفه مرة أخرى
 router.patch('/removal-requests/:id', allowRoles('admin'), handleRemovalRequest);
 
 export default router;

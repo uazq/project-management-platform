@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
 import prisma from '../lib/prisma';
 import { logActivity } from '../services/activityLog';
+import { notifyUser, notifyProjectMembers } from '../services/notificationService';
 
 // إضافة تعليق على مهمة
 export const addTaskComment = async (req: AuthRequest, res: Response) => {
@@ -10,10 +11,15 @@ export const addTaskComment = async (req: AuthRequest, res: Response) => {
     const taskId = parseInt(String(req.params.taskId));
     const { content } = req.body;
     const userId = req.user!.userId;
+    const userFullName = req.user!.fullName;
 
     const task = await prisma.task.findUnique({
       where: { id: taskId },
-      include: { project: { include: { members: true } } }
+      include: { 
+        project: { include: { members: true } },
+        assignee: { select: { id: true, fullName: true } },
+        creator: { select: { id: true, fullName: true } }
+      }
     });
     if (!task) {
       return res.status(404).json({ message: 'Task not found' });
@@ -45,6 +51,32 @@ export const addTaskComment = async (req: AuthRequest, res: Response) => {
       projectId: task.projectId,
     });
 
+    // ✅ إشعار لصاحب المهمة (إذا كان مختلفاً عن صاحب التعليق)
+    if (task.assigneeId && task.assigneeId !== userId) {
+      await notifyUser(
+        task.assigneeId,
+        'comment_added',
+        `💬 تعليق جديد من ${userFullName} على مهمة "${task.title}"`,
+        'Comment',
+        comment.id,
+        task.projectId,
+        task.title
+      );
+    }
+
+    // ✅ إشعار لمنشئ المهمة (إذا كان مختلفاً عن صاحب التعليق وعن المسند إليه)
+    if (task.createdBy && task.createdBy !== userId && task.createdBy !== task.assigneeId) {
+      await notifyUser(
+        task.createdBy,
+        'comment_added',
+        `💬 تعليق جديد من ${userFullName} على مهمة "${task.title}"`,
+        'Comment',
+        comment.id,
+        task.projectId,
+        task.title
+      );
+    }
+
     // بث عبر WebSocket
     if ((global as any).io) {
       (global as any).io.emit('commentAdded', { ...comment, projectId: task.projectId, taskId });
@@ -63,6 +95,7 @@ export const addProjectComment = async (req: AuthRequest, res: Response) => {
     const projectId = parseInt(String(req.params.projectId));
     const { content } = req.body;
     const userId = req.user!.userId;
+    const userFullName = req.user!.fullName;
 
     const project = await prisma.project.findUnique({
       where: { id: projectId },
@@ -97,6 +130,17 @@ export const addProjectComment = async (req: AuthRequest, res: Response) => {
       details: { content: content.substring(0, 50) + (content.length > 50 ? '...' : ''), projectId },
       projectId,
     });
+
+    // ✅ إشعار لجميع أعضاء المشروع (باستثناء صاحب التعليق)
+    await notifyProjectMembers(
+      projectId,
+      userId,
+      'comment_added',
+      `💬 تعليق جديد من ${userFullName} في مشروع "${project.name}"`,
+      'Comment',
+      comment.id,
+      project.name
+    );
 
     if ((global as any).io) {
       (global as any).io.emit('commentAdded', { ...comment, projectId });

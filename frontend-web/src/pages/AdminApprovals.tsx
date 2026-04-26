@@ -65,6 +65,17 @@ const AdminApprovals = () => {
     }
   };
 
+  const rejectProject = async (id: number, name: string) => {
+    if (!confirm(`هل أنت متأكد من رفض المشروع "${name}"؟ سيتم حذفه نهائياً.`)) return;
+    try {
+      await api.post(`/projects/${id}/reject`);
+      toast.success(`تم رفض المشروع "${name}" وحذفه`);
+      setPendingProjects(pendingProjects.filter(p => p.id !== id));
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'فشل رفض المشروع');
+    }
+  };
+
   const approveUser = async (id: number) => {
     try {
       await api.post(`/users/${id}/approve`);
@@ -72,6 +83,17 @@ const AdminApprovals = () => {
       setPendingUsers(pendingUsers.filter(u => u.id !== id));
     } catch {
       toast.error(t('admin.approveError'));
+    }
+  };
+
+  const rejectUser = async (id: number, name: string) => {
+    if (!confirm(`هل أنت متأكد من رفض المستخدم "${name}"؟ سيتم حذف حسابه نهائياً.`)) return;
+    try {
+      await api.post(`/users/${id}/reject`);
+      toast.success(`تم رفض المستخدم ${name} وحذف حسابه`);
+      setPendingUsers(pendingUsers.filter(u => u.id !== id));
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'فشل رفض المستخدم');
     }
   };
 
@@ -103,12 +125,20 @@ const AdminApprovals = () => {
                     {t('admin.createdBy')}: {project.creator.fullName} (@{project.creator.username})
                   </p>
                 </div>
-                <button
-                  onClick={() => approveProject(project.id)}
-                  className="btn-primary inline-flex items-center gap-1 text-sm"
-                >
-                  <FiCheckCircle size={16} /> {t('admin.approve')}
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => approveProject(project.id)}
+                    className="btn-primary inline-flex items-center gap-1 text-sm"
+                  >
+                    <FiCheckCircle size={16} /> {t('admin.approve')}
+                  </button>
+                  <button
+                    onClick={() => rejectProject(project.id, project.name)}
+                    className="btn-secondary inline-flex items-center gap-1 text-sm bg-red-600 hover:bg-red-700 text-white border-red-600"
+                  >
+                    <FiXCircle size={16} /> رفض
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -133,12 +163,20 @@ const AdminApprovals = () => {
                   <p className="text-sm text-gray-500">@{user.username}</p>
                   <p className="text-xs text-gray-400">{user.email}</p>
                 </div>
-                <button
-                  onClick={() => approveUser(user.id)}
-                  className="btn-primary inline-flex items-center gap-1 text-sm"
-                >
-                  <FiCheckCircle size={16} /> {t('admin.approve')}
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => approveUser(user.id)}
+                    className="btn-primary inline-flex items-center gap-1 text-sm"
+                  >
+                    <FiCheckCircle size={16} /> {t('admin.approve')}
+                  </button>
+                  <button
+                    onClick={() => rejectUser(user.id, user.fullName)}
+                    className="btn-secondary inline-flex items-center gap-1 text-sm bg-red-600 hover:bg-red-700 text-white border-red-600"
+                  >
+                    <FiXCircle size={16} /> رفض
+                  </button>
+                </div>
               </div>
             ))}
           </div>

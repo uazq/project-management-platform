@@ -3,7 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from './store/authStore';
-import socket from './services/socket';
+import socket, { registerUser } from './services/socket';
+import { useNotificationStore } from './store/notificationStore';
 import Layout from './components/Layout';
 import PrivateRoute from './components/PrivateRoute';
 import Login from './pages/Login';
@@ -39,26 +40,44 @@ const PageLoader = () => (
 function App() {
   const { token, user, logout } = useAuthStore();
   const { t } = useTranslation();
+  const { loadUnreadCount, addRealtimeNotification } = useNotificationStore();
 
   // الاستماع لحدث تعطيل المستخدم من WebSocket
   useEffect(() => {
     const handleUserDeactivated = (data: { message: string }) => {
       console.log('Received userDeactivated event:', data);
       toast.error(data.message || t('auth.accountDeactivated'));
-      logout(); // تسجيل الخروج فوراً
+      logout();
     };
 
     socket.on('userDeactivated', handleUserDeactivated);
 
-    // تسجيل المستخدم الحالي في غرفته الخاصة
-    if (user) {
-      socket.emit('register-user', user.id);
-    }
-
     return () => {
       socket.off('userDeactivated', handleUserDeactivated);
     };
-  }, [user, logout, t]);
+  }, [logout, t]);
+
+  // ✅ تسجيل المستخدم في WebSocket وجلب عدد الإشعارات غير المقروءة
+  useEffect(() => {
+    if (user) {
+      registerUser(user.id);
+      loadUnreadCount();
+    }
+  }, [user, loadUnreadCount]);
+
+  // ✅ الاستماع للإشعارات الجديدة عبر WebSocket
+  useEffect(() => {
+    const handleNewNotification = (notification: any) => {
+      addRealtimeNotification(notification);
+      toast.success(notification.message);
+    };
+
+    socket.on('new_notification', handleNewNotification);
+
+    return () => {
+      socket.off('new_notification', handleNewNotification);
+    };
+  }, [addRealtimeNotification]);
 
   return (
     <BrowserRouter>
@@ -70,14 +89,13 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/status" element={
-  <PrivateRoute>
-    <Layout>
-      <Status />
-    </Layout>
-  </PrivateRoute>
-} />
-<Route path="/public/project/:token" element={<PublicProject />} />
-
+          <PrivateRoute>
+            <Layout>
+              <Status />
+            </Layout>
+          </PrivateRoute>
+        } />
+        <Route path="/public/project/:token" element={<PublicProject />} />
 
         {/* صفحات محمية (تتطلب مصادقة) */}
         <Route path="/" element={
@@ -100,29 +118,29 @@ function App() {
           </PrivateRoute>
         } />
 
-          <Route path="/my-tasks" element={
-  <PrivateRoute>
-    <Layout>
-      <MyTasks />
-    </Layout>
-  </PrivateRoute>
-} />
+        <Route path="/my-tasks" element={
+          <PrivateRoute>
+            <Layout>
+              <MyTasks />
+            </Layout>
+          </PrivateRoute>
+        } />
 
-<Route path="/admin/removal-requests" element={
-  <PrivateRoute requiredRole={['admin']}>
-    <Layout>
-      <RemovalRequests />
-    </Layout>
-  </PrivateRoute>
-} />
+        <Route path="/admin/removal-requests" element={
+          <PrivateRoute requiredRole={['admin']}>
+            <Layout>
+              <RemovalRequests />
+            </Layout>
+          </PrivateRoute>
+        } />
 
-<Route path="/users/:id/details" element={
-  <PrivateRoute requiredRole={['admin', 'project_manager']}>
-    <Layout>
-      <MemberDetails />
-    </Layout>
-  </PrivateRoute>
-} />
+        <Route path="/users/:id/details" element={
+          <PrivateRoute requiredRole={['admin', 'project_manager']}>
+            <Layout>
+              <MemberDetails />
+            </Layout>
+          </PrivateRoute>
+        } />
 
         <Route path="/users" element={
           <PrivateRoute requiredRole={['admin']}>
@@ -135,23 +153,20 @@ function App() {
         } />
 
         <Route path="/admin/approvals" element={
-  <PrivateRoute requiredRole={['admin']}>
-    <Layout>
-      <AdminApprovals />
-    </Layout>
-  </PrivateRoute>
-} />
+          <PrivateRoute requiredRole={['admin']}>
+            <Layout>
+              <AdminApprovals />
+            </Layout>
+          </PrivateRoute>
+        } />
 
-      <Route path="/tags" element={
-  <PrivateRoute requiredRole={['admin']}>
-    <Layout>
-      <TagsManagement />
-    </Layout>
-  </PrivateRoute>
-} />
-
-
-
+        <Route path="/tags" element={
+          <PrivateRoute requiredRole={['admin']}>
+            <Layout>
+              <TagsManagement />
+            </Layout>
+          </PrivateRoute>
+        } />
 
         <Route path="/projects" element={
           <PrivateRoute>

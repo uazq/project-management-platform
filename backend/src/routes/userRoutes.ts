@@ -10,23 +10,28 @@ import {
   uploadProfilePicture,
   getPendingUsers,
   approveUser,
-  getAvailableMembers, // ✅ استيراد الدالة الجديدة
+  rejectUser, // ✅ إضافة دالة الرفض
+  getAvailableMembers,
+  getMemberDetails,
 } from '../controllers/userController';
 
 const upload = multer({ dest: 'uploads/temp/' });
 
 const router = Router();
 
-// جميع المسارات تتطلب مصادقة
 router.use(authenticate);
 
-// ✅ مسار جلب المستخدمين المتاحين لمشروع معين (يجب أن يكون قبل أي مسار يحتوي على :id)
+// ✅ مسار جلب تفاصيل العضو (يجب أن يكون قبل أي مسار يحتوي على :id)
+router.get('/:id/details', getMemberDetails);
+
+// مسار جلب المستخدمين المتاحين لمشروع معين
 router.get('/projects/:projectId/available-members', getAvailableMembers);
 
 // مسارات الأدمن
 router.get('/', allowRoles('admin'), getAllUsers);
 router.get('/pending', allowRoles('admin'), getPendingUsers);
 router.post('/:id/approve', allowRoles('admin'), approveUser);
+router.post('/:id/reject', allowRoles('admin'), rejectUser); // ✅ مسار رفض المستخدم
 router.put('/:id', allowRoles('admin'), updateUser);
 router.patch('/:id/toggle-active', allowRoles('admin'), toggleUserActive);
 router.delete('/:id', allowRoles('admin'), deleteUser);

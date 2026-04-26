@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../store/authStore';
+import { useNotificationStore } from '../store/notificationStore';
 import api from '../services/api';
 import socket from '../services/socket';
 import { Project, Task, User, Comment, File as ProjectFile, Tag } from '../types';
@@ -26,11 +27,11 @@ const ProjectDetails = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { user } = useAuthStore();
+  const { notifications, loadUnreadCount } = useNotificationStore();
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'tasks' | 'members' | 'files' | 'comments' | 'discussions' | 'reports'>('overview');
 
-  // بيانات للمهام
   const [tasks, setTasks] = useState<Task[]>([]);
   const [members, setMembers] = useState<User[]>([]);
   const [files, setFiles] = useState<ProjectFile[]>([]);
@@ -38,7 +39,6 @@ const ProjectDetails = () => {
   const [uploading, setUploading] = useState(false);
   const [newComment, setNewComment] = useState('');
 
-  // حالة إضافة مهمة
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [newTask, setNewTask] = useState({
     title: '',
@@ -48,35 +48,48 @@ const ProjectDetails = () => {
     assigneeId: ''
   });
 
-  // حالة إضافة عضو
   const [showAddMember, setShowAddMember] = useState(false);
   const [availableUsers, setAvailableUsers] = useState<User[]>([]);
   const [selectedUserId, setSelectedUserId] = useState('');
 
-  // حالة التبويب الحالي للمهام
   const [taskStatusTab, setTaskStatusTab] = useState<'not_started' | 'in_progress' | 'completed' | 'overdue'>('not_started');
 
-  // بيانات المخطط الخطي
   const [timelineData, setTimelineData] = useState<any[]>([]);
   const [loadingTimeline, setLoadingTimeline] = useState(false);
 
-  // حالات الوسوم
   const [projectTags, setProjectTags] = useState<Tag[]>([]);
   const [showTagSelector, setShowTagSelector] = useState(false);
   const [taskTags, setTaskTags] = useState<{ [taskId: number]: Tag[] }>({});
 
-  // حالات المشاركة
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [shareLink, setShareLink] = useState('');
 
-  // حالات طلب حذف العضو
   const [removalReason, setRemovalReason] = useState('');
   const [showRemovalModal, setShowRemovalModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState<User | null>(null);
 
+  const [tabBadges, setTabBadges] = useState<{ [key: string]: number }>({});
+
+  const isManager = user?.role === 'admin' || user?.role === 'project_manager';
+
   useEffect(() => {
     if (id) fetchProject();
   }, [id]);
+
+  useEffect(() => {
+    if (!id || notifications.length === 0) return;
+    const projectIdNum = parseInt(id);
+    const projectNotifications = notifications.filter(n => n.projectId === projectIdNum && !n.isRead);
+    
+    const counts = {
+      tasks: projectNotifications.filter(n => n.entityType === 'Task' || n.type?.includes('task')).length,
+      comments: projectNotifications.filter(n => n.entityType === 'Comment' || n.type?.includes('comment')).length,
+      discussions: projectNotifications.filter(n => n.entityType === 'Discussion' || n.type?.includes('discussion')).length,
+      files: projectNotifications.filter(n => n.entityType === 'File' || n.type?.includes('file')).length,
+      members: projectNotifications.filter(n => n.entityType === 'Member' || n.type?.includes('member')).length,
+    };
+    setTabBadges(counts);
+  }, [id, notifications]);
 
   const fetchProject = async () => {
     try {
@@ -93,6 +106,7 @@ const ProjectDetails = () => {
         taskTagsMap[task.id] = task.tags?.map((tt: any) => tt.tag) || [];
       });
       setTaskTags(taskTagsMap);
+      loadUnreadCount();
     } catch {
       toast.error(t('project.fetchError'));
       navigate('/projects');
@@ -101,7 +115,6 @@ const ProjectDetails = () => {
     }
   };
 
-  // WebSocket للتحديث الفوري
   useEffect(() => {
     if (!id) return;
     socket.emit('join-project', id);
@@ -147,24 +160,23 @@ const ProjectDetails = () => {
     };
   }, [id]);
 
-  // جلب المستخدمين المتاحين للإضافة
   useEffect(() => {
-    if (showAddMember && (user?.role === 'admin' || user?.role === 'project_manager')) {
+    if (showAddMember && isManager) {
       const fetchAvailable = async () => {
-  try {
-    const res = await api.get(`/users/projects/${id}/available-members`);
-    setAvailableUsers(res.data);
-  } catch (error) {
-    toast.error(t('member.fetchError'));
-  }
-};
+        try {
+          const res = await api.get(`/users/projects/${id}/available-members`);
+          setAvailableUsers(res.data);
+        } catch (error) {
+          toast.error(t('member.fetchError'));
+        }
+      };
       fetchAvailable();
     }
   }, [showAddMember, members, user]);
 
-  // إضافة مهمة جديدة
   const handleAddTask = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isManager) return;
     try {
       const payload = {
         ...newTask,
@@ -180,7 +192,6 @@ const ProjectDetails = () => {
     }
   };
 
-  // تغيير حالة مهمة
   const handleStatusChange = useCallback(async (taskId: number, newStatus: string) => {
     try {
       await api.patch(`/tasks/${taskId}/status`, { status: newStatus });
@@ -192,9 +203,9 @@ const ProjectDetails = () => {
     }
   }, [t]);
 
-  // حذف مهمة
   const handleDeleteTask = useCallback(async (taskId: number) => {
     if (!confirm(t('common.confirmDelete'))) return;
+    if (!isManager) return;
     try {
       await api.delete(`/tasks/${taskId}`);
       setTasks(prev => prev.filter(t => t.id !== taskId));
@@ -202,11 +213,11 @@ const ProjectDetails = () => {
     } catch {
       toast.error(t('task.deleteError'));
     }
-  }, [t]);
+  }, [t, isManager]);
 
-  // إضافة عضو
   const handleAddMember = async () => {
     if (!selectedUserId) return;
+    if (!isManager) return;
     try {
       await api.post(`/projects/${id}/members`, { userId: parseInt(selectedUserId) });
       const newMember = availableUsers.find(u => u.id === parseInt(selectedUserId));
@@ -222,9 +233,9 @@ const ProjectDetails = () => {
     }
   };
 
-  // إزالة عضو مباشر (للأدمن فقط)
   const handleRemoveMemberDirect = async (userId: number) => {
     if (!confirm(t('common.confirmDelete'))) return;
+    if (!isManager) return;
     try {
       await api.delete(`/projects/${id}/members/${userId}`);
       setMembers(prev => prev.filter(m => m.id !== userId));
@@ -234,9 +245,9 @@ const ProjectDetails = () => {
     }
   };
 
-  // طلب حذف عضو (للمدير)
   const handleRequestRemoval = async () => {
     if (!selectedMember || !removalReason.trim()) return;
+    if (!isManager) return;
     try {
       await api.post(`/projects/${id}/members/${selectedMember.id}/removal-request`, { reason: removalReason });
       toast.success(t('removal.requestSent'));
@@ -248,7 +259,6 @@ const ProjectDetails = () => {
     }
   };
 
-  // رفع ملف
   const handleFileUpload = async (files: File[]) => {
     setUploading(true);
     const formData = new FormData();
@@ -264,7 +274,6 @@ const ProjectDetails = () => {
     }
   };
 
-  // حذف ملف
   const handleDeleteFile = async (fileId: number) => {
     if (!confirm(t('common.confirmDelete'))) return;
     try {
@@ -276,7 +285,6 @@ const ProjectDetails = () => {
     }
   };
 
-  // إضافة تعليق
   const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim()) return;
@@ -290,7 +298,6 @@ const ProjectDetails = () => {
     }
   };
 
-  // حذف تعليق
   const handleDeleteComment = async (commentId: number) => {
     if (!confirm(t('common.confirmDelete'))) return;
     try {
@@ -302,9 +309,9 @@ const ProjectDetails = () => {
     }
   };
 
-  // أرشفة / إلغاء أرشفة المشروع
   const handleArchive = async () => {
     if (!confirm(t('archive.confirmArchive'))) return;
+    if (!isManager) return;
     try {
       await api.patch(`/projects/${id}/archive`);
       toast.success(t('archive.archiveSuccess'));
@@ -316,6 +323,7 @@ const ProjectDetails = () => {
 
   const handleUnarchive = async () => {
     if (!confirm(t('archive.confirmUnarchive'))) return;
+    if (!isManager) return;
     try {
       await api.patch(`/projects/${id}/unarchive`);
       toast.success(t('archive.unarchiveSuccess'));
@@ -325,8 +333,8 @@ const ProjectDetails = () => {
     }
   };
 
-  // مشاركة المشروع
   const handleShare = async () => {
+    if (!isManager) return;
     try {
       const res = await api.post(`/projects/${id}/share`, {});
       setShareLink(res.data.shareUrl);
@@ -336,7 +344,6 @@ const ProjectDetails = () => {
     }
   };
 
-  // جلب بيانات المخطط الخطي
   const fetchTimeline = async () => {
     setLoadingTimeline(true);
     try {
@@ -369,15 +376,13 @@ const ProjectDetails = () => {
 
   if (!project) return <div className="text-center py-10">{t('project.notFound')}</div>;
 
-  const isManager = user?.role === 'admin' || project.createdBy === user?.id;
-
   const tabs = [
     { id: 'overview', label: t('common.overview'), icon: FiFolder },
-    { id: 'tasks', label: t('common.tasks'), icon: FiCheckCircle },
-    { id: 'members', label: t('common.members'), icon: FiUsers },
-    { id: 'files', label: t('common.files'), icon: FiUpload },
-    { id: 'comments', label: t('common.comments'), icon: FiMessageSquare },
-    { id: 'discussions', label: t('discussions.title'), icon: FiMessageSquare },
+    { id: 'tasks', label: t('common.tasks'), icon: FiCheckCircle, badge: tabBadges.tasks },
+    { id: 'members', label: t('common.members'), icon: FiUsers, badge: tabBadges.members },
+    { id: 'files', label: t('common.files'), icon: FiUpload, badge: tabBadges.files },
+    { id: 'comments', label: t('common.comments'), icon: FiMessageSquare, badge: tabBadges.comments },
+    { id: 'discussions', label: t('discussions.title'), icon: FiMessageSquare, badge: tabBadges.discussions },
     { id: 'reports', label: t('common.reports'), icon: FiBarChart2 },
   ];
 
@@ -404,7 +409,6 @@ const ProjectDetails = () => {
             </div>
             <p className="text-gray-600 dark:text-gray-400 mt-2">{project.description}</p>
             
-            {/* قسم الوسوم للمشروع */}
             <div className="mt-4">
               <div className="flex items-center gap-2 mb-2">
                 <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('tag.title')}</h3>
@@ -514,13 +518,13 @@ const ProjectDetails = () => {
       </div>
 
       {/* تبويبات الصفحة الرئيسية */}
-      <div className="border-b border-gray-200 dark:border-dark-100 overflow-x-auto">
+      <div className="border-b border-gray-200 dark:border-dark-200 overflow-x-auto">
         <nav className="flex space-x-8 space-x-reverse min-w-max px-1">
           {tabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`py-2 px-1 border-b-2 font-medium text-sm flex items-center gap-2 whitespace-nowrap transition ${
+              className={`py-2 px-1 border-b-2 font-medium text-sm flex items-center gap-2 whitespace-nowrap transition relative ${
                 activeTab === tab.id
                   ? 'border-primary-500 text-primary-600 dark:text-primary-400'
                   : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
@@ -528,6 +532,11 @@ const ProjectDetails = () => {
             >
               <tab.icon size={18} />
               {tab.label}
+              {(tab as any).badge !== undefined && (tab as any).badge > 0 && (
+                <span className="absolute -top-1 -right-2 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                  {(tab as any).badge > 9 ? '9+' : (tab as any).badge}
+                </span>
+              )}
             </button>
           ))}
         </nav>
@@ -539,21 +548,21 @@ const ProjectDetails = () => {
           <div className="space-y-4">
             <h2 className="text-lg font-semibold">{t('project.overview')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-gray-50 dark:bg-dark-100 p-4 rounded-lg">
+              <div className="bg-gray-50 dark:bg-dark-200 p-4 rounded-lg">
                 <p className="text-sm text-gray-500">{t('project.startDate')}</p>
                 <p className="font-medium">{new Date(project.startDate).toLocaleDateString()}</p>
               </div>
               {project.endDate && (
-                <div className="bg-gray-50 dark:bg-dark-100 p-4 rounded-lg">
+                <div className="bg-gray-50 dark:bg-dark-200 p-4 rounded-lg">
                   <p className="text-sm text-gray-500">{t('project.endDate')}</p>
                   <p className="font-medium">{new Date(project.endDate).toLocaleDateString()}</p>
                 </div>
               )}
-              <div className="bg-gray-50 dark:bg-dark-100 p-4 rounded-lg">
+              <div className="bg-gray-50 dark:bg-dark-200 p-4 rounded-lg">
                 <p className="text-sm text-gray-500">{t('common.tasks')}</p>
                 <p className="font-medium">{tasks.length}</p>
               </div>
-              <div className="bg-gray-50 dark:bg-dark-100 p-4 rounded-lg">
+              <div className="bg-gray-50 dark:bg-dark-200 p-4 rounded-lg">
                 <p className="text-sm text-gray-500">{t('common.members')}</p>
                 <p className="font-medium">{members.length}</p>
               </div>
@@ -577,7 +586,7 @@ const ProjectDetails = () => {
 
             {showTaskModal && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                <div className="bg-white dark:bg-dark-200 rounded-xl shadow-xl max-w-md w-full p-6">
+                <div className="bg-white dark:bg-dark-100 rounded-xl shadow-xl max-w-md w-full p-6">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-semibold">{t('task.newTask')}</h3>
                     <button onClick={() => setShowTaskModal(false)} className="text-gray-500 hover:text-gray-700">
@@ -653,7 +662,7 @@ const ProjectDetails = () => {
               </div>
             )}
 
-            <div className="border-b border-gray-200 dark:border-dark-100">
+            <div className="border-b border-gray-200 dark:border-dark-200">
               <nav className="flex space-x-4 space-x-reverse">
                 {taskStatusTabs.map(tab => (
                   <button
@@ -677,13 +686,12 @@ const ProjectDetails = () => {
                 <p className="text-center text-gray-500 py-4">{t('common.noData')}</p>
               ) : (
                 tasks.filter(t => t.status === taskStatusTab).map(task => (
-                  <div key={task.id} className="bg-gray-50 dark:bg-dark-100 p-4 rounded-lg border border-gray-200 dark:border-dark-100">
+                  <div key={task.id} className="bg-gray-50 dark:bg-dark-200 p-4 rounded-lg border border-gray-200 dark:border-dark-200">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div className="flex-1">
                         <h4 className="font-medium text-gray-900 dark:text-white">{task.title}</h4>
                         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{task.description}</p>
                         
-                        {/* وسوم المهمة */}
                         <div className="flex flex-wrap gap-1 mt-2">
                           {(taskTags[task.id] || []).map(tag => (
                             <span
@@ -756,7 +764,7 @@ const ProjectDetails = () => {
                               <select
                                 value={task.status}
                                 onChange={(e) => handleStatusChange(task.id, e.target.value)}
-                                className="p-1.5 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg"
+                                className="p-1.5 text-sm border border-gray-300 dark:border-dark-300 rounded-lg bg-white dark:bg-dark-200 text-gray-900 dark:text-gray-100"
                               >
                                 <option value="not_started">{t('task.not_started')}</option>
                                 <option value="in_progress">{t('task.in_progress')}</option>
@@ -806,7 +814,7 @@ const ProjectDetails = () => {
             </div>
 
             {showAddMember && (
-              <div className="bg-gray-50 dark:bg-dark-100 p-4 rounded-lg flex flex-col sm:flex-row gap-2">
+              <div className="bg-gray-50 dark:bg-dark-200 p-4 rounded-lg flex flex-col sm:flex-row gap-2">
                 <select
                   value={selectedUserId}
                   onChange={(e) => setSelectedUserId(e.target.value)}
@@ -830,7 +838,7 @@ const ProjectDetails = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {members.map(member => (
-                <div key={member.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-dark-100 rounded-lg">
+                <div key={member.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-dark-200 rounded-lg">
                   <div className="flex items-center gap-3">
                     {member.profilePicture ? (
                       <img src={`http://localhost:5000${member.profilePicture}`} className="w-10 h-10 rounded-full object-cover" />
@@ -848,23 +856,29 @@ const ProjectDetails = () => {
                     <span className="badge badge-info">{t('member.projectManager')}</span>
                   )}
                   {isManager && member.id !== project.createdBy && !project.archived && (
-                    <>
+                    <div className="flex gap-2">
                       <button
                         onClick={() => {
                           setSelectedMember(member);
                           setShowRemovalModal(true);
                         }}
-                        className="text-red-500 hover:text-red-700 text-sm flex items-center gap-1"
+                        className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition-all duration-200 shadow-sm hover:shadow-md"
                         title={t('removal.request')}
                       >
-                        <FiUserX size={16} /> {t('removal.request')}
+                        <FiUserX size={14} />
+                        {t('removal.request')}
                       </button>
                       {user?.role === 'admin' && (
-                        <button onClick={() => handleRemoveMemberDirect(member.id)} className="text-red-600 hover:text-red-800 text-sm">
+                        <button
+                          onClick={() => handleRemoveMemberDirect(member.id)}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium rounded-lg bg-red-500 text-white hover:bg-red-600 transition-all duration-200 shadow-sm hover:shadow-md"
+                          title={t('common.delete')}
+                        >
+                          <FiTrash2 size={14} />
                           {t('common.delete')}
                         </button>
                       )}
-                    </>
+                    </div>
                   )}
                 </div>
               ))}
@@ -880,7 +894,7 @@ const ProjectDetails = () => {
             )}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {files.map(file => (
-                <div key={file.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-dark-100 rounded-lg">
+                <div key={file.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-dark-200 rounded-lg">
                   <div>
                     <p className="font-medium text-sm">{file.fileName}</p>
                     <p className="text-xs text-gray-500">{(file.size / 1024).toFixed(2)} KB</p>
@@ -920,7 +934,7 @@ const ProjectDetails = () => {
             )}
             <div className="space-y-3">
               {comments.map(comment => (
-                <div key={comment.id} className="bg-gray-50 dark:bg-dark-100 p-4 rounded-lg">
+                <div key={comment.id} className="bg-gray-50 dark:bg-dark-200 p-4 rounded-lg">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-2">
                       {comment.user?.profilePicture ? (
@@ -995,7 +1009,7 @@ const ProjectDetails = () => {
               )}
             </div>
 
-            <div className="bg-gray-50 dark:bg-dark-100 p-4 rounded-lg">
+            <div className="bg-gray-50 dark:bg-dark-200 p-4 rounded-lg">
               <h3 className="font-medium mb-3">{t('report.tasksByStatus')}</h3>
               <div className="space-y-2">
                 {['not_started', 'in_progress', 'completed', 'overdue'].map(status => {
@@ -1007,7 +1021,7 @@ const ProjectDetails = () => {
                         <span>{t(`task.${status}`)}</span>
                         <span>{count} {t('report.tasksCount')} ({percentage}%)</span>
                       </div>
-                      <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                      <div className="w-full bg-gray-200 dark:bg-dark-300 rounded-full h-2">
                         <div
                           className={`h-2 rounded-full ${
                             status === 'not_started' ? 'bg-gray-400' :
@@ -1023,34 +1037,49 @@ const ProjectDetails = () => {
               </div>
             </div>
 
-            <div className="bg-gray-50 dark:bg-dark-100 p-4 rounded-lg">
-              <h3 className="font-medium mb-3">{t('report.memberPerformance')}</h3>
+            {/* ✅ جدول أداء الأعضاء المحسن */}
+            <div className="bg-gray-50 dark:bg-dark-200 p-4 rounded-lg">
+              <h3 className="font-medium mb-3 text-gray-900 dark:text-white">{t('report.memberPerformance')}</h3>
               <div className="overflow-x-auto">
-                <table className="min-w-full">
-                  <thead>
-                    <tr className="text-sm text-gray-500 border-b">
-                      <th className="py-2 text-right">{t('common.member')}</th>
-                      <th className="py-2 text-right">{t('report.totalTasks')}</th>
-                      <th className="py-2 text-right">{t('report.completedTasks')}</th>
-                      <th className="py-2 text-right">{t('report.percentage')}</th>
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-dark-300">
+                  <thead className="bg-gray-100 dark:bg-dark-300">
+                    <tr>
+                      <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        {t('common.member')}
+                      </th>
+                      <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        {t('report.totalTasks')}
+                      </th>
+                      <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        {t('report.completedTasks')}
+                      </th>
+                      <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        {t('report.percentage')}
+                      </th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {members.map(member => {
+                  <tbody className="divide-y divide-gray-200 dark:divide-dark-300">
+                    {members.map((member, idx) => {
                       const memberTasks = tasks.filter(t => t.assigneeId === member.id);
                       const completed = memberTasks.filter(t => t.status === 'completed').length;
                       const total = memberTasks.length;
                       const percentage = total ? Math.round((completed / total) * 100) : 0;
                       return (
-                        <tr key={member.id} className="border-b">
-                          <td className="py-2">{member.fullName}</td>
-                          <td className="py-2">{total}</td>
-                          <td className="py-2">{completed}</td>
-                          <td className="py-2">
-                            <div className="flex items-center gap-2">
-                              <span className="w-12 text-sm">{percentage}%</span>
-                              <div className="w-20 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                                <div className="bg-primary-500 h-2 rounded-full" style={{ width: `${percentage}%` }} />
+                        <tr key={member.id} className={`${idx % 2 === 0 ? 'bg-white dark:bg-dark-100' : 'bg-gray-50 dark:bg-dark-200'} hover:bg-gray-100 dark:hover:bg-dark-300 transition`}>
+                          <td className="px-4 py-3 text-right text-sm font-medium text-gray-900 dark:text-white">
+                            {member.fullName}
+                          </td>
+                          <td className="px-4 py-3 text-center text-sm text-gray-600 dark:text-gray-400">
+                            {total}
+                          </td>
+                          <td className="px-4 py-3 text-center text-sm text-gray-600 dark:text-gray-400">
+                            {completed}
+                          </td>
+                          <td className="px-4 py-3 text-center text-sm text-gray-600 dark:text-gray-400">
+                            <div className="flex items-center justify-center gap-2">
+                              <span className="w-12 text-right">{percentage}%</span>
+                              <div className="w-24 bg-gray-200 dark:bg-dark-300 rounded-full h-2">
+                                <div className="bg-gradient-to-r from-primary-500 to-secondary-500 h-2 rounded-full transition-all duration-500" style={{ width: `${percentage}%` }} />
                               </div>
                             </div>
                           </td>
@@ -1068,9 +1097,9 @@ const ProjectDetails = () => {
       {/* مودال طلب حذف العضو */}
       {showRemovalModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full p-6">
+          <div className="bg-white dark:bg-dark-100 rounded-xl max-w-md w-full p-6">
             <h3 className="text-lg font-semibold mb-2">{t('removal.requestTitle')}</h3>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
               {t('removal.confirmRemove', { name: selectedMember?.fullName })}
             </p>
             <textarea
@@ -1095,9 +1124,9 @@ const ProjectDetails = () => {
       {/* مودال مشاركة المشروع */}
       {shareModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full p-6">
+          <div className="bg-white dark:bg-dark-100 rounded-xl max-w-md w-full p-6">
             <h3 className="text-lg font-semibold mb-2">{t('share.title')}</h3>
-            <p className="text-sm text-gray-600 mb-4">{t('share.description')}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{t('share.description')}</p>
             <div className="flex gap-2">
               <input
                 type="text"

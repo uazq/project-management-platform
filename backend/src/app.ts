@@ -18,6 +18,7 @@ import activityRoutes from './routes/activityRoutes';
 import tagRoutes from './routes/tagRoutes';
 import statusRoutes from './routes/statusRoutes';
 import shareRoutes from './routes/shareRoutes';
+import notificationRoutes from './routes/notificationRoutes'; // ✅ إضافة
 
 dotenv.config();
 
@@ -74,7 +75,8 @@ app.use('/api', activityRoutes);
 app.use('/api', tagRoutes);
 app.use('/api/status', statusRoutes);
 app.use('/api', shareRoutes);
-app.use('/api/tags', tagRoutes);  
+app.use('/api/tags', tagRoutes);
+app.use('/api/notifications', notificationRoutes); // ✅ إضافة مسار الإشعارات
 
 // مسار اختبار
 app.get('/', (req, res) => {

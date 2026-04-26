@@ -4,6 +4,7 @@ import prisma from '../lib/prisma';
 import path from 'path';
 import fs from 'fs';
 import { logActivity } from '../services/activityLog';
+import { notifyUser } from '../services/notificationService';
 
 // عرض جميع المستخدمين (للأدمن فقط)
 export const getAllUsers = async (req: AuthRequest, res: Response) => {
@@ -29,7 +30,7 @@ export const getAllUsers = async (req: AuthRequest, res: Response) => {
   }
 };
 
-// ✅ جديد: جلب المستخدمين المعلقين (لأدمن فقط)
+// جلب المستخدمين المعلقين (لأدمن فقط)
 export const getPendingUsers = async (req: AuthRequest, res: Response) => {
   try {
     if (req.user!.role !== 'admin') {
@@ -53,7 +54,7 @@ export const getPendingUsers = async (req: AuthRequest, res: Response) => {
   }
 };
 
-// ✅ جديد: الموافقة على مستخدم (لأدمن فقط)
+// الموافقة على مستخدم (لأدمن فقط)
 export const approveUser = async (req: AuthRequest, res: Response) => {
   try {
     if (req.user!.role !== 'admin') {
@@ -68,9 +69,9 @@ export const approveUser = async (req: AuthRequest, res: Response) => {
       return res.status(400).json({ message: 'User already approved' });
     }
     const updated = await prisma.user.update({
-      where: { id: userId },
-      data: { isApproved: true },
-    });
+  where: { id: userId },
+  data: { isApproved: true, isActive: true },
+});
     await logActivity({
       userId: req.user!.userId,
       action: 'APPROVE_USER',
@@ -78,7 +79,49 @@ export const approveUser = async (req: AuthRequest, res: Response) => {
       entityId: userId,
       details: { fullName: user.fullName },
     });
+
+    await notifyUser(
+      userId,
+      'user_approved',
+      `✅ تمت الموافقة على حسابك. يمكنك الآن تسجيل الدخول إلى النظام.`,
+      'User',
+      userId,
+      undefined,
+      'تم قبول حسابك'
+    );
+
     res.json({ message: 'User approved successfully', user: updated });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// ✅ رفض مستخدم (لأدمن فقط) – حذف المستخدم
+export const rejectUser = async (req: AuthRequest, res: Response) => {
+  try {
+    if (req.user!.role !== 'admin') {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+    const userId = parseInt(String(req.params.id));
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    if (user.isApproved) {
+      return res.status(400).json({ message: 'User is already approved, cannot reject' });
+    }
+    // حذف المستخدم (يمكن تغيير إلى تعطيل إذا أردت)
+    await prisma.user.delete({ where: { id: userId } });
+
+    await logActivity({
+      userId: req.user!.userId,
+      action: 'REJECT_USER',
+      entityType: 'User',
+      entityId: userId,
+      details: { fullName: user.fullName },
+    });
+    res.json({ message: 'User rejected and deleted successfully' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
@@ -232,14 +275,18 @@ export const uploadProfilePicture = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 // جلب تفاصيل عضو معين (للمشرفين أو مديري المشاريع)
 export const getMemberDetails = async (req: AuthRequest, res: Response) => {
   try {
-    const memberId = parseInt(String(req.params.id));
+    const memberId = parseInt(String(req.params.id), 10);
+    if (isNaN(memberId)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
+
     const currentUserId = req.user!.userId;
     const currentUserRole = req.user!.role;
 
-    // جلب بيانات العضو
     const member = await prisma.user.findUnique({
       where: { id: memberId },
       select: {
@@ -257,22 +304,18 @@ export const getMemberDetails = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // تحديد المشاريع التي يمكن للعضو رؤيتها (حسب صلاحيات المستخدم الحالي)
     let projectWhereClause: any = {};
     if (currentUserRole !== 'admin') {
-      // المستخدم العادي أو مدير المشروع يرى فقط المشاريع المشتركة مع هذا العضو
       projectWhereClause = {
         members: { some: { userId: currentUserId } },
         AND: { members: { some: { userId: memberId } } },
       };
     } else {
-      // الأدمن يرى كل مشاريع العضو
       projectWhereClause = {
         members: { some: { userId: memberId } },
       };
     }
 
-    // جلب المشاريع التي شارك فيها العضو
     const projects = await prisma.project.findMany({
       where: projectWhereClause,
       select: {
@@ -287,7 +330,6 @@ export const getMemberDetails = async (req: AuthRequest, res: Response) => {
       orderBy: { createdAt: 'desc' },
     });
 
-    // جلب المهام المسندة للعضو
     const tasks = await prisma.task.findMany({
       where: { assigneeId: memberId },
       include: {
@@ -296,7 +338,6 @@ export const getMemberDetails = async (req: AuthRequest, res: Response) => {
       orderBy: { dueDate: 'asc' },
     });
 
-    // إحصائيات الإنجازات
     const totalTasks = tasks.length;
     const completedTasks = tasks.filter(t => t.status === 'completed').length;
     const overdueTasks = tasks.filter(t => t.status === 'overdue').length;
@@ -318,6 +359,7 @@ export const getMemberDetails = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 // جلب المستخدمين المتاحين للإضافة إلى مشروع معين (ليسوا أعضاء بالفعل)
 export const getAvailableMembers = async (req: AuthRequest, res: Response) => {
   try {

@@ -14,7 +14,7 @@ export default {
           200: '#ddd6fe',
           300: '#c4b5fd',
           400: '#a78bfa',
-          500: '#8b5cf6', // البنفسجي الرئيسي
+          500: '#8b5cf6',
           600: '#7c3aed',
           700: '#6d28d9',
           800: '#5b21b6',
@@ -26,7 +26,7 @@ export default {
           200: '#fbcfe8',
           300: '#f9a8d4',
           400: '#f472b6',
-          500: '#ec4899', // الوردي
+          500: '#ec4899',
           600: '#db2777',
           700: '#be185d',
           800: '#9d174d',
@@ -38,7 +38,7 @@ export default {
           200: '#fde68a',
           300: '#fcd34d',
           400: '#fbbf24',
-          500: '#f59e0b', // البرتقالي
+          500: '#f59e0b',
           600: '#d97706',
           700: '#b45309',
           800: '#92400e',
@@ -51,8 +51,8 @@ export default {
         }
       },
       fontFamily: {
-  sans: ['Inter', 'Cairo', 'system-ui', 'sans-serif'],
-},
+        sans: ['Inter', 'Cairo', 'system-ui', 'sans-serif'],
+      },
       boxShadow: {
         'soft': '0 4px 20px rgba(0, 0, 0, 0.05)',
         'medium': '0 8px 30px rgba(0, 0, 0, 0.1)',
@@ -61,6 +61,7 @@ export default {
       animation: {
         'fade-in': 'fadeIn 0.3s ease-out',
         'slide-up': 'slideUp 0.3s ease-out',
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       keyframes: {
         fadeIn: {

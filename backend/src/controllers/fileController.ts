@@ -4,16 +4,35 @@ import prisma from '../lib/prisma';
 import path from 'path';
 import fs from 'fs';
 import { logActivity } from '../services/activityLog';
+import { notifyProjectMembers } from '../services/notificationService';
+
+// دالة مساعدة لتحويل اسم الملف إلى UTF-8 (دعم الأسماء العربية)
+const decodeFileName = (fileName: string): string => {
+  try {
+    // محاولة التحويل من latin1 إلى utf8
+    const decoded = Buffer.from(fileName, 'latin1').toString('utf8');
+    if (decoded && decoded !== fileName) return decoded;
+  } catch (e) {
+    // تجاهل الخطأ
+  }
+  try {
+    // محاولة فك ترميز URI إذا كان مشفراً
+    return decodeURIComponent(escape(fileName));
+  } catch (e) {
+    return fileName;
+  }
+};
 
 // رفع ملفات لمشروع
 export const uploadProjectFiles = async (req: AuthRequest, res: Response) => {
   try {
     const projectId = parseInt(String(req.params.projectId));
     const userId = req.user!.userId;
+    const userFullName = req.user!.fullName;
     const files = req.files as Express.Multer.File[];
 
     if (!files || files.length === 0) {
-      return res.status(400).json({ message: 'No files uploaded' });
+      return res.status(400).json({ message: 'لم يتم رفع أي ملفات' });
     }
 
     const project = await prisma.project.findUnique({
@@ -21,19 +40,22 @@ export const uploadProjectFiles = async (req: AuthRequest, res: Response) => {
       include: { members: true }
     });
     if (!project) {
-      return res.status(404).json({ message: 'Project not found' });
+      return res.status(404).json({ message: 'المشروع غير موجود' });
     }
 
     const isMember = project.members.some(m => m.userId === userId);
     if (!isMember && req.user!.role !== 'admin') {
-      return res.status(403).json({ message: 'Access denied' });
+      return res.status(403).json({ message: 'غير مسموح لك برفع ملفات لهذا المشروع' });
     }
 
     const fileRecords = await Promise.all(
       files.map(async (file) => {
+        // ✅ تحويل اسم الملف الأصلي إلى UTF-8 للحفاظ على الأسماء العربية في قاعدة البيانات
+        const originalName = decodeFileName(file.originalname);
+        
         return prisma.file.create({
           data: {
-            fileName: file.originalname,
+            fileName: originalName, // الاسم الأصلي (سيتم عرضه في الواجهة)
             filePath: file.path,
             fileType: file.mimetype,
             size: file.size,
@@ -54,6 +76,16 @@ export const uploadProjectFiles = async (req: AuthRequest, res: Response) => {
         projectId,
       });
 
+      await notifyProjectMembers(
+        projectId,
+        userId,
+        'file_uploaded',
+        `📎 تم رفع ملف "${file.fileName}" في مشروع "${project.name}" بواسطة ${userFullName}`,
+        'File',
+        file.id,
+        file.fileName
+      );
+
       if ((global as any).io) {
         (global as any).io.emit('fileUploaded', { ...file, projectId, uploadedBy: userId });
       }
@@ -62,19 +94,20 @@ export const uploadProjectFiles = async (req: AuthRequest, res: Response) => {
     res.status(201).json(fileRecords);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'خطأ في الخادم أثناء رفع الملفات' });
   }
 };
 
-// رفع ملفات لمهمة
+// رفع ملفات لمهمة (نفس المنطق)
 export const uploadTaskFiles = async (req: AuthRequest, res: Response) => {
   try {
     const taskId = parseInt(String(req.params.taskId));
     const userId = req.user!.userId;
+    const userFullName = req.user!.fullName;
     const files = req.files as Express.Multer.File[];
 
     if (!files || files.length === 0) {
-      return res.status(400).json({ message: 'No files uploaded' });
+      return res.status(400).json({ message: 'لم يتم رفع أي ملفات' });
     }
 
     const task = await prisma.task.findUnique({
@@ -82,19 +115,20 @@ export const uploadTaskFiles = async (req: AuthRequest, res: Response) => {
       include: { project: { include: { members: true } } }
     });
     if (!task) {
-      return res.status(404).json({ message: 'Task not found' });
+      return res.status(404).json({ message: 'المهمة غير موجودة' });
     }
 
     const isMember = task.project.members.some(m => m.userId === userId);
     if (!isMember && req.user!.role !== 'admin') {
-      return res.status(403).json({ message: 'Access denied' });
+      return res.status(403).json({ message: 'غير مسموح لك برفع ملفات لهذه المهمة' });
     }
 
     const fileRecords = await Promise.all(
       files.map(async (file) => {
+        const originalName = decodeFileName(file.originalname);
         return prisma.file.create({
           data: {
-            fileName: file.originalname,
+            fileName: originalName,
             filePath: file.path,
             fileType: file.mimetype,
             size: file.size,
@@ -115,6 +149,16 @@ export const uploadTaskFiles = async (req: AuthRequest, res: Response) => {
         projectId: task.projectId,
       });
 
+      await notifyProjectMembers(
+        task.projectId,
+        userId,
+        'file_uploaded',
+        `📎 تم رفع ملف "${file.fileName}" في مهمة "${task.title}" بواسطة ${userFullName}`,
+        'File',
+        file.id,
+        file.fileName
+      );
+
       if ((global as any).io) {
         (global as any).io.emit('fileUploaded', { ...file, taskId, projectId: task.projectId });
       }
@@ -123,7 +167,7 @@ export const uploadTaskFiles = async (req: AuthRequest, res: Response) => {
     res.status(201).json(fileRecords);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'خطأ في الخادم أثناء رفع الملفات' });
   }
 };
 
@@ -293,28 +337,43 @@ export const getRecentFiles = async (req: AuthRequest, res: Response) => {
     const userId = req.user!.userId;
     const userRole = req.user!.role;
 
-    let projectWhereClause: any = {};
-    if (userRole !== 'admin') {
-      projectWhereClause = {
-        members: { some: { userId } }
-      };
-    }
+    let files;
 
-    const files = await prisma.file.findMany({
-      where: {
+    if (userRole === 'admin') {
+      // الأدمن يرى جميع الملفات الحديثة من كل المشاريع
+      files = await prisma.file.findMany({
+        include: {
+          uploader: { select: { id: true, fullName: true } },
+          project: { select: { id: true, name: true } },
+          task: { select: { id: true, title: true, projectId: true } }
+        },
+        orderBy: { uploadedAt: 'desc' },
+        take: 5,
+      });
+    } else {
+      // للمستخدم العادي ومدير المشروع: المشاريع التي هو عضو فيها أو منشئها
+      const projectWhereClause = {
         OR: [
-          { project: projectWhereClause },
-          { task: { project: projectWhereClause } }
+          { members: { some: { userId } } },
+          { createdBy: userId }
         ]
-      },
-      include: {
-        uploader: { select: { id: true, fullName: true } },
-        project: { select: { id: true, name: true } },
-        task: { select: { id: true, title: true, projectId: true } }
-      },
-      orderBy: { uploadedAt: 'desc' },
-      take: 5,
-    });
+      };
+      files = await prisma.file.findMany({
+        where: {
+          OR: [
+            { project: projectWhereClause },
+            { task: { project: projectWhereClause } }
+          ]
+        },
+        include: {
+          uploader: { select: { id: true, fullName: true } },
+          project: { select: { id: true, name: true } },
+          task: { select: { id: true, title: true, projectId: true } }
+        },
+        orderBy: { uploadedAt: 'desc' },
+        take: 5,
+      });
+    }
 
     res.json(files);
   } catch (error) {

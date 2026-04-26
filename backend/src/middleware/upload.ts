@@ -8,32 +8,43 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// إعداد التخزين
+// إعداد التخزين (الحفاظ على الأسماء العربية عبر ترميزها بشكل آمن)
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
-    // إنشاء اسم فريد للملف: الوقت + اسم الملف الأصلي
+    // الحفاظ على الاسم الأصلي مع ترميز آمن للمسافات والرموز الخاصة
+    const originalName = Buffer.from(file.originalname, 'latin1').toString('utf8');
+    const safeName = originalName.replace(/[^a-zA-Z0-9\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\u0621-\u064A\.\-_]/g, '_');
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const ext = path.extname(file.originalname);
-    cb(null, uniqueSuffix + ext);
+    cb(null, uniqueSuffix + '-' + safeName);
   }
 });
 
-// فلترة الملفات (اختياري): قبول الصور والمستندات فقط
+// فلترة الملفات المسموحة
 const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-  const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+  const allowedTypes: string[] = [ // ✅ تحديد النوع كـ string[]
+    'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    'text/plain',
+    'application/zip', 'application/x-zip-compressed', 'application/x-rar-compressed'
+  ];
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error('Invalid file type. Only images, PDF, and DOC files are allowed.'));
+    cb(new Error(`نوع الملف غير مدعوم: ${file.mimetype}`));
   }
 };
 
-// إنشاء middleware للرفع مع حدود حجم (مثلاً 10 ميجابايت)
 export const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 10 * 1024 * 1024 } // 10 MB
+  limits: { fileSize: 20 * 1024 * 1024, files: 10 } // 20 ميجابايت كحد أقصى
 });

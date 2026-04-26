@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
 import prisma from '../lib/prisma';
 import { logActivity } from '../services/activityLog';
+import { notifyUser, notifyProjectMembers } from '../services/notificationService';
 
 // إنشاء مهمة جديدة
 export const createTask = async (req: AuthRequest, res: Response) => {
@@ -10,6 +11,7 @@ export const createTask = async (req: AuthRequest, res: Response) => {
     const projectId = parseInt(String(req.params.projectId));
     const { title, description, priority, dueDate, assigneeId } = req.body;
     const createdBy = req.user!.userId;
+    const creatorFullName = req.user!.fullName;
 
     const project = await prisma.project.findUnique({
       where: { id: projectId },
@@ -40,7 +42,6 @@ export const createTask = async (req: AuthRequest, res: Response) => {
       }
     });
 
-    // تسجيل النشاط
     await logActivity({
       userId: createdBy,
       action: 'CREATE_TASK',
@@ -50,7 +51,28 @@ export const createTask = async (req: AuthRequest, res: Response) => {
       projectId,
     });
 
-    // بث عبر WebSocket
+    await notifyProjectMembers(
+      projectId,
+      createdBy,
+      'task_created',
+      `📌 مهمة جديدة: "${task.title}" في مشروع "${project.name}"`,
+      'Task',
+      task.id,
+      task.title
+    );
+
+    if (assigneeId && assigneeId !== createdBy) {
+      await notifyUser(
+        assigneeId,
+        'task_assigned',
+        `📌 تم تعيينك لمهمة "${task.title}" في مشروع "${project.name}"`,
+        'Task',
+        task.id,
+        projectId,
+        task.title
+      );
+    }
+
     if ((global as any).io) {
       (global as any).io.emit('taskCreated', task);
     }
@@ -85,12 +107,18 @@ export const getTasks = async (req: AuthRequest, res: Response) => {
       include: {
         assignee: { select: { id: true, fullName: true, username: true } },
         creator: { select: { id: true, fullName: true } },
+        tags: { include: { tag: true } },
         _count: { select: { comments: true, files: true } }
       },
       orderBy: { dueDate: 'asc' }
     });
 
-    res.json(tasks);
+    // تحويل الشكل إلى tags مباشرة
+    const formattedTasks = tasks.map(t => ({
+      ...t,
+      tags: t.tags?.map((tt: any) => tt.tag) || []
+    }));
+    res.json(formattedTasks);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
@@ -109,6 +137,7 @@ export const getTaskById = async (req: AuthRequest, res: Response) => {
         project: { select: { id: true, name: true } },
         assignee: { select: { id: true, fullName: true, username: true } },
         creator: { select: { id: true, fullName: true } },
+        tags: { include: { tag: true } },
         comments: {
           include: { user: { select: { id: true, fullName: true, profilePicture: true } } },
           orderBy: { createdAt: 'desc' }
@@ -128,14 +157,18 @@ export const getTaskById = async (req: AuthRequest, res: Response) => {
       return res.status(403).json({ message: 'Access denied' });
     }
 
-    res.json(task);
+    const formattedTask = {
+      ...task,
+      tags: task.tags?.map((tt: any) => tt.tag) || []
+    };
+    res.json(formattedTask);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
 };
 
-// تحديث مهمة (مدير المشروع أو المسؤول عن المهمة أو أدمن)
+// تحديث مهمة
 export const updateTask = async (req: AuthRequest, res: Response) => {
   try {
     const taskId = parseInt(String(req.params.id));
@@ -172,7 +205,6 @@ export const updateTask = async (req: AuthRequest, res: Response) => {
       }
     });
 
-    // تسجيل النشاط
     await logActivity({
       userId,
       action: 'UPDATE_TASK',
@@ -181,6 +213,18 @@ export const updateTask = async (req: AuthRequest, res: Response) => {
       details: { title: updated.title, projectId: task.projectId, projectName: task.project.name },
       projectId: task.projectId,
     });
+
+    if (assigneeId && assigneeId !== task.assigneeId) {
+      await notifyUser(
+        assigneeId,
+        'task_assigned',
+        `📌 تم تعيينك لمهمة "${updated.title}" في مشروع "${task.project.name}"`,
+        'Task',
+        taskId,
+        task.projectId,
+        updated.title
+      );
+    }
 
     if ((global as any).io) {
       (global as any).io.emit('taskUpdated', updated);
@@ -193,22 +237,25 @@ export const updateTask = async (req: AuthRequest, res: Response) => {
   }
 };
 
-// تغيير حالة المهمة (يسمح للمسند إليه ومدير المشروع والأدمن)
+// تغيير حالة المهمة
 export const changeTaskStatus = async (req: AuthRequest, res: Response) => {
   try {
     const taskId = parseInt(String(req.params.id));
     const { status } = req.body;
     const userId = req.user!.userId;
+    const userFullName = req.user!.fullName;
 
     const task = await prisma.task.findUnique({
       where: { id: taskId },
-      include: { project: { select: { createdBy: true, name: true } } }
+      include: { 
+        project: { select: { createdBy: true, name: true } },
+        assignee: { select: { id: true, fullName: true } }
+      }
     });
     if (!task) {
       return res.status(404).json({ message: 'Task not found' });
     }
 
-    // التحقق من الصلاحية: المسند إليه أو مدير المشروع أو أدمن
     const isAssignee = task.assigneeId === userId;
     const isProjectManager = task.project.createdBy === userId;
     if (!isAssignee && !isProjectManager && req.user!.role !== 'admin') {
@@ -221,7 +268,6 @@ export const changeTaskStatus = async (req: AuthRequest, res: Response) => {
       select: { id: true, status: true, title: true, projectId: true }
     });
 
-    // تسجيل النشاط
     await logActivity({
       userId,
       action: 'UPDATE_TASK_STATUS',
@@ -230,6 +276,30 @@ export const changeTaskStatus = async (req: AuthRequest, res: Response) => {
       details: { title: updated.title, newStatus: status, projectId: task.projectId, projectName: task.project.name },
       projectId: task.projectId,
     });
+
+    if (task.assigneeId && task.assigneeId !== userId) {
+      await notifyUser(
+        task.assigneeId,
+        'task_status_changed',
+        `✅ تغيرت حالة مهمة "${task.title}" إلى ${status} في مشروع "${task.project.name}"`,
+        'Task',
+        taskId,
+        task.projectId,
+        task.title
+      );
+    }
+
+    if (task.project.createdBy !== userId) {
+      await notifyUser(
+        task.project.createdBy,
+        'task_status_changed',
+        `✅ المستخدم ${userFullName} غير حالة مهمة "${task.title}" إلى ${status} في مشروع "${task.project.name}"`,
+        'Task',
+        taskId,
+        task.projectId,
+        task.title
+      );
+    }
 
     if ((global as any).io) {
       (global as any).io.emit('taskStatusChanged', { ...updated, projectId: task.projectId });
@@ -242,7 +312,7 @@ export const changeTaskStatus = async (req: AuthRequest, res: Response) => {
   }
 };
 
-// حذف مهمة (مدير المشروع فقط)
+// حذف مهمة
 export const deleteTask = async (req: AuthRequest, res: Response) => {
   try {
     const taskId = parseInt(String(req.params.id));
@@ -260,9 +330,20 @@ export const deleteTask = async (req: AuthRequest, res: Response) => {
       return res.status(403).json({ message: 'Only project manager can delete tasks' });
     }
 
+    if (task.assigneeId && task.assigneeId !== userId) {
+      await notifyUser(
+        task.assigneeId,
+        'task_deleted',
+        `🗑️ تم حذف مهمة "${task.title}" من مشروع "${task.project.name}"`,
+        'Task',
+        taskId,
+        task.projectId,
+        task.title
+      );
+    }
+
     await prisma.task.delete({ where: { id: taskId } });
 
-    // تسجيل النشاط
     await logActivity({
       userId,
       action: 'DELETE_TASK',
@@ -283,7 +364,7 @@ export const deleteTask = async (req: AuthRequest, res: Response) => {
   }
 };
 
-// تعيين مسؤول للمهمة (مدير المشروع فقط)
+// تعيين مسؤول للمهمة
 export const assignTask = async (req: AuthRequest, res: Response) => {
   try {
     const taskId = parseInt(String(req.params.id));
@@ -308,7 +389,6 @@ export const assignTask = async (req: AuthRequest, res: Response) => {
       include: { assignee: { select: { id: true, fullName: true } } }
     });
 
-    // تسجيل النشاط
     await logActivity({
       userId,
       action: 'ASSIGN_TASK',
@@ -317,6 +397,18 @@ export const assignTask = async (req: AuthRequest, res: Response) => {
       details: { title: updated.title, assigneeId, projectId: task.projectId, projectName: task.project.name },
       projectId: task.projectId,
     });
+
+    if (assigneeId && assigneeId !== userId) {
+      await notifyUser(
+        assigneeId,
+        'task_assigned',
+        `📌 تم تعيينك لمهمة "${task.title}" في مشروع "${task.project.name}"`,
+        'Task',
+        taskId,
+        task.projectId,
+        task.title
+      );
+    }
 
     if ((global as any).io) {
       (global as any).io.emit('taskAssigned', updated);
@@ -328,37 +420,40 @@ export const assignTask = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
-// جلب المهام المسندة للمستخدم الحالي (مهامي)
+
+// ✅ جلب المهام المسندة للمستخدم الحالي (مهامي) مع الوسوم
 export const getMyTasks = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.userId;
     const { status, priority } = req.query;
 
     let whereClause: any = { assigneeId: userId };
-
-    if (status) {
-      whereClause.status = status;
-    }
-    if (priority) {
-      whereClause.priority = priority;
-    }
+    if (status) whereClause.status = status;
+    if (priority) whereClause.priority = priority;
 
     const tasks = await prisma.task.findMany({
       where: whereClause,
       include: {
         project: { select: { id: true, name: true } },
         creator: { select: { id: true, fullName: true } },
+        tags: { include: { tag: true } }  // ✅ تأكد من وجود هذا السطر
       },
       orderBy: { dueDate: 'asc' },
     });
 
-    res.json(tasks);
+    const formattedTasks = tasks.map(task => ({
+      ...task,
+      tags: task.tags?.map((tt: any) => tt.tag) || []
+    }));
+
+    res.json(formattedTasks);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
 };
-// جلب المهام حسب المسند إليه (assigneeId)
+
+// ✅ جلب المهام حسب المسند إليه (assigneeId) مع الوسوم
 export const getTasksByAssignee = async (req: AuthRequest, res: Response) => {
   try {
     const { assigneeId, status, priority } = req.query;
@@ -375,10 +470,17 @@ export const getTasksByAssignee = async (req: AuthRequest, res: Response) => {
       include: {
         project: { select: { id: true, name: true } },
         creator: { select: { id: true, fullName: true } },
+        tags: { include: { tag: true } }
       },
       orderBy: { dueDate: 'asc' },
     });
-    res.json(tasks);
+
+    const formattedTasks = tasks.map(task => ({
+      ...task,
+      tags: task.tags?.map((tt: any) => tt.tag) || []
+    }));
+
+    res.json(formattedTasks);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });

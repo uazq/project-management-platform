@@ -34,10 +34,11 @@ model User {
   activities      ActivityLog[]
   discussions     Discussion[]
   replies         Reply[]
-  // علاقات طلبات حذف الأعضاء (ثلاث علاقات مستقلة)
   memberRemovalRequestsAsTarget   MemberRemovalRequest[] @relation("MemberRemovalTarget")
   memberRemovalRequestsAsRequester MemberRemovalRequest[] @relation("MemberRemovalRequester")
   memberRemovalRequestsAsApprover  MemberRemovalRequest[] @relation("MemberRemovalApprover")
+  
+  notifications   Notification[]   // إضافة هذا السطر
 }
 
 model Project {
@@ -239,6 +240,25 @@ model MemberRemovalRequest {
   @@index([projectId])
   @@index([userId])
   @@index([status])
+}
+
+// ==================== نموذج الإشعارات الجديد ====================
+model Notification {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        String   // e.g., 'task_created', 'task_status_changed', 'comment_added', 'member_added', 'file_uploaded', 'project_approved'
+  title       String?  // short title
+  message     String
+  entityType  String?  // 'Task', 'Project', 'Comment', 'File', 'Discussion', 'Reply'
+  entityId    Int?
+  projectId   Int?
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([userId, isRead])
+  @@index([projectId])
 }
 
 enum Role {
