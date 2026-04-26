@@ -8,6 +8,12 @@
   isActive: boolean;
   createdAt: string;
 }
+export interface Tag {
+  id: number;
+  name: string;
+  color?: string;
+  createdAt?: string;
+}
 
 export interface LoginCredentials {
   username: string;
@@ -38,6 +44,8 @@ export interface Project {
   members?: ProjectMember[];
   tasks?: Task[];
   _count?: { tasks: number; members: number };
+  archived?: boolean;   // ✅ إضافة
+  tags?: Tag[];         // ✅ إضافة
 }
 
 export interface ProjectMember {
@@ -62,7 +70,11 @@ export interface Task {
   createdAt: string;
   comments?: Comment[];
   files?: File[];
-}
+  tags?: Tag[];        // ✅ إضافة
+  project?: {          // ✅ إضافة (يستخدم في MyTasks لعرض اسم المشروع)
+    id: number;
+    name: string;
+  }
 
 export interface Comment {
   id: number;

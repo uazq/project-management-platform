@@ -217,7 +217,7 @@ const Dashboard = () => {
         <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{t('dashboard.projectsProgress')}</h2>
         {stats?.projectProgress?.length ? (
           <div className="space-y-4">
-            {stats.projectProgress.map(proj => (
+            {stats!.projectProgress.map(proj => (
               <div key={proj.id} className="animate-fade-in">
                 <div className="flex justify-between text-sm mb-1">
                   <span className="font-medium text-gray-700 dark:text-gray-300">{proj.name}</span>

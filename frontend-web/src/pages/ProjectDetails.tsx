@@ -401,7 +401,7 @@ const ProjectDetails = () => {
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{project.name}</h1>
-              {project.archived && (
+              {(project as any).archived && (
                 <span className="badge bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
                   {t('archive.archived')}
                 </span>

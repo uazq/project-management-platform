@@ -1,15 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAuthStore } from '../store/authStore';
 import api from '../services/api';
 import { Task, Tag } from '../types';
 import toast from 'react-hot-toast';
-import { FiClock, FiCheckCircle, FiAlertCircle, FiPlay } from 'react-icons/fi';
+import { FiClock } from 'react-icons/fi';
 import Skeleton from '../components/Skeleton';
 
 const MyTasks = () => {
   const { t } = useTranslation();
-  const { user } = useAuthStore();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'not_started' | 'in_progress' | 'completed' | 'overdue'>('all');
@@ -78,7 +76,7 @@ const MyTasks = () => {
                   <h3 className="font-semibold text-lg text-gray-900 dark:text-white">{task.title}</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{task.description}</p>
                   
-                  {/* ✅ عرض الوسوم */}
+                  {/* عرض الوسوم */}
                   {task.tags && task.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-2">
                       {task.tags.map((tag: Tag) => (

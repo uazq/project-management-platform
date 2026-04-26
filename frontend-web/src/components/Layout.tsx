@@ -26,17 +26,17 @@ const Layout = ({ children }: LayoutProps) => {
     const saved = localStorage.getItem('darkMode');
     return saved ? JSON.parse(saved) : false;
   });
-  const [showNotifications, setShowNotifications] = useState(false);
+ // const [showNotifications, setShowNotifications] = useState(false);
 
   useEffect(() => {
     if (user) loadUnreadCount();
   }, [user, loadUnreadCount]);
 
   useEffect(() => {
-    const handleNewNotification = () => loadUnreadCount();
-    socket.on('new_notification', handleNewNotification);
-    return () => socket.off('new_notification', handleNewNotification);
-  }, [loadUnreadCount]);
+  const handleNewNotification = () => loadUnreadCount();
+  socket.on('new_notification', handleNewNotification);
+  return () => socket.off('new_notification', handleNewNotification);
+}, [loadUnreadCount]);
 
   useEffect(() => {
     if (darkMode) {
