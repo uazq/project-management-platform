@@ -377,14 +377,14 @@ const ProjectDetails = () => {
   if (!project) return <div className="text-center py-10">{t('project.notFound')}</div>;
 
   const tabs = [
-  { id: 'overview', label: t('common.overview'), icon: FiFolder },
-  { id: 'tasks', label: t('common.tasks'), icon: FiCheckCircle, badge: tabBadges.tasks },
-  { id: 'members', label: t('common.members'), icon: FiUsers, badge: tabBadges.members },
-  { id: 'files', label: t('common.files'), icon: FiUpload, badge: tabBadges.files },
-  { id: 'comments', label: t('common.comments'), icon: FiMessageSquare, badge: tabBadges.comments },
-  { id: 'discussions', label: t('discussions.title'), icon: FiMessageSquare, badge: tabBadges.discussions },
-  { id: 'reports', label: t('common.reports'), icon: FiBarChart2 },
-              ] as const;   // ✅ أضف هذه العبارة
+    { id: 'overview', label: t('common.overview'), icon: FiFolder },
+    { id: 'tasks', label: t('common.tasks'), icon: FiCheckCircle, badge: tabBadges.tasks },
+    { id: 'members', label: t('common.members'), icon: FiUsers, badge: tabBadges.members },
+    { id: 'files', label: t('common.files'), icon: FiUpload, badge: tabBadges.files },
+    { id: 'comments', label: t('common.comments'), icon: FiMessageSquare, badge: tabBadges.comments },
+    { id: 'discussions', label: t('discussions.title'), icon: FiMessageSquare, badge: tabBadges.discussions },
+    { id: 'reports', label: t('common.reports'), icon: FiBarChart2 },
+  ] as const;
 
   const taskStatusTabs = [
     { id: 'not_started', label: t('task.not_started'), icon: FiClock },
@@ -523,7 +523,7 @@ const ProjectDetails = () => {
           {tabs.map(tab => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id )}
+              onClick={() => setActiveTab(tab.id)}
               className={`py-2 px-1 border-b-2 font-medium text-sm flex items-center gap-2 whitespace-nowrap transition relative ${
                 activeTab === tab.id
                   ? 'border-primary-500 text-primary-600 dark:text-primary-400'
@@ -532,9 +532,9 @@ const ProjectDetails = () => {
             >
               <tab.icon size={18} />
               {tab.label}
-              {(tab as any).badge !== undefined && (tab as any).badge > 0 && (
+              {tab.badge !== undefined && tab.badge > 0 && (
                 <span className="absolute -top-1 -right-2 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                  {(tab as any).badge > 9 ? '9+' : (tab as any).badge}
+                  {tab.badge > 9 ? '9+' : tab.badge}
                 </span>
               )}
             </button>
@@ -632,33 +632,32 @@ const ProjectDetails = () => {
                           type="date"
                           value={newTask.dueDate}
                           onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
-                          className="input-field"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-1">{t('task.assignee')}</label>
-                      <select
-                        value={newTask.assigneeId}
-                        onChange={(e) => setNewTask({ ...newTask, assigneeId: e.target.value })}
                         className="input-field"
-                      >
-                        <option value="">{t('task.unassigned')}</option>
-                        {members.map(m => (
-                          <option key={m.id} value={m.id}>{m.fullName}</option>
-                        ))}
-                      </select>
+                      />
                     </div>
-                    <div className="flex gap-2 pt-4">
-                      <button type="submit" className="btn-primary">
-                        {t('common.add')}
-                      </button>
-                      <button type="button" onClick={() => setShowTaskModal(false)} className="btn-secondary">
-                        {t('common.cancel')}
-                      </button>
-                    </div>
-                  </form>
-                </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">{t('task.assignee')}</label>
+                    <select
+                      value={newTask.assigneeId}
+                      onChange={(e) => setNewTask({ ...newTask, assigneeId: e.target.value })}
+                      className="input-field"
+                    >
+                      <option value="">{t('task.unassigned')}</option>
+                      {members.map(m => (
+                        <option key={m.id} value={m.id}>{m.fullName}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex gap-2 pt-4">
+                    <button type="submit" className="btn-primary">
+                      {t('common.add')}
+                    </button>
+                    <button type="button" onClick={() => setShowTaskModal(false)} className="btn-secondary">
+                      {t('common.cancel')}
+                    </button>
+                  </div>
+                </form>
               </div>
             )}
 
@@ -1037,7 +1036,6 @@ const ProjectDetails = () => {
               </div>
             </div>
 
-            {/* ✅ جدول أداء الأعضاء المحسن */}
             <div className="bg-gray-50 dark:bg-dark-200 p-4 rounded-lg">
               <h3 className="font-medium mb-3 text-gray-900 dark:text-white">{t('report.memberPerformance')}</h3>
               <div className="overflow-x-auto">
