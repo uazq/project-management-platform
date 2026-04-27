@@ -412,7 +412,7 @@ const ProjectDetails = () => {
             <div className="mt-4">
               <div className="flex items-center gap-2 mb-2">
                 <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('tag.title')}</h3>
-                {isManager && !project.archived && (
+                {isManager && !(project as any).archived && (
                   <button
                     onClick={() => setShowTagSelector(!showTagSelector)}
                     className="text-xs text-primary-600 hover:underline"
@@ -441,7 +441,7 @@ const ProjectDetails = () => {
                     toast.error(t('tag.removeError'));
                   }
                 }}
-                disabled={project.archived || !isManager}
+                disabled={(project as any).archived || !isManager}
               />
             </div>
 
@@ -465,7 +465,7 @@ const ProjectDetails = () => {
           </div>
           {isManager && (
             <div className="flex gap-2">
-              {project.archived ? (
+              {(project as any).archived ? (
                 <button
                   onClick={handleUnarchive}
                   className="p-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/30 rounded-lg"
@@ -574,7 +574,7 @@ const ProjectDetails = () => {
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold">{t('task.title')}</h2>
-              {isManager && !project.archived && (
+              {isManager && !(project as any).archived && (
                 <button
                   onClick={() => setShowTaskModal(true)}
                   className="btn-primary inline-flex items-center gap-2"
@@ -632,32 +632,33 @@ const ProjectDetails = () => {
                           type="date"
                           value={newTask.dueDate}
                           onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
-                        className="input-field"
-                      />
+                          className="input-field"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">{t('task.assignee')}</label>
-                    <select
-                      value={newTask.assigneeId}
-                      onChange={(e) => setNewTask({ ...newTask, assigneeId: e.target.value })}
-                      className="input-field"
-                    >
-                      <option value="">{t('task.unassigned')}</option>
-                      {members.map(m => (
-                        <option key={m.id} value={m.id}>{m.fullName}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="flex gap-2 pt-4">
-                    <button type="submit" className="btn-primary">
-                      {t('common.add')}
-                    </button>
-                    <button type="button" onClick={() => setShowTaskModal(false)} className="btn-secondary">
-                      {t('common.cancel')}
-                    </button>
-                  </div>
-                </form>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">{t('task.assignee')}</label>
+                      <select
+                        value={newTask.assigneeId}
+                        onChange={(e) => setNewTask({ ...newTask, assigneeId: e.target.value })}
+                        className="input-field"
+                      >
+                        <option value="">{t('task.unassigned')}</option>
+                        {members.map(m => (
+                          <option key={m.id} value={m.id}>{m.fullName}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="flex gap-2 pt-4">
+                      <button type="submit" className="btn-primary">
+                        {t('common.add')}
+                      </button>
+                      <button type="button" onClick={() => setShowTaskModal(false)} className="btn-secondary">
+                        {t('common.cancel')}
+                      </button>
+                    </div>
+                  </form>
+                </div>
               </div>
             )}
 
@@ -690,7 +691,6 @@ const ProjectDetails = () => {
                       <div className="flex-1">
                         <h4 className="font-medium text-gray-900 dark:text-white">{task.title}</h4>
                         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{task.description}</p>
-                        
                         <div className="flex flex-wrap gap-1 mt-2">
                           {(taskTags[task.id] || []).map(tag => (
                             <span
@@ -702,8 +702,7 @@ const ProjectDetails = () => {
                             </span>
                           ))}
                         </div>
-
-                        {isManager && !project.archived && (
+                        {isManager && !(project as any).archived && (
                           <div className="mt-2">
                             <TagSelector
                               selectedTags={taskTags[task.id] || []}
@@ -731,11 +730,10 @@ const ProjectDetails = () => {
                                   toast.error(t('tag.removeError'));
                                 }
                               }}
-                              disabled={project.archived || !isManager}
+                              disabled={(project as any).archived || !isManager}
                             />
                           </div>
                         )}
-
                         <div className="flex flex-wrap gap-3 mt-2 text-xs text-gray-500">
                           <span className={`badge ${
                             task.priority === 'high' ? 'badge-danger' :
@@ -753,7 +751,7 @@ const ProjectDetails = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         {(() => {
-                          const canChange = !project.archived && (
+                          const canChange = !(project as any).archived && (
                             user?.role === 'admin' ||
                             isManager ||
                             task.assigneeId === user?.id
@@ -784,7 +782,7 @@ const ProjectDetails = () => {
                             );
                           }
                         })()}
-                        {isManager && !project.archived && (
+                        {isManager && !(project as any).archived && (
                           <button onClick={() => handleDeleteTask(task.id)} className="p-2 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg">
                             <FiTrash2 size={18} />
                           </button>
@@ -802,7 +800,7 @@ const ProjectDetails = () => {
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold">{t('member.title')}</h2>
-              {isManager && !project.archived && (
+              {isManager && !(project as any).archived && (
                 <button
                   onClick={() => setShowAddMember(!showAddMember)}
                   className="btn-primary inline-flex items-center gap-2 text-sm"
@@ -854,7 +852,7 @@ const ProjectDetails = () => {
                   {member.id === project.createdBy && (
                     <span className="badge badge-info">{t('member.projectManager')}</span>
                   )}
-                  {isManager && member.id !== project.createdBy && !project.archived && (
+                  {isManager && member.id !== project.createdBy && !(project as any).archived && (
                     <div className="flex gap-2">
                       <button
                         onClick={() => {
@@ -888,7 +886,7 @@ const ProjectDetails = () => {
 
         {activeTab === 'files' && (
           <div className="space-y-4">
-            {!project.archived && (
+            {!(project as any).archived && (
               <FileUploader onUpload={handleFileUpload} uploading={uploading} />
             )}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -902,7 +900,7 @@ const ProjectDetails = () => {
                     <a href={`http://localhost:5000/api/files/${file.id}/download`} className="p-1.5 text-primary-600 hover:bg-primary-100 rounded">
                       <FiDownload size={16} />
                     </a>
-                    {!project.archived && (user?.id === file.uploadedBy || isManager) && (
+                    {!(project as any).archived && (user?.id === file.uploadedBy || isManager) && (
                       <button onClick={() => handleDeleteFile(file.id)} className="p-1.5 text-red-600 hover:bg-red-100 rounded">
                         <FiTrash2 size={16} />
                       </button>
@@ -917,7 +915,7 @@ const ProjectDetails = () => {
 
         {activeTab === 'comments' && (
           <div className="space-y-4">
-            {!project.archived && (
+            {!(project as any).archived && (
               <form onSubmit={handleAddComment} className="flex gap-2">
                 <input
                   type="text"
@@ -946,7 +944,7 @@ const ProjectDetails = () => {
                       <span className="font-medium text-sm">{comment.user?.fullName}</span>
                       <span className="text-xs text-gray-500">{new Date(comment.createdAt).toLocaleString()}</span>
                     </div>
-                    {!project.archived && (user?.id === comment.userId || isManager) && (
+                    {!(project as any).archived && (user?.id === comment.userId || isManager) && (
                       <button onClick={() => handleDeleteComment(comment.id)} className="text-red-500 hover:text-red-600">
                         <FiTrash2 size={16} />
                       </button>
@@ -961,7 +959,7 @@ const ProjectDetails = () => {
         )}
 
         {activeTab === 'discussions' && (
-          <Discussions projectId={id!} archived={project.archived} />
+          <Discussions projectId={id!} archived={(project as any).archived} />
         )}
 
         {activeTab === 'reports' && (
