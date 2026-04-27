@@ -691,6 +691,7 @@ const ProjectDetails = () => {
                       <div className="flex-1">
                         <h4 className="font-medium text-gray-900 dark:text-white">{task.title}</h4>
                         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{task.description}</p>
+                        
                         <div className="flex flex-wrap gap-1 mt-2">
                           {(taskTags[task.id] || []).map(tag => (
                             <span
@@ -702,6 +703,7 @@ const ProjectDetails = () => {
                             </span>
                           ))}
                         </div>
+
                         {isManager && !(project as any).archived && (
                           <div className="mt-2">
                             <TagSelector
@@ -734,6 +736,7 @@ const ProjectDetails = () => {
                             />
                           </div>
                         )}
+
                         <div className="flex flex-wrap gap-3 mt-2 text-xs text-gray-500">
                           <span className={`badge ${
                             task.priority === 'high' ? 'badge-danger' :
@@ -1052,7 +1055,7 @@ const ProjectDetails = () => {
                       <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">
                         {t('report.percentage')}
                       </th>
-                    </tr>
+                    <tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 dark:divide-dark-300">
                     {members.map((member, idx) => {
