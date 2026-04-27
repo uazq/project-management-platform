@@ -377,14 +377,14 @@ const ProjectDetails = () => {
   if (!project) return <div className="text-center py-10">{t('project.notFound')}</div>;
 
   const tabs = [
-    { id: 'overview', label: t('common.overview'), icon: FiFolder },
-    { id: 'tasks', label: t('common.tasks'), icon: FiCheckCircle, badge: tabBadges.tasks },
-    { id: 'members', label: t('common.members'), icon: FiUsers, badge: tabBadges.members },
-    { id: 'files', label: t('common.files'), icon: FiUpload, badge: tabBadges.files },
-    { id: 'comments', label: t('common.comments'), icon: FiMessageSquare, badge: tabBadges.comments },
-    { id: 'discussions', label: t('discussions.title'), icon: FiMessageSquare, badge: tabBadges.discussions },
-    { id: 'reports', label: t('common.reports'), icon: FiBarChart2 },
-  ];
+  { id: 'overview', label: t('common.overview'), icon: FiFolder },
+  { id: 'tasks', label: t('common.tasks'), icon: FiCheckCircle, badge: tabBadges.tasks },
+  { id: 'members', label: t('common.members'), icon: FiUsers, badge: tabBadges.members },
+  { id: 'files', label: t('common.files'), icon: FiUpload, badge: tabBadges.files },
+  { id: 'comments', label: t('common.comments'), icon: FiMessageSquare, badge: tabBadges.comments },
+  { id: 'discussions', label: t('discussions.title'), icon: FiMessageSquare, badge: tabBadges.discussions },
+  { id: 'reports', label: t('common.reports'), icon: FiBarChart2 },
+              ] as const;   // ✅ أضف هذه العبارة
 
   const taskStatusTabs = [
     { id: 'not_started', label: t('task.not_started'), icon: FiClock },
@@ -523,7 +523,7 @@ const ProjectDetails = () => {
           {tabs.map(tab => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id )}
               className={`py-2 px-1 border-b-2 font-medium text-sm flex items-center gap-2 whitespace-nowrap transition relative ${
                 activeTab === tab.id
                   ? 'border-primary-500 text-primary-600 dark:text-primary-400'

@@ -38,7 +38,7 @@ const PageLoader = () => (
 );
 
 function App() {
-  const { token, user, logout } = useAuthStore();
+  const { user, logout } = useAuthStore();
   const { t } = useTranslation();
   const { loadUnreadCount, addRealtimeNotification } = useNotificationStore();
 

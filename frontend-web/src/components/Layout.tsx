@@ -33,9 +33,13 @@ const Layout = ({ children }: LayoutProps) => {
   }, [user, loadUnreadCount]);
 
   useEffect(() => {
-  const handleNewNotification = () => loadUnreadCount();
+  const handleNewNotification = () => {
+    loadUnreadCount();
+  };
   socket.on('new_notification', handleNewNotification);
-  return () => socket.off('new_notification', handleNewNotification);
+  return () => {
+    socket.off('new_notification', handleNewNotification);
+  };
 }, [loadUnreadCount]);
 
   useEffect(() => {

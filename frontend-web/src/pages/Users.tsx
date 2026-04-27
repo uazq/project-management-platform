@@ -6,7 +6,7 @@ import { User } from '../types';
 import toast from 'react-hot-toast';
 import { 
   FiToggleLeft, FiToggleRight, FiSearch, FiTrash2, 
-  FiUser, FiMail, FiCalendar, FiDownload, FiFilter,
+  FiMail, FiCalendar, FiDownload, FiFilter,
   FiChevronUp, FiChevronDown, FiUsers, FiUserCheck,
   FiUserX, FiShield
 } from 'react-icons/fi';

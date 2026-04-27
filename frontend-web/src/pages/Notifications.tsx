@@ -1,8 +1,6 @@
-import { useEffect, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNotificationStore } from '../store/notificationStore';
-import { Notification } from '../services/notificationService';
 import { FiBell, FiCheckCircle, FiTrash2, FiRefreshCw } from 'react-icons/fi';
 import Skeleton from '../components/Skeleton';
 

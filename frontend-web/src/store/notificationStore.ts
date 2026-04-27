@@ -22,7 +22,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
   hasMore: true,
 
   loadNotifications: async (reset = false) => {
-    const { notifications, loading, hasMore } = get();
+    const { notifications, loading, _hasMore } = get();
     if (loading) return;
     if (reset) {
       set({ notifications: [], hasMore: true });

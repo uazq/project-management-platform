@@ -4,7 +4,7 @@ import { Task, User } from '../types';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { FiDownload, FiFileText, FiFile } from 'react-icons/fi';
+import { FiFileText, FiFile } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 interface ReportExportProps {

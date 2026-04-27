@@ -5,12 +5,12 @@ import { useAuthStore } from '../store/authStore';
 import api from '../services/api';
 import socket from '../services/socket';
 import toast from 'react-hot-toast';
-import { FiUser, FiMail, FiLock, FiCamera, FiSave, FiHelpCircle, FiAlertCircle } from 'react-icons/fi';
+import { FiUser, FiLock, FiCamera, FiSave, FiHelpCircle, FiAlertCircle } from 'react-icons/fi';
 
 const Profile = () => {
   const { t } = useTranslation();
   const { user, setUser, logout } = useAuthStore();
-  const navigate = useNavigate();
+  const _navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: user?.fullName || '',
     email: user?.email || '',

@@ -22,6 +22,7 @@ interface Discussion {
   user: { fullName: string; profilePicture?: string };
   createdAt: string;
   replies: Reply[];
+  projectId: number;   // ✅ أضف هذا السطر
 }
 
 interface DiscussionsProps {

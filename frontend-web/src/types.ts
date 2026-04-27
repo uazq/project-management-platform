@@ -107,7 +107,7 @@ export interface Discussion {
   content: string;
   userId: number;
   user: User;
-  projectId: number;
+  projectId: number;   // ← هذا السطر
   createdAt: string;
   replies: Reply[];
 }

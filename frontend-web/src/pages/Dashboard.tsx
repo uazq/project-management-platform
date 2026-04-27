@@ -196,7 +196,7 @@ const Dashboard = () => {
                   outerRadius={80}
                   paddingAngle={5}
                   dataKey="value"
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
                 >
                   {projectStatusData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
@@ -217,7 +217,7 @@ const Dashboard = () => {
         <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{t('dashboard.projectsProgress')}</h2>
         {stats?.projectProgress?.length ? (
           <div className="space-y-4">
-            {stats!.projectProgress.map(proj => (
+            {stats?.projectProgress?.map(proj => (
               <div key={proj.id} className="animate-fade-in">
                 <div className="flex justify-between text-sm mb-1">
                   <span className="font-medium text-gray-700 dark:text-gray-300">{proj.name}</span>
@@ -235,7 +235,7 @@ const Dashboard = () => {
       </div>
 
       {/* أداء الأعضاء */}
-      {stats?.memberStats?.length > 0 && (
+      {stats?.memberStats && stats.memberStats.length > 0 && (
         <div className="card">
           <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{t('dashboard.memberPerformance')}</h2>
           <div className="overflow-x-auto">
@@ -303,7 +303,7 @@ const Dashboard = () => {
                   <div>
                     <p className="text-sm font-medium text-gray-900 dark:text-white">{file.fileName}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {file.project?.name || file.task?.project?.name} • {file.uploader.fullName}
+                     {file.project?.name || (file.task as any)?.project?.name} • {file.uploader.fullName}
                     </p>
                   </div>
                 </div>
