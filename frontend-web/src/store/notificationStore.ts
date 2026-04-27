@@ -22,11 +22,12 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
   hasMore: true,
 
   loadNotifications: async (reset = false) => {
-    const { notifications, loading, _hasMore } = get();
+    const { notifications, loading, hasMore } = get();
     if (loading) return;
     if (reset) {
       set({ notifications: [], hasMore: true });
     }
+    // ✅ استخدام hasMore بدلاً من _hasMore
     if (!get().hasMore && !reset) return;
 
     set({ loading: true });
@@ -35,7 +36,6 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
       const res = await fetchNotifications(20, offset, false);
       const newList = res.data;
       
-      // ✅ منع التكرار عند التحميل (دمج بدون تكرار)
       if (reset) {
         set({ notifications: newList, hasMore: newList.length === 20, loading: false });
       } else {
@@ -104,13 +104,10 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     }
   },
 
-  // ✅ تعديل دالة الإضافة الفورية لمنع التكرار
   addRealtimeNotification: (notification: Notification) => {
     set((state) => {
-      // التحقق من عدم وجود إشعار بنفس المعرف مسبقاً
       const exists = state.notifications.some(n => n.id === notification.id);
-      if (exists) return state; // لا نضيفه مرة أخرى
-      
+      if (exists) return state;
       return {
         notifications: [notification, ...state.notifications].slice(0, 50),
         unreadCount: state.unreadCount + 1,
