@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "project-management-platform",
+  "compatibility_date": "2026-04-26",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": "frontend-web"
+  },
+  "compatibility_flags": [
+    "nodejs_compat"
+  ]
+}
